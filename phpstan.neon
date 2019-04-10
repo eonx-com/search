@@ -1,0 +1,11 @@
+parameters:
+    ignoreErrors:
+        -
+            message: '#Constant XDEBUG_[A-Z_]+ not found.#'
+            path: tests/bootstrap.php
+        -
+            message: '/Parameter #1 \$function of function call_user_func_array expects callable\(\): mixed, array\(Illuminate\\Container\\Container, string\) given./'
+            path: tests/Stubs/Vendor/Illuminate/Contracts/Foundation/ApplicationStub.php
+        -
+            message: '#Tests\\LoyaltyCorp\\Search\\Stubs\\Vendor\\Elasticsearch\\ClientStub::__construct\(\) does not call parent constructor from Elasticsearch\\Client.#'
+            path: tests/Stubs/Vendor/Elasticsearch/ClientStub.php

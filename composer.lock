@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bbb3fc1abaea024aa1eb0d3e3f646b06",
+    "content-hash": "7fa1bf9840fadbabee56ed7521de48dd",
     "packages": [
         {
             "name": "elasticsearch/elasticsearch",
@@ -65,16 +65,16 @@
         },
         {
             "name": "eoneopay/externals",
-            "version": "dev-master",
+            "version": "v1.0.0-RC2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/loyaltycorp/externals.git",
-                "reference": "8ba4847a548b15416c0b9b45733110ed1815fafc"
+                "reference": "3d6347ee2b57dd1f4811746f3c7148ed7d8370b2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/loyaltycorp/externals/zipball/8ba4847a548b15416c0b9b45733110ed1815fafc",
-                "reference": "8ba4847a548b15416c0b9b45733110ed1815fafc",
+                "url": "https://api.github.com/repos/loyaltycorp/externals/zipball/3d6347ee2b57dd1f4811746f3c7148ed7d8370b2",
+                "reference": "3d6347ee2b57dd1f4811746f3c7148ed7d8370b2",
                 "shasum": ""
             },
             "require": {
@@ -134,7 +134,7 @@
             "keywords": [
                 "external"
             ],
-            "time": "2019-04-10T00:47:15+00:00"
+            "time": "2019-04-10T03:24:13+00:00"
         },
         {
             "name": "eoneopay/utils",
@@ -142,12 +142,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/loyaltycorp/utils.git",
-                "reference": "5dea634e625b3e50236ad94322070b95cf51f4c7"
+                "reference": "f68549357c03b4114a84a88cec28a0cd10d33dc8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/loyaltycorp/utils/zipball/5dea634e625b3e50236ad94322070b95cf51f4c7",
-                "reference": "5dea634e625b3e50236ad94322070b95cf51f4c7",
+                "url": "https://api.github.com/repos/loyaltycorp/utils/zipball/f68549357c03b4114a84a88cec28a0cd10d33dc8",
+                "reference": "f68549357c03b4114a84a88cec28a0cd10d33dc8",
                 "shasum": ""
             },
             "require": {
@@ -192,7 +192,7 @@
                 "helpers",
                 "utilities"
             ],
-            "time": "2019-03-19T04:05:25+00:00"
+            "time": "2019-04-10T04:08:38+00:00"
         },
         {
             "name": "guzzlehttp/ringphp",
@@ -4345,7 +4345,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "eoneopay/externals": 20,
         "eoneopay/standards": 20,
         "roave/security-advisories": 20
     },

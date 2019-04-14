@@ -48,7 +48,10 @@ final class ManagerTest extends TestCase
 
         // Test method passes through to elasticsearch
         $manager->handleDeletes(['index' => [['9']]]);
-        self::assertSame(['body' => [['delete' => ['_index' => 'index', '_id' => ['9']]]]], $stub->getBulkParameters());
+        self::assertSame(
+            ['body' => [['delete' => ['_index' => 'index', '_type' => 'doc', '_id' => ['9']]]]],
+            $stub->getBulkParameters()
+        );
     }
 
     /**
@@ -72,7 +75,9 @@ final class ManagerTest extends TestCase
             new SearchableStub()
         ]);
         self::assertSame(
-            ['body' => [['index' => ['_index' => 'valid', '_id' => 'searchable']], ['search' => 'body']]],
+            ['body' =>
+                [['index' => ['_index' => 'valid', '_type' => 'doc', '_id' => 'searchable']], ['search' => 'body']]
+            ],
             $stub->getBulkParameters()
         );
     }

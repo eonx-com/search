@@ -47,7 +47,14 @@ final class Client implements ClientInterface
              * @see https://youtrack.jetbrains.com/issue/WI-37859 typehint required until PhpStorm recognises === check
              */
             foreach ($indexIds as $indexId) {
-                $bulk[] = ['delete' => ['_index' => $index, '_id' => $indexId]];
+                // The _type parameter is being deprecated, and in Elasticsearch 6.0+ means
+                // nothing, but still must be provided. As a standard, anything using this
+                // library will need to define the type as "doc" in any schema mappings until
+                // we reach Elasticsearch 7.0.
+                //
+                // See: https://www.elastic.co/guide/en/elasticsearch/reference/current/removal-of-types.html
+
+                $bulk[] = ['delete' => ['_index' => $index, '_type' => 'doc', '_id' => $indexId]];
             }
         }
 
@@ -68,7 +75,14 @@ final class Client implements ClientInterface
         $bulk = [];
 
         foreach ($documents as $documentId => $document) {
-            $bulk[] = ['index' => ['_index' => $index, '_id' => $documentId]];
+            // The _type parameter is being deprecated, and in Elasticsearch 6.0+ means
+            // nothing, but still must be provided. As a standard, anything using this
+            // library will need to define the type as "doc" in any schema mappings until
+            // we reach Elasticsearch 7.0.
+            //
+            // See: https://www.elastic.co/guide/en/elasticsearch/reference/current/removal-of-types.html
+
+            $bulk[] = ['index' => ['_index' => $index, '_type' => 'doc', '_id' => $documentId]];
             $bulk[] = $document;
         }
 

@@ -53,7 +53,10 @@ final class ClientTest extends TestCase
 
         $client->bulkDelete(['index' => [['1']]]);
 
-        self::assertSame(['body' => [['delete' => ['_index' => 'index', '_id' => ['1']]]]], $stub->getBulkParameters());
+        self::assertSame(
+            ['body' => [['delete' => ['_index' => 'index', '_type' => 'doc', '_id' => ['1']]]]],
+            $stub->getBulkParameters()
+        );
     }
 
     /**
@@ -68,6 +71,9 @@ final class ClientTest extends TestCase
 
         $client->bulkDelete(['index' => [['7']], 'not-iterable']);
 
-        self::assertSame(['body' => [['delete' => ['_index' => 'index', '_id' => ['7']]]]], $stub->getBulkParameters());
+        self::assertSame(
+            ['body' => [['delete' => ['_index' => 'index', '_type' => 'doc', '_id' => ['7']]]]],
+            $stub->getBulkParameters()
+        );
     }
 }

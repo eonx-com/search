@@ -9,6 +9,7 @@ use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 use LoyaltyCorp\Search\Client;
+use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\HandlerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Manager;
@@ -32,6 +33,15 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
      */
     public function register(): void
     {
+        // Bind elasticsearch client
+        $this->app->singleton(ClientInterface::class, static function (Container $app): ClientInterface {
+            return new Client(ClientBuilder::create()
+                ->setLogger($app->make(LoggerInterface::class))
+                ->setHosts(\array_filter([(string)\env('ELASTICSEARCH_HOST', '')]))
+                ->setSSLVerification(false)
+                ->build());
+        });
+
         // Bind search manager
         $this->app->singleton(ManagerInterface::class, static function (Container $app): ManagerInterface {
             // Get handlers tagged in app
@@ -46,11 +56,7 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
             // Create manager
             return new Manager(
                 $handlers,
-                new Client(ClientBuilder::create()
-                    ->setLogger($app->make(LoggerInterface::class))
-                    ->setHosts(\array_filter([(string)\env('ELASTICSEARCH_HOST', '')]))
-                    ->setSSLVerification(false)
-                    ->build())
+                $app->make(ClientInterface::class)
             );
         });
     }

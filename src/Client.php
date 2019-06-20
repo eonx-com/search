@@ -92,4 +92,151 @@ final class Client implements ClientInterface
             throw new SearchUpdateException('An error occured while performing bulk update on backend', 0, $exception);
         }
     }
+
+    /**
+     * Create a new alias for specified index
+     *
+     * @param string $indexName
+     * @param string $aliasName
+     *
+     * @return void
+     */
+    public function createAlias(string $indexName, string $aliasName): void
+    {
+        try {
+            $this->elastic->indices()->updateAliases(
+                ['body' => ['actions' => [['add' => ['index' => $indexName, 'alias' => $aliasName]]]]]
+            );
+        } catch (Exception $exception) {
+            // @todo fix exception
+            throw new SearchDeleteException('Unable to add alias', 0, $exception);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createIndex(
+        string $name,
+        ?array $mappings = null,
+        ?array $settings = null
+    ): void {
+        try {
+            $this->elastic->indices()->create([
+                'index' => $name,
+                'body' => \array_filter([
+                    'settings' => $settings,
+                    'mappings' => $mappings
+                ])
+            ]);
+        } catch (Exception $exception) {
+            // @todo fix exception type
+            throw new SearchDeleteException('', 0, $exception);
+        }
+    }
+
+    /**
+     * Delete an existing alias
+     *
+     * @param string $indexName
+     * @param string $aliasName
+     *
+     * @return void
+     */
+    public function deleteAlias(string $indexName, string $aliasName): void
+    {
+        try {
+            $this->elastic->indices()->updateAliases(
+                ['body' => ['actions' => [['remove' => ['index' => $indexName, 'alias' => $aliasName]]]]]
+            );
+        } catch (Exception $exception) {
+            // @todo fix exception type
+            throw new SearchDeleteException('', 0, $exception);
+        }
+    }
+
+    /**
+     * Delete an existing index
+     *
+     * @param string $name
+     *
+     * @return void
+     */
+    public function deleteIndex(string $name): void
+    {
+        try {
+            $this->elastic->indices()->delete([
+                'index' => $name
+            ]);
+        } catch (Exception $exception) {
+            // @todo fix exception type
+            throw new SearchDeleteException('', 0, $exception);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isAlias(string $name): bool
+    {
+        try {
+            return $this->elastic->indices()->existsAlias(['index' => '*', 'name' => $name]);
+        } catch (Exception $exception) {
+            // @todo fix exception type
+            throw new SearchDeleteException('', 0, $exception);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isIndex(string $name): bool
+    {
+        try {
+            return $this->elastic->indices()->exists(['index' => $name]);
+        } catch (Exception $exception) {
+            // @todo fix exception type
+            throw new SearchDeleteException('', 0, $exception);
+        }
+    }
+
+    /**
+     * List all existing indexes
+     *
+     * @param bool|null $includeAliases
+     *
+     * @return mixed[]
+     */
+    public function listIndices(?bool $includeAliases = null): array
+    {
+        try {
+            $indices = [];
+            foreach ($this->elastic->cat()->indices() as $index) {
+                // Key as index name just for local ease of mapping
+                $indices[$index['index']] = [
+                    'name' => $index['index']
+                ];
+            }
+
+            if (($includeAliases ?? false) === false) {
+                // Reset keys to numerical indexes & remove aliases key
+                return \array_values(
+                    \array_filter($indices)
+                );
+            }
+
+            foreach ($this->elastic->cat()->aliases() as $alias) {
+                if (\array_key_exists('aliases', $indices[$alias['index']]) === false) {
+                    $indices[$alias['index']]['aliases'] = [];
+                }
+
+                $indices[$alias['index']]['aliases'][] = $alias['alias'];
+            }
+
+            return \array_values($indices);
+        } catch (Exception $exception) {
+            // @todo fix exception type
+            throw new SearchDeleteException('', 0, $exception);
+        }
+    }
 }

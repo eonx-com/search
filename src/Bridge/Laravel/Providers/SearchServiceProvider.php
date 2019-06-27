@@ -23,7 +23,7 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
      */
     public function provides(): array
     {
-        return [ManagerInterface::class];
+        return [ClientInterface::class, ManagerInterface::class];
     }
 
     /**

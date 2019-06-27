@@ -6,6 +6,13 @@ namespace LoyaltyCorp\Search\Interfaces;
 interface HandlerInterface
 {
     /**
+     * Get the class this search handler will support
+     *
+     * @return string Fully Qualified Class Name
+     */
+    public function getHandledClass(): string;
+
+    /**
      * Returns the index name that this handler is responsible for.
      *
      * @return string
@@ -20,16 +27,6 @@ interface HandlerInterface
      * @return mixed|null
      */
     public function getSearchId(object $object);
-
-    /**
-     * Indicates if this handler accepts updates or deletes
-     * related to the supplied class.
-     *
-     * @param string $class
-     *
-     * @return bool
-     */
-    public function handles(string $class): bool;
 
     /**
      * Transforms objects supplied into serialized search arrays that

@@ -80,6 +80,24 @@ interface ClientInterface
     public function deleteIndex(string $name): void;
 
     /**
+     * List all existing aliases
+     *
+     * @param string|null $name
+     *
+     * @return mixed[]
+     */
+    public function getAliases(?string $name = null): array;
+
+    /**
+     * List all existing indexes
+     *
+     * @param string|null $name
+     *
+     * @return mixed[]
+     */
+    public function getIndices(?string $name = null): array;
+
+    /**
      * Determine if alias exists
      *
      * @param string $name
@@ -96,11 +114,4 @@ interface ClientInterface
      * @return bool
      */
     public function isIndex(string $name): bool;
-
-    /**
-     * List all existing indexes
-     *
-     * @return mixed[]
-     */
-    public function listIndices(): array;
 }

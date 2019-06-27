@@ -7,6 +7,7 @@ use EoneoPay\Externals\Logger\Interfaces\LoggerInterface;
 use EoneoPay\Externals\Logger\Logger;
 use Illuminate\Contracts\Foundation\Application;
 use LoyaltyCorp\Search\Bridge\Laravel\Providers\SearchServiceProvider;
+use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Manager;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\HandlerStub;
@@ -17,6 +18,8 @@ use Tests\LoyaltyCorp\Search\TestCase;
 
 /**
  * @covers \LoyaltyCorp\Search\Bridge\Laravel\Providers\SearchServiceProvider
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Required for testing all services
  */
 final class SearchServiceProviderTest extends TestCase
 {
@@ -45,7 +48,10 @@ final class SearchServiceProviderTest extends TestCase
      */
     public function testDeferredProvider(): void
     {
-        self::assertSame([ManagerInterface::class], (new SearchServiceProvider(new ApplicationStub()))->provides());
+        self::assertSame([
+            ClientInterface::class,
+            ManagerInterface::class
+        ], (new SearchServiceProvider(new ApplicationStub()))->provides());
     }
 
     /**

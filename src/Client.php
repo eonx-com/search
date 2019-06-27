@@ -5,6 +5,7 @@ namespace LoyaltyCorp\Search;
 
 use Elasticsearch\Client as BaseClient;
 use Exception;
+use LoyaltyCorp\Search\Exceptions\SearchCheckerException;
 use LoyaltyCorp\Search\Exceptions\SearchDeleteException;
 use LoyaltyCorp\Search\Exceptions\SearchUpdateException;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
@@ -94,12 +95,7 @@ final class Client implements ClientInterface
     }
 
     /**
-     * Create a new alias for specified index
-     *
-     * @param string $indexName
-     * @param string $aliasName
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function createAlias(string $indexName, string $aliasName): void
     {
@@ -108,7 +104,6 @@ final class Client implements ClientInterface
                 ['body' => ['actions' => [['add' => ['index' => $indexName, 'alias' => $aliasName]]]]]
             );
         } catch (Exception $exception) {
-            // @todo fix exception
             throw new SearchDeleteException('Unable to add alias', 0, $exception);
         }
     }
@@ -130,18 +125,12 @@ final class Client implements ClientInterface
                 ])
             ]);
         } catch (Exception $exception) {
-            // @todo fix exception type
             throw new SearchDeleteException('', 0, $exception);
         }
     }
 
     /**
-     * Delete an existing alias
-     *
-     * @param string $indexName
-     * @param string $aliasName
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function deleteAlias(string $indexName, string $aliasName): void
     {
@@ -150,17 +139,12 @@ final class Client implements ClientInterface
                 ['body' => ['actions' => [['remove' => ['index' => $indexName, 'alias' => $aliasName]]]]]
             );
         } catch (Exception $exception) {
-            // @todo fix exception type
-            throw new SearchDeleteException('', 0, $exception);
+            throw new SearchDeleteException('Unable to delete alias', 0, $exception);
         }
     }
 
     /**
-     * Delete an existing index
-     *
-     * @param string $name
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function deleteIndex(string $name): void
     {
@@ -169,8 +153,50 @@ final class Client implements ClientInterface
                 'index' => $name
             ]);
         } catch (Exception $exception) {
-            // @todo fix exception type
-            throw new SearchDeleteException('', 0, $exception);
+            throw new SearchDeleteException('Unable to delete index', 0, $exception);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAliases(?string $name = null): array
+    {
+        try {
+            $aliases = [];
+
+            foreach ($this->elastic->cat()->aliases(\array_filter(['name' => $name])) as $alias) {
+                $aliases[$alias['alias']] = [
+                    'name' => $alias['alias'],
+                    'index' => $alias['index']
+                ];
+            }
+
+            return \array_values($aliases);
+        } catch (Exception $exception) {
+            throw new SearchCheckerException('An error ocurred obtaining a list of aliases', 0, $exception);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIndices(?string $name = null): array
+    {
+        try {
+            $indices = [];
+
+            foreach ($this->elastic->cat()->indices(\array_filter(['index' => $name])) as $index) {
+                // Key as index name just for local ease of mapping
+                $indices[$index['index']] = [
+                    'name' => $index['index']
+                ];
+            }
+
+            // Reset keys to numerical indexes & remove aliases key
+            return \array_values($indices);
+        } catch (Exception $exception) {
+            throw new SearchCheckerException('An error ocurred obtaining a list of indices', 0, $exception);
         }
     }
 
@@ -182,8 +208,7 @@ final class Client implements ClientInterface
         try {
             return $this->elastic->indices()->existsAlias(['index' => '*', 'name' => $name]);
         } catch (Exception $exception) {
-            // @todo fix exception type
-            throw new SearchDeleteException('', 0, $exception);
+            throw new SearchCheckerException('An error occurred checking if alias exists', 0, $exception);
         }
     }
 
@@ -195,48 +220,7 @@ final class Client implements ClientInterface
         try {
             return $this->elastic->indices()->exists(['index' => $name]);
         } catch (Exception $exception) {
-            // @todo fix exception type
-            throw new SearchDeleteException('', 0, $exception);
-        }
-    }
-
-    /**
-     * List all existing indexes
-     *
-     * @param bool|null $includeAliases
-     *
-     * @return mixed[]
-     */
-    public function listIndices(?bool $includeAliases = null): array
-    {
-        try {
-            $indices = [];
-            foreach ($this->elastic->cat()->indices() as $index) {
-                // Key as index name just for local ease of mapping
-                $indices[$index['index']] = [
-                    'name' => $index['index']
-                ];
-            }
-
-            if (($includeAliases ?? false) === false) {
-                // Reset keys to numerical indexes & remove aliases key
-                return \array_values(
-                    \array_filter($indices)
-                );
-            }
-
-            foreach ($this->elastic->cat()->aliases() as $alias) {
-                if (\array_key_exists('aliases', $indices[$alias['index']]) === false) {
-                    $indices[$alias['index']]['aliases'] = [];
-                }
-
-                $indices[$alias['index']]['aliases'][] = $alias['alias'];
-            }
-
-            return \array_values($indices);
-        } catch (Exception $exception) {
-            // @todo fix exception type
-            throw new SearchDeleteException('', 0, $exception);
+            throw new SearchCheckerException('An error occurred checking if index exists', 0, $exception);
         }
     }
 }

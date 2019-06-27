@@ -11,6 +11,14 @@ final class HandlerStub implements HandlerInterface
     /**
      * @inheritdoc
      */
+    public function getHandledClass(): string
+    {
+        return NotSearchableStub::class;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getIndexName(): string
     {
         return 'valid';
@@ -22,14 +30,6 @@ final class HandlerStub implements HandlerInterface
     public function getSearchId(object $object)
     {
         return \method_exists($object, 'getSearchId') ? $object->getSearchId() : null;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function handles(string $class): bool
-    {
-        return $class !== NotSearchableStub::class;
     }
 
     /**

@@ -40,7 +40,7 @@ final class Manager implements ManagerInterface
         $ids = [];
 
         foreach ($this->handlers as $handler) {
-            if ($handler->handles($class) === false) {
+            if ($handler->getHandledClass() === $class) {
                 continue;
             }
 
@@ -73,7 +73,7 @@ final class Manager implements ManagerInterface
     public function handleUpdates(string $class, array $objects): void
     {
         foreach ($this->handlers as $handler) {
-            if ($handler->handles($class) === false) {
+            if ($handler->getHandledClass() === $class) {
                 continue;
             }
 
@@ -110,7 +110,7 @@ final class Manager implements ManagerInterface
     public function isSearchable(string $class): bool
     {
         foreach ($this->handlers as $handler) {
-            if ($handler->handles($class)) {
+            if ($handler->getHandledClass() === $class) {
                 return true;
             }
         }

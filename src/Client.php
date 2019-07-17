@@ -61,7 +61,7 @@ final class Client implements ClientInterface
         try {
             $this->elastic->bulk(['body' => $bulk]);
         } catch (Exception $exception) {
-            throw new SearchDeleteException('An error occured while performing bulk delete on backend', 0, $exception);
+            throw new SearchDeleteException('An error occurred while performing bulk delete on backend', 0, $exception);
         }
     }
 
@@ -89,7 +89,7 @@ final class Client implements ClientInterface
         try {
             $this->elastic->bulk(['body' => $bulk]);
         } catch (Exception $exception) {
-            throw new SearchUpdateException('An error occured while performing bulk update on backend', 0, $exception);
+            throw new SearchUpdateException('An error occurred while performing bulk update on backend', 0, $exception);
         }
     }
 }

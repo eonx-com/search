@@ -8,6 +8,7 @@ use EoneoPay\Externals\Logger\Logger;
 use Illuminate\Contracts\Foundation\Application;
 use LoyaltyCorp\Search\Bridge\Laravel\Providers\SearchServiceProvider;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
+use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Manager;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\HandlerStub;
@@ -50,6 +51,7 @@ final class SearchServiceProviderTest extends TestCase
     {
         self::assertSame([
             ClientInterface::class,
+            EntityManagerHelperInterface::class,
             ManagerInterface::class
         ], (new SearchServiceProvider(new ApplicationStub()))->provides());
     }
@@ -75,8 +77,8 @@ final class SearchServiceProviderTest extends TestCase
         $manager = $application->make(ManagerInterface::class);
 
         // Test stubs
-        self::assertTrue($manager->isSearchable(SearchableStub::class));
         self::assertFalse($manager->isSearchable(NotSearchableStub::class));
+        self::assertTrue($manager->isSearchable(SearchableStub::class));
     }
 
     /**

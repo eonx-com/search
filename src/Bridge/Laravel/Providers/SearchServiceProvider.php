@@ -9,8 +9,10 @@ use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 use LoyaltyCorp\Search\Client;
+use LoyaltyCorp\Search\Helpers\EntityManagerHelper;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\HandlerInterface;
+use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Manager;
 
@@ -23,7 +25,7 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
      */
     public function provides(): array
     {
-        return [ClientInterface::class, ManagerInterface::class];
+        return [ClientInterface::class, EntityManagerHelperInterface::class, ManagerInterface::class];
     }
 
     /**
@@ -59,5 +61,7 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
                 $app->make(ClientInterface::class)
             );
         });
+
+        $this->app->singleton(EntityManagerHelperInterface::class, EntityManagerHelper::class);
     }
 }

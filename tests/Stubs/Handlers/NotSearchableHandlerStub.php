@@ -4,16 +4,19 @@ declare(strict_types=1);
 namespace Tests\LoyaltyCorp\Search\Stubs\Handlers;
 
 use LoyaltyCorp\Search\Interfaces\HandlerInterface;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\SearchableStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NotSearchableStub;
 
-final class HandlerStub implements HandlerInterface
+/**
+ * @coversNothing
+ */
+final class NotSearchableHandlerStub implements HandlerInterface
 {
     /**
      * @inheritdoc
      */
     public function getHandledClass(): string
     {
-        return SearchableStub::class;
+        return NotSearchableStub::class;
     }
 
     /**
@@ -29,7 +32,7 @@ final class HandlerStub implements HandlerInterface
      */
     public function getSearchId(object $object)
     {
-        return \method_exists($object, 'getSearchId') ? $object->getSearchId() : null;
+        return null;
     }
 
     /**

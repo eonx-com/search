@@ -21,31 +21,53 @@ use Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch\ClientStub;
 final class ClientTest extends TestCase
 {
     /**
-     * Test exception thrown by bulk() while deleting is handled correctly
+     * Inputs to cause Exceptions
      *
-     * @return void
+     * @return iterable|mixed[]
      */
-    public function testBulkExceptionOnDeleteIsHandled(): void
+    public function getInputsCausingExceptions(): iterable
     {
-        $client = new Client(new ClientStub(true));
+        yield 'bulkUpdate' => [
+            'method' => 'bulkUpdate',
+            'arguments' => ['index', ['1' => 'document']],
+            'exception' => SearchUpdateException::class,
+            'exceptionMessage' => 'An error occured while performing bulk update on backend'
+        ];
 
-        $this->expectException(SearchDeleteException::class);
+        yield 'bulkDelete' => [
+            'method' => 'bulkDelete',
+            'arguments' => [['index' => [['1']]]],
+            'exception' => SearchDeleteException::class,
+            'exceptionMessage' => 'An error occured while performing bulk delete on backend'
+        ];
 
-        $client->bulkDelete(['index' => [['1']]]);
-    }
+        yield 'createAlias' => [
+            'method' => 'createAlias',
+            'arguments' => ['index', 'alias'],
+            'exception' => SearchUpdateException::class,
+            'exceptionMessage' => 'Unable to add alias'
+        ];
 
-    /**
-     * Test exception thrown by bulk() while updating is handled correctly
-     *
-     * @return void
-     */
-    public function testBulkExceptionOnUpdateIsHandled(): void
-    {
-        $client = new Client(new ClientStub(true));
+        yield 'createIndex' => [
+            'method' => 'createIndex',
+            'arguments' => ['index'],
+            'exception' => SearchUpdateException::class,
+            'exceptionMessage' => 'Unable to create new index'
+        ];
 
-        $this->expectException(SearchUpdateException::class);
+        yield 'deleteAlias' => [
+            'method' => 'deleteAlias',
+            'arguments' => ['index', 'alias'],
+            'exception' => SearchDeleteException::class,
+            'exceptionMessage' => 'Unable to delete alias'
+        ];
 
-        $client->bulkUpdate('index', ['1' => 'document']);
+        yield 'deleteIndex' => [
+            'method' => 'deleteIndex',
+            'arguments' => ['index'],
+            'exception' => SearchDeleteException::class,
+            'exceptionMessage' => 'Unable to delete index'
+        ];
     }
 
     /**
@@ -96,7 +118,7 @@ final class ClientTest extends TestCase
         $client = new Client($elasticClient);
         $expected = [];
 
-        $client->createIndex('', null, null);
+        $client->createIndex('');
 
         // assert mappings built as same as provided
         // assert settings are
@@ -119,7 +141,6 @@ final class ClientTest extends TestCase
 
         $client->deleteAlias('index1', 'big_alias');
 
-        // @todo
         self::assertSame($expected, []);
     }
 
@@ -142,6 +163,29 @@ final class ClientTest extends TestCase
     }
 
     /**
+     * Test exception thrown by all public functions
+     *
+     * @param string $method
+     * @param mixed[] $arguments
+     * @param string $exception
+     *
+     * @return void
+     *
+     * @dataProvider getInputsCausingExceptions()
+     */
+    public function testExceptionCatching(
+        string $method,
+        array $arguments,
+        string $exception
+    ): void {
+        $client = new Client(new ClientStub(true));
+
+        $this->expectException($exception);
+
+        $client->{$method}(...$arguments);
+    }
+
+    /**
      * Ensure the isAlias method respects HTTP status code
      *
      * @return void
@@ -149,12 +193,12 @@ final class ClientTest extends TestCase
     public function testIsAlias(): void
     {
         $response = [];
-        $elasticClient = $this->createElasticClient($response);
+        $elasticClient = $this->createElasticClient($response, 200);
         $client = new Client($elasticClient);
 
         $result = $client->isAlias('nice_alias');
 
-        self::assertSame(true, $result);
+        self::assertTrue($result);
     }
 
     /**
@@ -181,12 +225,12 @@ final class ClientTest extends TestCase
     public function testIsIndex(): void
     {
         $response = [];
-        $elasticClient = $this->createElasticClient($response);
+        $elasticClient = $this->createElasticClient($response, 200);
         $client = new Client($elasticClient);
 
         $result = $client->isIndex('nice_alias');
 
-        self::assertSame(true, $result);
+        self::assertTrue($result);
     }
 
     /**
@@ -206,6 +250,72 @@ final class ClientTest extends TestCase
     }
 
     /**
+     * Ensure the isAlias method respects HTTP status code
+     *
+     * @return void
+     */
+    public function testIsNotAlias(): void
+    {
+        $response = [];
+        $elasticClient = $this->createElasticClient($response, 404);
+        $client = new Client($elasticClient);
+
+        $result = $client->isAlias('nice_alias');
+
+        self::assertFalse($result);
+    }
+
+    /**
+     * Test ensuring the IsAlias respects the HTTP status code
+     *
+     * @return void
+     */
+    public function testIsNotIndex(): void
+    {
+        $response = [];
+        $elasticClient = $this->createElasticClient($response, 404);
+        $client = new Client($elasticClient);
+
+        $result = $client->isIndex('nice_alias');
+
+        self::assertFalse($result);
+    }
+
+    /**
+     * Ensure listing all aliases formats the expected response from elasticsearch client
+     *
+     * @return void
+     */
+    public function testListAliases(): void
+    {
+        $response = [['alias' => 'alias1', 'index' => 'index1'], ['alias' => 'alias2', 'index' => 'index1']];
+        $elasticClient = $this->createElasticClient($response);
+        $client = new Client($elasticClient);
+        $expected = [['name' => 'alias1', 'index' => 'index1'], ['name' => 'alias2', 'index' => 'index1']];
+
+        $result = $client->getAliases();
+
+        self::assertSame($expected, $result);
+    }
+
+    /**
+     * Ensure listing all aliases will throw an Exception if a non-200 HTTP status is received
+     *
+     * @return void
+     */
+    public function testListAliasesThrowsException(): void
+    {
+        $this->expectException(SearchCheckerException::class);
+        $this->expectExceptionMessage('An error ocurred obtaining a list of aliases');
+
+        $response = [['alias' => 'alias1', 'index' => 'index1'], ['alias' => 'alias2', 'index' => 'index1']];
+        $elasticClient = $this->createElasticClient($response, 400);
+        $client = new Client($elasticClient);
+
+        $client->getAliases();
+    }
+
+    /**
      * Test the listing of existing indices
      *
      * @return void
@@ -220,6 +330,23 @@ final class ClientTest extends TestCase
         $result = $client->getIndices();
 
         self::assertSame($expected, $result);
+    }
+
+    /**
+     * Test the listing of existing indices
+     *
+     * @return void
+     */
+    public function testListingIndicesThrowsException(): void
+    {
+        $this->expectException(SearchCheckerException::class);
+        $this->expectExceptionMessage('An error ocurred obtaining a list of indices');
+
+        $response = [['index' => 'index1'], ['index' => 'index2']];
+        $elasticClient = $this->createElasticClient($response, 400);
+        $client = new Client($elasticClient);
+
+        $client->getIndices();
     }
 
     /**

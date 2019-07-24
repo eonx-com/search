@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace LoyaltyCorp\Search\Bridge\Laravel\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Container\Container as ContainerInterface;
 use LoyaltyCorp\Search\Interfaces\HandlerInterface;
 
@@ -51,14 +50,13 @@ abstract class SearchIndexCommand extends Command
     /**
      * Yield all seach handlers instances that are configured in container
      *
-     * @return iterable|HandlerInterface[]
+     * @return iterable|\LoyaltyCorp\Search\Interfaces\HandlerInterface[]
      */
     protected function getSearchHandlers(): iterable
     {
-        foreach ($this->container->tagged('search_handlers') as $searchHandler) {
+        foreach ($this->container->tagged('search_handler') as $searchHandler) {
             /** @var \LoyaltyCorp\Search\Interfaces\HandlerInterface|mixed $searchHandler */
             if (($searchHandler instanceof HandlerInterface) === false) {
-                // @todo throw exception?
                 continue;
             }
 

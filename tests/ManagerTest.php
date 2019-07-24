@@ -6,6 +6,7 @@ namespace Tests\LoyaltyCorp\Search;
 use LoyaltyCorp\Search\Client;
 use LoyaltyCorp\Search\Manager;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\HandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\NotSearchableHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NoDocumentBodyStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NoSearchIdStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NotSearchableStub;
@@ -75,8 +76,9 @@ final class ManagerTest extends TestCase
             new SearchableStub()
         ]);
         self::assertSame(
-            ['body' =>
-                [['index' => ['_index' => 'valid', '_type' => 'doc', '_id' => 'searchable']], ['search' => 'body']]
+            [
+                'body' =>
+                    [['index' => ['_index' => 'valid', '_type' => 'doc', '_id' => 'searchable']], ['search' => 'body']]
             ],
             $stub->getBulkParameters()
         );
@@ -93,5 +95,19 @@ final class ManagerTest extends TestCase
 
         self::assertTrue($manager->isSearchable(SearchableStub::class));
         self::assertFalse($manager->isSearchable(NotSearchableStub::class));
+    }
+
+    /**
+     * Ensure no results are returned when a handler is passed an object that has no searchId
+     *
+     * @return void
+     */
+    public function testSearchMetaReturnsNothingWhenSearchIdNulled(): void
+    {
+        $manager = new Manager([new NotSearchableHandlerStub()], new Client(new ClientStub()));
+
+        $result = $manager->getSearchMeta(new NotSearchableStub());
+
+        self::assertSame([], $result);
     }
 }

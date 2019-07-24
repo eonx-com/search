@@ -40,7 +40,7 @@ final class Manager implements ManagerInterface
         $ids = [];
 
         foreach ($this->handlers as $handler) {
-            if ($handler->getHandledClass() === $class) {
+            if ($handler->getHandledClass() !== $class) {
                 continue;
             }
 
@@ -73,7 +73,7 @@ final class Manager implements ManagerInterface
     public function handleUpdates(string $class, array $objects): void
     {
         foreach ($this->handlers as $handler) {
-            if ($handler->getHandledClass() === $class) {
+            if ($handler->getHandledClass() !== $class) {
                 continue;
             }
 

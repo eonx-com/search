@@ -104,7 +104,7 @@ final class Client implements ClientInterface
                 ['body' => ['actions' => [['add' => ['index' => $indexName, 'alias' => $aliasName]]]]]
             );
         } catch (Exception $exception) {
-            throw new SearchDeleteException('Unable to add alias', 0, $exception);
+            throw new SearchUpdateException('Unable to add alias', 0, $exception);
         }
     }
 
@@ -125,7 +125,7 @@ final class Client implements ClientInterface
                 ])
             ]);
         } catch (Exception $exception) {
-            throw new SearchDeleteException('', 0, $exception);
+            throw new SearchUpdateException('Unable to create new index', 0, $exception);
         }
     }
 

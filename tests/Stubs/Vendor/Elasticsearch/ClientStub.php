@@ -58,4 +58,17 @@ class ClientStub extends Client
     {
         return $this->bulk;
     }
+
+    /**
+     * @noinspection PhpMissingParentCallCommonInspection Parent is intentionally ignored as per class comment
+     *
+     * @inheritdoc
+     */
+    public function indices()
+    {
+        // If an exception should be thrown, throw it
+        if ($this->throwException === true) {
+            throw new RuntimeException('An error occured');
+        }
+    }
 }

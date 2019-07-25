@@ -5,6 +5,9 @@ namespace Tests\LoyaltyCorp\Search\Stubs;
 
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 
+/**
+ * @coversNothing
+ */
 class ClientStub implements ClientInterface
 {
     /**
@@ -48,6 +51,11 @@ class ClientStub implements ClientInterface
     private $isIndex;
 
     /**
+     * @var string[]
+     */
+    private $swappedAliases = [];
+
+    /**
      * ClientStub constructor.
      *
      * @param bool|null $isAlias
@@ -75,24 +83,14 @@ class ClientStub implements ClientInterface
     }
 
     /**
-     * Upserts all documents provided into the index.
-     *
-     * @param string $index
-     * @param string[][] $documents
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function bulkUpdate(string $index, array $documents): void
     {
     }
 
     /**
-     * Create a new alias for specified index
-     *
-     * @param string $indexName
-     * @param string $aliasName
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function createAlias(string $indexName, string $aliasName): void
     {
@@ -100,13 +98,7 @@ class ClientStub implements ClientInterface
     }
 
     /**
-     * Create a new index
-     *
-     * @param string $name
-     * @param mixed[]|null $mappings
-     * @param mixed[]|null $settings
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function createIndex(string $name, ?array $mappings = null, ?array $settings = null): void
     {
@@ -114,24 +106,15 @@ class ClientStub implements ClientInterface
     }
 
     /**
-     * Delete an existing alias
-     *
-     * @param string $indexName
-     * @param string $aliasName
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function deleteAlias(string $indexName, string $aliasName): void
+    public function deleteAlias(string $indexName, string $alias): void
     {
-        $this->deletedAliases[] = $aliasName;
+        $this->deletedAliases[] = $alias;
     }
 
     /**
-     * Delete an existing index
-     *
-     * @param string $name
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function deleteIndex(string $name): void
     {
@@ -139,11 +122,7 @@ class ClientStub implements ClientInterface
     }
 
     /**
-     * List all existing aliases
-     *
-     * @param string|null $name
-     *
-     * @return mixed[]
+     * {@inheritdoc}
      */
     public function getAliases(?string $name = null): array
     {
@@ -191,11 +170,7 @@ class ClientStub implements ClientInterface
     }
 
     /**
-     * List all existing indexes
-     *
-     * @param string|null $name
-     *
-     * @return mixed[]
+     * {@inheritdoc}
      */
     public function getIndices(?string $name = null): array
     {
@@ -203,11 +178,17 @@ class ClientStub implements ClientInterface
     }
 
     /**
-     * Determine if alias exists
+     * Spy on alias that had its index swapped
      *
-     * @param string $name
-     *
-     * @return bool
+     * @return string[]
+     */
+    public function getSwappedAliases(): array
+    {
+        return $this->swappedAliases;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function isAlias(string $name): bool
     {
@@ -215,14 +196,18 @@ class ClientStub implements ClientInterface
     }
 
     /**
-     * Determine if index exists
-     *
-     * @param string $name
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function isIndex(string $name): bool
     {
         return $this->isIndex;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function moveAlias(string $alias, string $newIndex): void
+    {
+        $this->swappedAliases[] = $alias;
     }
 }

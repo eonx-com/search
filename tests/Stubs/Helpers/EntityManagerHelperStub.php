@@ -5,6 +5,9 @@ namespace Tests\LoyaltyCorp\Search\Stubs\Helpers;
 
 use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 
+/**
+ * @coversNothing
+ */
 class EntityManagerHelperStub implements EntityManagerHelperInterface
 {
     /**

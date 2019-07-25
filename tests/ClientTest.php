@@ -68,6 +68,13 @@ final class ClientTest extends TestCase
             'exception' => SearchDeleteException::class,
             'exceptionMessage' => 'Unable to delete index'
         ];
+
+        yield 'moveAlias' => [
+            'method' => 'moveAlias',
+            'arguments' => ['index', 'index_new'],
+            'exception' => SearchUpdateException::class,
+            'exceptionMessage' => 'Unable to atomically swap alias'
+        ];
     }
 
     /**
@@ -347,6 +354,22 @@ final class ClientTest extends TestCase
         $client = new Client($elasticClient);
 
         $client->getIndices();
+    }
+
+    /**
+     * Ensure moveAlias invoking updateAliases to ES client does not result in an Exception
+     *
+     * @return void
+     */
+    public function testMovingAlias(): void
+    {
+        $response = [];
+        $elasticClient = $this->createElasticClient($response);
+        $client = new Client($elasticClient);
+
+        $client->moveAlias('index', 'index_20190502');
+
+        $this->addToAssertionCount(1);
     }
 
     /**

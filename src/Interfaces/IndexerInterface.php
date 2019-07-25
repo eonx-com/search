@@ -24,6 +24,15 @@ interface IndexerInterface
     public function create(HandlerInterface $searchHandler): void;
 
     /**
+     * Atomically swap the root alias for a search handler, with the latest index created
+     *
+     * @param \LoyaltyCorp\Search\Interfaces\HandlerInterface $searchHandler
+     *
+     * @return void
+     */
+    public function indexSwap(HandlerInterface $searchHandler): void;
+
+    /**
      * Populate a search handler with relevant documents
      *
      * @param \LoyaltyCorp\Search\Interfaces\HandlerInterface $searchHandler

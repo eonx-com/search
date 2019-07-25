@@ -5,6 +5,9 @@ namespace Tests\LoyaltyCorp\Search\Stubs;
 
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 
+/**
+ * @coversNothing
+ */
 class ManagerStub implements ManagerInterface
 {
     /**

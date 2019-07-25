@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search;
 
+use LoyaltyCorp\Search\Exceptions\AliasNotFoundException;
 use LoyaltyCorp\Search\Indexer;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
@@ -76,6 +77,62 @@ class IndexerTest extends TestCase
         $indexer->clean([new HandlerStub()]);
 
         self::assertSame(['valid-unused'], $client->getDeletedIndices());
+    }
+
+    /**
+     * Ensure the swap method removes the _new alias
+     *
+     * @return void
+     */
+    public function testIndexSwapperRemovesNewAlias(): void
+    {
+        $elasticClient = new ClientStub(
+            true,
+            null,
+            null,
+            [['name' => 'valid_new', 'index' => 'valid_201900502']]
+        );
+        $indexer = $this->createInstance($elasticClient);
+
+        $indexer->indexSwap(new HandlerStub());
+
+        self::assertSame(['valid_new'], $elasticClient->getDeletedAliases());
+    }
+
+    /**
+     * Ensure the index<->alias swap does indeed happen
+     *
+     * @return void
+     */
+    public function testIndexSwapperSwapsAlias(): void
+    {
+        $elasticClient = new ClientStub(
+            true,
+            null,
+            null,
+            [['name' => 'valid_new', 'index' => 'valid_201900502']]
+        );
+        $indexer = $this->createInstance($elasticClient);
+
+        $indexer->indexSwap(new HandlerStub());
+
+        self::assertSame(['valid'], $elasticClient->getSwappedAliases());
+    }
+
+    /**
+     * Ensure the index swap method throws an Exception if no *_new alias can be found
+     *
+     * @return void
+     */
+    public function testIndexSwapperThrowsExceptionIfAliasNotFound(): void
+    {
+        $this->expectException(AliasNotFoundException::class);
+        $this->expectExceptionMessage('Could not find expected alias \'valid_new\'');
+
+        $elasticClient = new ClientStub(true);
+        $indexer = $this->createInstance($elasticClient);
+
+        $indexer->indexSwap(new HandlerStub());
     }
 
     /**

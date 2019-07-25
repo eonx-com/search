@@ -6,6 +6,9 @@ namespace Tests\LoyaltyCorp\Search\Stubs;
 use LoyaltyCorp\Search\Interfaces\HandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 
+/**
+ * @coversNothing
+ */
 class IndexerStub implements IndexerInterface
 {
     /**
@@ -17,6 +20,11 @@ class IndexerStub implements IndexerInterface
      * @var int
      */
     private $createdCount = 0;
+
+    /**
+     * @var int
+     */
+    private $indicesSwapped = 0;
 
     /**
      * @var int
@@ -60,6 +68,16 @@ class IndexerStub implements IndexerInterface
     }
 
     /**
+     * Spy for the number of time indexSwap was called
+     *
+     * @return int
+     */
+    public function getIndicesSwapped(): int
+    {
+        return $this->indicesSwapped;
+    }
+
+    /**
      * Determine if indexed has caled populate
      *
      * @return int
@@ -67,6 +85,14 @@ class IndexerStub implements IndexerInterface
     public function getPopulatedCount(): int
     {
         return $this->populatedCount;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function indexSwap(HandlerInterface $searchHandler): void
+    {
+        $this->indicesSwapped++;
     }
 
     /**

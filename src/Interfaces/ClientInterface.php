@@ -64,11 +64,11 @@ interface ClientInterface
      * Delete an existing alias
      *
      * @param string $indexName
-     * @param string $aliasName
+     * @param string $alias
      *
      * @return void
      */
-    public function deleteAlias(string $indexName, string $aliasName): void;
+    public function deleteAlias(string $indexName, string $alias): void;
 
     /**
      * Delete an existing index
@@ -84,7 +84,7 @@ interface ClientInterface
      *
      * @param string|null $name
      *
-     * @return mixed[]
+     * @return string[][]
      */
     public function getAliases(?string $name = null): array;
 
@@ -114,4 +114,14 @@ interface ClientInterface
      * @return bool
      */
     public function isIndex(string $name): bool;
+
+    /**
+     * Atomically remove/add alias
+     *
+     * @param string $alias
+     * @param string $newIndex
+     *
+     * @return void
+     */
+    public function moveAlias(string $alias, string $newIndex): void;
 }

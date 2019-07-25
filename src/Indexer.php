@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace LoyaltyCorp\Search;
 
 use EoneoPay\Utils\DateTime;
+use LoyaltyCorp\Search\Exceptions\AliasNotFoundException;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\HandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
@@ -112,7 +113,31 @@ final class Indexer implements IndexerInterface
             $this->elasticClient->deleteAlias('*', $tempAlias);
         }
 
-        $this->elasticClient->createAlias($index, $tempAlias);
+        $this->elasticClient->createAlias($newIndex, $tempAlias);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @throws \LoyaltyCorp\Search\Exceptions\AliasNotFoundException
+     */
+    public function indexSwap(HandlerInterface $searchHandler): void
+    {
+        // Use index+_new to determine the latest index name
+        $newAlias = \sprintf('%s_new', $searchHandler->getIndexName());
+
+        /** @var string[]|null $latestIndex */
+        $latestAlias = $this->elasticClient->getAliases($newAlias)[0] ?? null;
+
+        if ($latestAlias === null) {
+            throw new AliasNotFoundException(\sprintf('Could not find expected alias \'%s\'', $newAlias));
+        }
+
+        // Atomically switch which index the root alias is associated with
+        $this->elasticClient->moveAlias($searchHandler->getIndexName(), $latestAlias['index']);
+
+        // Remove *_new alias for this handler
+        $this->elasticClient->deleteAlias('*', $newAlias);
     }
 
     /**

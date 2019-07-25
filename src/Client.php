@@ -132,11 +132,11 @@ final class Client implements ClientInterface
     /**
      * {@inheritdoc}
      */
-    public function deleteAlias(string $indexName, string $aliasName): void
+    public function deleteAlias(string $indexName, string $alias): void
     {
         try {
             $this->elastic->indices()->updateAliases(
-                ['body' => ['actions' => [['remove' => ['index' => $indexName, 'alias' => $aliasName]]]]]
+                ['body' => ['actions' => [['remove' => ['index' => $indexName, 'alias' => $alias]]]]]
             );
         } catch (Exception $exception) {
             throw new SearchDeleteException('Unable to delete alias', 0, $exception);
@@ -221,6 +221,28 @@ final class Client implements ClientInterface
             return $this->elastic->indices()->exists(['index' => $name]);
         } catch (Exception $exception) {
             throw new SearchCheckerException('An error occurred checking if index exists', 0, $exception);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function moveAlias(string $alias, string $newIndex): void
+    {
+        try {
+            $this->elastic->indices()->updateAliases(
+                [
+                    'body' => [
+                        'actions' => [
+                            // Remove from all indices, it should only point to one
+                            ['remove' => ['index' => '_all', 'alias' => $alias]],
+                            ['add' => ['index' => $newIndex, 'alias' => $alias]]
+                        ]
+                    ]
+                ]
+            );
+        } catch (Exception $exception) {
+            throw new SearchUpdateException('Unable to atomically swap alias', 0, $exception);
         }
     }
 }

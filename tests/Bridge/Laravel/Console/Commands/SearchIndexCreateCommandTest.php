@@ -13,8 +13,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\HandlerStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\IndexerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\OtherHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\IndexerStub;
 use Tests\LoyaltyCorp\Search\TestCase;
 
 /**

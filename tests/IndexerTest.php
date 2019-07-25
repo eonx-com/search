@@ -35,6 +35,50 @@ class IndexerTest extends TestCase
     }
 
     /**
+     * Ensure the cleaning process only disregards indices unrelated to search handlers
+     *
+     * @return void
+     */
+    public function testCleaningIndicesDoesNotRemoveUnrelatedIndices(): void
+    {
+        // #1. Have random indices exist (and aliases?)
+        // #2. Have search handler indices exi
+        $client = new ClientStub(
+            null,
+            null,
+            [['name' => 'unrelated-index'], ['name' => 'irrelevant-index'], ['name' => 'valid-123']]
+        );
+        $indexer = $this->createInstance($client);
+
+        $indexer->clean([new HandlerStub()]);
+
+        // unrelated-index and irrelevant-index should not be touched, because they are unrelated to search handlers
+        self::assertSame(['valid-123'], $client->getDeletedIndices());
+    }
+
+    /**
+     * Ensure the cleaning process only cares about indices that are related to search handlers
+     *
+     * @return void
+     */
+    public function testCleaningIndicesRepectsIndicesFromAliases(): void
+    {
+        // #1. Have random indices exist (and aliases?)
+        // #2. Have search handler indices exi
+        $client = new ClientStub(
+            null,
+            null,
+            [['name' => 'unrelated-index'], ['name' => 'valid-unused']],
+            [['index' => 'valid', 'name' => 'anything']]
+        );
+        $indexer = $this->createInstance($client);
+
+        $indexer->clean([new HandlerStub()]);
+
+        self::assertSame(['valid-unused'], $client->getDeletedIndices());
+    }
+
+    /**
      * Index population happens in batches, loops are involved, and then whatever is left over unpopulated, outside
      * of these loops should be still handled
      *

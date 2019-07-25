@@ -1,13 +1,18 @@
 <?php
 declare(strict_types=1);
 
-namespace Tests\LoyaltyCorp\Search\Stubs\Handlers;
+namespace Tests\LoyaltyCorp\Search\Stubs;
 
 use LoyaltyCorp\Search\Interfaces\HandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 
 class IndexerStub implements IndexerInterface
 {
+    /**
+     * @var \LoyaltyCorp\Search\Interfaces\HandlerInterface[]
+     */
+    private $cleanedHandlers = [];
+
     /**
      * @var int
      */
@@ -21,9 +26,27 @@ class IndexerStub implements IndexerInterface
     /**
      * {@inheritdoc}
      */
+    public function clean(array $searchHandlers): void
+    {
+        $this->cleanedHandlers = $searchHandlers;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function create(HandlerInterface $searchHandler): void
     {
         $this->createdCount++;
+    }
+
+    /**
+     * Spy method to look at cleaned handlers
+     *
+     * @return \LoyaltyCorp\Search\Interfaces\HandlerInterface[]
+     */
+    public function getCleanedSearchHandlers(): array
+    {
+        return $this->cleanedHandlers;
     }
 
     /**

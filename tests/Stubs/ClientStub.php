@@ -10,6 +10,11 @@ class ClientStub implements ClientInterface
     /**
      * @var mixed[]
      */
+    private $aliases;
+
+    /**
+     * @var mixed[]
+     */
     private $createdAliases = [];
 
     /**
@@ -28,6 +33,11 @@ class ClientStub implements ClientInterface
     private $deletedIndices = [];
 
     /**
+     * @var mixed[]
+     */
+    private $indices;
+
+    /**
      * @var bool
      */
     private $isAlias;
@@ -42,9 +52,17 @@ class ClientStub implements ClientInterface
      *
      * @param bool|null $isAlias
      * @param bool|null $isIndex
+     * @param mixed[]|null $indices
+     * @param mixed[]|null $aliases
      */
-    public function __construct(?bool $isAlias = null, ?bool $isIndex = null)
-    {
+    public function __construct(
+        ?bool $isAlias = null,
+        ?bool $isIndex = null,
+        ?array $indices = null,
+        ?array $aliases = null
+    ) {
+        $this->aliases = $aliases ?? [];
+        $this->indices = $indices ?? [];
         $this->isAlias = $isAlias ?? false;
         $this->isIndex = $isIndex ?? false;
     }
@@ -129,7 +147,7 @@ class ClientStub implements ClientInterface
      */
     public function getAliases(?string $name = null): array
     {
-        return [];
+        return $this->aliases;
     }
 
     /**
@@ -181,7 +199,7 @@ class ClientStub implements ClientInterface
      */
     public function getIndices(?string $name = null): array
     {
-        return [];
+        return $this->indices;
     }
 
     /**

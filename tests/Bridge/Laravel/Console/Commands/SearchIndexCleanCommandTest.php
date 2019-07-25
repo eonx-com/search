@@ -5,11 +5,9 @@ namespace Tests\LoyaltyCorp\Search\Bridge\Laravel\Console\Commands;
 
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Container\Container as ContainerInterface;
-use LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexFillCommand;
+use LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexCleanCommand;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Input\InputDefinition;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\HandlerStub;
@@ -19,57 +17,35 @@ use Tests\LoyaltyCorp\Search\TestCase;
 
 /**
  * @covers \LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexCommand
- * @covers \LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexFillCommand
+ * @covers \LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexCleanCommand
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Required for thorough testing
  */
-class SearchIndexFillCommandTest extends TestCase
+class SearchIndexCleanCommandTest extends TestCase
 {
     /**
-     * Ensure
+     * Ensure the number of indices cleaned matches the number of registered search handlers via container tagging
      *
      * @return void
      *
      * @throws \ReflectionException
      */
-    public function testIndexerPopulateCalled(): void
+    public function testIndexerHandlesAllTaggedSearchHandlers(): void
     {
         $indexer = new IndexerStub();
-        $output = new NullOutput();
         $container = new Container();
         $container->tag([
             HandlerStub::class,
             OtherHandlerStub::class
         ], ['search_handler']);
-        $command = $this->createInstance([], $output, $indexer, $container);
+        $command = $this->createInstance([], new NullOutput(), $indexer, $container);
 
         $command->handle();
 
-        // No indices because the tagged search handler does not have the HandlerInterface
-        self::assertSame(2, $indexer->getPopulatedCount());
-    }
+        // Two search handlers registered should result in 2 indices passed to clean method
+        $result = \array_map('\get_class', $indexer->getCleanedSearchHandlers());
 
-    /**
-     * Ensure a tagged search handler that does not implement the interface is not actually attempted execution on
-     *
-     * @return void
-     *
-     * @throws \ReflectionException
-     */
-    public function testNonSearchHandlerRegisteredIsSkipped(): void
-    {
-        $indexer = new IndexerStub();
-        $output = new NullOutput();
-        $container = new Container();
-        $container->tag([
-            IndexerStub::class
-        ], ['search_handler']);
-        $command = $this->createInstance([], $output, $indexer, $container);
-
-        $command->handle();
-
-        // No indices because the tagged search handler does not have the HandlerInterface
-        self::assertSame(0, $indexer->getCreatedCount());
+        self::assertSame([HandlerStub::class, OtherHandlerStub::class], $result);
     }
 
     /**
@@ -80,7 +56,7 @@ class SearchIndexFillCommandTest extends TestCase
      * @param \LoyaltyCorp\Search\Interfaces\IndexerInterface|null $indexer
      * @param \Illuminate\Contracts\Container\Container|null $container
      *
-     * @return \LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexFillCommand
+     * @return \LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexCleanCommand
      *
      * @throws \ReflectionException If class being reflected does not exist
      */
@@ -89,10 +65,10 @@ class SearchIndexFillCommandTest extends TestCase
         OutputInterface $output,
         ?IndexerInterface $indexer = null,
         ?ContainerInterface $container = null
-    ): SearchIndexFillCommand {
+    ): SearchIndexCleanCommand {
         // Use reflection to access input and output properties as these are protected
         // and derived from the application/console input/output
-        $class = new \ReflectionClass(SearchIndexFillCommand::class);
+        $class = new \ReflectionClass(SearchIndexCleanCommand::class);
         $inputProperty = $class->getProperty('input');
         $outputProperty = $class->getProperty('output');
 
@@ -101,16 +77,13 @@ class SearchIndexFillCommandTest extends TestCase
         $outputProperty->setAccessible(true);
 
         // Create instance
-        $instance = new SearchIndexFillCommand(
+        $instance = new SearchIndexCleanCommand(
             $container ?? new Container(),
             $indexer ?? new IndexerStub()
         );
 
         // Set input/output property values
-        $inputProperty->setValue($instance, new ArrayInput(
-            $options,
-            new InputDefinition([new InputOption('batchSize')])
-        ));
+        $inputProperty->setValue($instance, new ArrayInput($options));
         $outputProperty->setValue($instance, $output);
 
         return $instance;

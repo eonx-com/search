@@ -46,6 +46,50 @@ final class Indexer implements IndexerInterface
 
     /**
      * {@inheritdoc}
+     */
+    public function clean(array $searchHandlers): void
+    {
+        //4) search:index:clean - Removes all indexes not pointed to by the root aliases
+        $indicesUsedByAlias = [];
+        $allIndices = [];
+        $handlerIndices = [];
+
+        /** @var \LoyaltyCorp\Search\Interfaces\HandlerInterface[] $searchHandlers */
+        foreach ($searchHandlers as $searchHandler) {
+            $handlerIndices[] = $searchHandler->getIndexName();
+        }
+
+        // Build array of all indices used by aliases
+        foreach ($this->elasticClient->getAliases() as $alias) {
+            $indicesUsedByAlias[] = $alias['index'];
+        }
+
+        // Build array of all indices
+        foreach ($this->elasticClient->getIndices() as $index) {
+            // Disregard any indices that are not to do with search handlers
+            if ($this->indexStartsWith($index['name'], $handlerIndices) === false) {
+                continue;
+            }
+
+            $allIndices[] = $index['name'];
+        }
+
+        // Remove double-ups of indices being used from aliases
+        $indicesUsedByAlias = \array_unique($indicesUsedByAlias);
+
+        // Determine which indices are not used by an alias
+        $unusedIndices = \array_diff($allIndices, $indicesUsedByAlias);
+
+        // Out of the indices deemed to not have an alias associated, compare with
+
+        // Remove any indices unused by a root alias
+        foreach ($unusedIndices as $unusedIndex) {
+            $this->elasticClient->deleteIndex($unusedIndex);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
      *
      * @throws \EoneoPay\Utils\Exceptions\InvalidDateTimeStringException
      */
@@ -101,5 +145,24 @@ final class Indexer implements IndexerInterface
                 $documents
             );
         }
+    }
+
+    /**
+     * Determine if provided index name starts with any of the specified values
+     *
+     * @param string $index
+     * @param string[] $indexPrefixes
+     *
+     * @return bool True indicates the index start start with a value within the supplied prefixes
+     */
+    private function indexStartsWith(string $index, array $indexPrefixes): bool
+    {
+        foreach ($indexPrefixes as $indexPrefix) {
+            if (\strpos($index, $indexPrefix) === 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

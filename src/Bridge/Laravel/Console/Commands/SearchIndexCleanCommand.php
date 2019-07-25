@@ -7,7 +7,7 @@ use Illuminate\Contracts\Container\Container as ContainerInterface;
 use LoyaltyCorp\Search\Interfaces\HandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 
-final class SearchIndexCreateCommand extends SearchIndexCommand
+class SearchIndexCleanCommand extends SearchIndexCommand
 {
     /**
      * @var \LoyaltyCorp\Search\Interfaces\IndexerInterface
@@ -15,15 +15,20 @@ final class SearchIndexCreateCommand extends SearchIndexCommand
     private $indexer;
 
     /**
-     * SearchIndexCreate constructor.
+     * @var \LoyaltyCorp\Search\Interfaces\HandlerInterface[]
+     */
+    private $searchHandlers = [];
+
+    /**
+     * SearchIndexClean constructor.
      *
      * @param \Illuminate\Contracts\Container\Container $container
      * @param \LoyaltyCorp\Search\Interfaces\IndexerInterface $indexer
      */
     public function __construct(ContainerInterface $container, IndexerInterface $indexer)
     {
-        $this->description = 'Create date-based indices for all registered search handlers';
-        $this->signature = 'search:index:create';
+        $this->description = 'Remove any indices deriving from search handlers that are unused';
+        $this->signature = 'search:index:clean';
 
         $this->indexer = $indexer;
 
@@ -33,10 +38,18 @@ final class SearchIndexCreateCommand extends SearchIndexCommand
     /**
      * {@inheritdoc}
      */
-    public function handleSearchHandler(HandlerInterface $searchHandler): void
+    public function handle(): void
     {
-        $this->info(\sprintf('Processing search handler \'%s\'', \get_class($searchHandler)));
+        parent::handle();
 
-        $this->indexer->create($searchHandler);
+        $this->indexer->clean($this->searchHandlers);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function handleSearchHandler(HandlerInterface $handler): void
+    {
+        $this->searchHandlers[] = $handler;
     }
 }

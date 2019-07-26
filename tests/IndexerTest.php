@@ -42,8 +42,6 @@ class IndexerTest extends TestCase
      */
     public function testCleaningIndicesDoesNotRemoveUnrelatedIndices(): void
     {
-        // #1. Have random indices exist (and aliases?)
-        // #2. Have search handler indices exi
         $client = new ClientStub(
             null,
             null,
@@ -64,8 +62,6 @@ class IndexerTest extends TestCase
      */
     public function testCleaningIndicesRepectsIndicesFromAliases(): void
     {
-        // #1. Have random indices exist (and aliases?)
-        // #2. Have search handler indices exi
         $client = new ClientStub(
             null,
             null,

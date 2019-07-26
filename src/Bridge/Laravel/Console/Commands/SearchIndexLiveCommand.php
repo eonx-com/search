@@ -22,8 +22,8 @@ final class SearchIndexLiveCommand extends SearchIndexCommand
      */
     public function __construct(ContainerInterface $container, IndexerInterface $indexer)
     {
-        $this->description = 'Remove any indices deriving from search handlers that are unused';
-        $this->signature = 'search:index:clean';
+        $this->description = 'Atomically switches root aliases from search handlers to the latest index';
+        $this->signature = 'search:index:live';
 
         $this->indexer = $indexer;
 

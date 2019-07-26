@@ -75,6 +75,7 @@ final class ManagerTest extends TestCase
             new NoSearchIdStub(),
             new SearchableStub()
         ]);
+
         self::assertSame(
             [
                 'body' =>
@@ -82,6 +83,25 @@ final class ManagerTest extends TestCase
             ],
             $stub->getBulkParameters()
         );
+    }
+
+    /**
+     * Test handleUpdates() functionality when no transformations occur
+     *
+     * @return void
+     */
+    public function testHandleUpdatesWhenNoTransformationsOccur(): void
+    {
+        $stub = new ClientStub();
+        $manager = new Manager([new HandlerStub()], new Client($stub));
+
+        // Tests whats going to happen when handleUpdates is called with objects that result
+        // in no transformations
+        $manager->handleUpdates(SearchableStub::class, [
+            new NoDocumentBodyStub()
+        ]);
+
+        self::assertNull($stub->getBulkParameters());
     }
 
     /**

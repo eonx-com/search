@@ -29,7 +29,7 @@ interface ClientInterface
      * Upserts all documents provided into the index.
      *
      * @param string $index
-     * @param string[][] $documents
+     * @param mixed[][] $documents
      *
      * @return void
      */

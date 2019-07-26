@@ -100,6 +100,12 @@ final class Manager implements ManagerInterface
                 $transformed[(string)$searchId] = $document;
             }
 
+            if (\count($transformed) === 0) {
+                // there were no transformed documents created by the handler, we have
+                // nothing to update
+                continue;
+            }
+
             $this->client->bulkUpdate($handler->getIndexName(), $transformed);
         }
     }

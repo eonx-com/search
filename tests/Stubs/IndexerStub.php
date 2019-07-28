@@ -90,7 +90,7 @@ class IndexerStub implements IndexerInterface
     /**
      * {@inheritdoc}
      */
-    public function indexSwap(HandlerInterface $searchHandler): void
+    public function indexSwap(array $searchHandlers): void
     {
         $this->indicesSwapped++;
     }

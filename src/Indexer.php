@@ -110,7 +110,7 @@ final class Indexer implements IndexerInterface
 
         // Remove _new alias if already exists index, before we re-use the temporary alias name
         if ($this->elasticClient->isAlias($tempAlias) === true) {
-            $this->elasticClient->deleteAlias('*', $tempAlias);
+            $this->elasticClient->deleteAlias([$tempAlias]);
         }
 
         $this->elasticClient->createAlias($newIndex, $tempAlias);
@@ -121,23 +121,30 @@ final class Indexer implements IndexerInterface
      *
      * @throws \LoyaltyCorp\Search\Exceptions\AliasNotFoundException
      */
-    public function indexSwap(HandlerInterface $searchHandler): void
+    public function indexSwap(array $searchHandlers): void
     {
-        // Use index+_new to determine the latest index name
-        $newAlias = \sprintf('%s_new', $searchHandler->getIndexName());
+        $aliasesToMove = [];
+        $aliasedToRemove = [];
+        foreach ($searchHandlers as $searchHandler) {
+            // Use index+_new to determine the latest index name
+            $newAlias = \sprintf('%s_new', $searchHandler->getIndexName());
 
-        /** @var string[]|null $latestIndex */
-        $latestAlias = $this->elasticClient->getAliases($newAlias)[0] ?? null;
+            /** @var string[]|null $latestIndex */
+            $latestAlias = $this->elasticClient->getAliases($newAlias)[0] ?? null;
 
-        if ($latestAlias === null) {
-            throw new AliasNotFoundException(\sprintf('Could not find expected alias \'%s\'', $newAlias));
+            if ($latestAlias === null) {
+                throw new AliasNotFoundException(\sprintf('Could not find expected alias \'%s\'', $newAlias));
+            }
+
+            $aliasesToMove[] = ['alias' => $searchHandler->getIndexName(), 'index' => $latestAlias['index']];
+            $aliasedToRemove[] = $newAlias;
         }
 
         // Atomically switch which index the root alias is associated with
-        $this->elasticClient->moveAlias($searchHandler->getIndexName(), $latestAlias['index']);
+        $this->elasticClient->moveAlias($aliasesToMove);
 
         // Remove *_new alias for this handler
-        $this->elasticClient->deleteAlias('*', $newAlias);
+        $this->elasticClient->deleteAlias($aliasedToRemove);
     }
 
     /**

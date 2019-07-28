@@ -132,11 +132,16 @@ final class Client implements ClientInterface
     /**
      * {@inheritdoc}
      */
-    public function deleteAlias(string $indexName, string $alias): void
+    public function deleteAlias(array $aliases): void
     {
+        $actions = [];
+        foreach ($aliases as $alias) {
+            $actions[] = ['remove' => ['index' => '_all', 'alias' => $alias]];
+        }
+
         try {
             $this->elastic->indices()->updateAliases(
-                ['body' => ['actions' => [['remove' => ['index' => $indexName, 'alias' => $alias]]]]]
+                ['body' => ['actions' => $actions]]
             );
         } catch (Exception $exception) {
             throw new SearchDeleteException('Unable to delete alias', 0, $exception);
@@ -227,17 +232,20 @@ final class Client implements ClientInterface
     /**
      * {@inheritdoc}
      */
-    public function moveAlias(string $alias, string $newIndex): void
+    public function moveAlias(array $aliases): void
     {
+        $actions = [];
+
+        foreach ($aliases as $operation) {
+            $actions[] = ['remove' => ['index' => '_all', 'alias' => $operation['alias']]];
+            $actions[] = ['add' => ['index' => $operation['index'], 'alias' => $operation['alias']]];
+        }
+
         try {
             $this->elastic->indices()->updateAliases(
                 [
                     'body' => [
-                        'actions' => [
-                            // Remove from all indices, it should only point to one
-                            ['remove' => ['index' => '_all', 'alias' => $alias]],
-                            ['add' => ['index' => $newIndex, 'alias' => $alias]]
-                        ]
+                        'actions' => $actions
                     ]
                 ]
             );

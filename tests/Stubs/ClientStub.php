@@ -108,9 +108,11 @@ class ClientStub implements ClientInterface
     /**
      * {@inheritdoc}
      */
-    public function deleteAlias(string $indexName, string $alias): void
+    public function deleteAlias(array $aliases): void
     {
-        $this->deletedAliases[] = $alias;
+        foreach ($aliases as $alias) {
+            $this->deletedAliases[] = $alias;
+        }
     }
 
     /**
@@ -206,8 +208,10 @@ class ClientStub implements ClientInterface
     /**
      * {@inheritdoc}
      */
-    public function moveAlias(string $alias, string $newIndex): void
+    public function moveAlias(array $aliases): void
     {
-        $this->swappedAliases[] = $alias;
+        foreach ($aliases as $alias) {
+            $this->swappedAliases[] = $alias['alias'];
+        }
     }
 }

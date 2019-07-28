@@ -90,7 +90,7 @@ class IndexerTest extends TestCase
         );
         $indexer = $this->createInstance($elasticClient);
 
-        $indexer->indexSwap(new HandlerStub());
+        $indexer->indexSwap([new HandlerStub()]);
 
         self::assertSame(['valid_new'], $elasticClient->getDeletedAliases());
     }
@@ -110,7 +110,7 @@ class IndexerTest extends TestCase
         );
         $indexer = $this->createInstance($elasticClient);
 
-        $indexer->indexSwap(new HandlerStub());
+        $indexer->indexSwap([new HandlerStub()]);
 
         self::assertSame(['valid'], $elasticClient->getSwappedAliases());
     }
@@ -128,7 +128,7 @@ class IndexerTest extends TestCase
         $elasticClient = new ClientStub(true);
         $indexer = $this->createInstance($elasticClient);
 
-        $indexer->indexSwap(new HandlerStub());
+        $indexer->indexSwap([new HandlerStub()]);
     }
 
     /**

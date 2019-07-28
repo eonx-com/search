@@ -37,6 +37,6 @@ final class SearchIndexLiveCommand extends SearchIndexCommand
     {
         $this->info(\sprintf('Swapping index for \'%s\'', \get_class($handler)));
 
-        $this->indexer->indexSwap($handler);
+        $this->indexer->indexSwap([$handler]);
     }
 }

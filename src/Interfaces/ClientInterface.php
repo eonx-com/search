@@ -61,14 +61,13 @@ interface ClientInterface
     ): void;
 
     /**
-     * Delete an existing alias
+     * Delete an existing alias across all indices
      *
-     * @param string $indexName
-     * @param string $alias
+     * @param string[] $aliases Array of alias names to be deleted
      *
      * @return void
      */
-    public function deleteAlias(string $indexName, string $alias): void;
+    public function deleteAlias(array $aliases): void;
 
     /**
      * Delete an existing index
@@ -118,10 +117,9 @@ interface ClientInterface
     /**
      * Atomically remove/add alias
      *
-     * @param string $alias
-     * @param string $newIndex
+     * @param string[][] $aliases Array containing alias and index to be swapped
      *
      * @return void
      */
-    public function moveAlias(string $alias, string $newIndex): void;
+    public function moveAlias(array $aliases): void;
 }

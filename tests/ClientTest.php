@@ -57,7 +57,7 @@ final class ClientTest extends TestCase
 
         yield 'deleteAlias' => [
             'method' => 'deleteAlias',
-            'arguments' => ['index', 'alias'],
+            'arguments' => [['alias']],
             'exception' => SearchDeleteException::class,
             'exceptionMessage' => 'Unable to delete alias'
         ];
@@ -71,7 +71,7 @@ final class ClientTest extends TestCase
 
         yield 'moveAlias' => [
             'method' => 'moveAlias',
-            'arguments' => ['index', 'index_new'],
+            'arguments' => [[['index' => 'index_new', 'alias' => 'index']]],
             'exception' => SearchUpdateException::class,
             'exceptionMessage' => 'Unable to atomically swap alias'
         ];
@@ -146,7 +146,7 @@ final class ClientTest extends TestCase
         $client = new Client($elasticClient);
         $expected = [];
 
-        $client->deleteAlias('index1', 'big_alias');
+        $client->deleteAlias(['big_alias']);
 
         self::assertSame($expected, []);
     }
@@ -367,7 +367,7 @@ final class ClientTest extends TestCase
         $elasticClient = $this->createElasticClient($response);
         $client = new Client($elasticClient);
 
-        $client->moveAlias('index', 'index_20190502');
+        $client->moveAlias([['alias' => 'index', 'index' => 'index_20190502']]);
 
         $this->addToAssertionCount(1);
     }

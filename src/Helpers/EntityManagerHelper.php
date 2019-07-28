@@ -28,7 +28,9 @@ class EntityManagerHelper implements EntityManagerHelperInterface
     /**
      * {@inheritdoc}
      *
-     * @throws \Exception
+     * @throws \Doctrine\ORM\Mapping\MappingException
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \LoyaltyCorp\Search\Exceptions\BindingResolutionException
      */
     public function iterateAllIds(string $entityClass): iterable
     {
@@ -50,7 +52,7 @@ class EntityManagerHelper implements EntityManagerHelperInterface
      *
      * @return \Doctrine\ORM\EntityManagerInterface
      *
-     * @throws \Exception
+     * @throws \LoyaltyCorp\Search\Exceptions\BindingResolutionException
      */
     private function getDoctrineEntityManager(): EntityManagerInterface
     {

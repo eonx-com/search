@@ -3,9 +3,8 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Bridge\Laravel\Console\Commands;
 
-use Illuminate\Container\Container;
-use Illuminate\Contracts\Container\Container as ContainerInterface;
 use LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexLiveCommand;
+use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputDefinition;
@@ -13,11 +12,11 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\HandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\IndexerStub;
 use Tests\LoyaltyCorp\Search\TestCase;
 
 /**
- * @covers \LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexCommand
  * @covers \LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexLiveCommand
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Required for thorough testing
@@ -34,11 +33,8 @@ class SearchIndexLiveCommandTest extends TestCase
     public function testSearchHandlersPassedToIndexSwapMethod(): void
     {
         $indexer = new IndexerStub();
-        $container = new Container();
-        $container->tag([
-            HandlerStub::class
-        ], ['search_handler']);
-        $command = $this->createInstance([], new NullOutput(), $indexer, $container);
+        $handlers = [new HandlerStub()];
+        $command = $this->createInstance([], new NullOutput(), $indexer, new RegisteredSearchHandlerStub($handlers));
 
         $command->handle();
 
@@ -51,7 +47,7 @@ class SearchIndexLiveCommandTest extends TestCase
      * @param mixed[] $options Options to pass to the command
      * @param \Symfony\Component\Console\Output\OutputInterface $output The interface to output the result to
      * @param \LoyaltyCorp\Search\Interfaces\IndexerInterface|null $indexer
-     * @param \Illuminate\Contracts\Container\Container|null $container
+     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface|null $registeredHandlers
      *
      * @return \LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexLiveCommand
      *
@@ -61,7 +57,7 @@ class SearchIndexLiveCommandTest extends TestCase
         array $options,
         OutputInterface $output,
         ?IndexerInterface $indexer = null,
-        ?ContainerInterface $container = null
+        ?RegisteredSearchHandlerInterface $registeredHandlers = null
     ): SearchIndexLiveCommand {
         // Use reflection to access input and output properties as these are protected
         // and derived from the application/console input/output
@@ -75,8 +71,8 @@ class SearchIndexLiveCommandTest extends TestCase
 
         // Create instance
         $instance = new SearchIndexLiveCommand(
-            $container ?? new Container(),
-            $indexer ?? new IndexerStub()
+            $indexer ?? new IndexerStub(),
+            $registeredHandlers ?? new RegisteredSearchHandlerStub()
         );
 
         // Set input/output property values

@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Bridge\Laravel\Console\Commands;
 
-use Illuminate\Contracts\Container\Container as ContainerInterface;
-use LoyaltyCorp\Search\Interfaces\HandlerInterface;
+use Illuminate\Console\Command;
+use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 
-final class SearchIndexLiveCommand extends SearchIndexCommand
+final class SearchIndexLiveCommand extends Command
 {
     /**
      * @var \LoyaltyCorp\Search\Interfaces\IndexerInterface
@@ -15,28 +15,36 @@ final class SearchIndexLiveCommand extends SearchIndexCommand
     private $indexer;
 
     /**
+     * @var \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface
+     */
+    private $searchHandlers;
+
+    /**
      * SearchIndexLiveCommand constructor.
      *
-     * @param \Illuminate\Contracts\Container\Container $container
      * @param \LoyaltyCorp\Search\Interfaces\IndexerInterface $indexer
+     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface $searchHandlers
      */
-    public function __construct(ContainerInterface $container, IndexerInterface $indexer)
+    public function __construct(IndexerInterface $indexer, RegisteredSearchHandlerInterface $searchHandlers)
     {
         $this->description = 'Atomically switches root aliases from search handlers to the latest index';
         $this->signature = 'search:index:live';
 
         $this->indexer = $indexer;
+        $this->searchHandlers = $searchHandlers;
 
-        parent::__construct($container);
+        parent::__construct();
     }
 
     /**
-     * {@inheritdoc}
+     * Swap root alias to point to newest index created on a per-seach-handler basis
+     *
+     * @return void
      */
-    protected function handleSearchHandler(HandlerInterface $handler): void
+    public function handle(): void
     {
-        $this->info(\sprintf('Swapping index for \'%s\'', \get_class($handler)));
+        $this->info('Swapping indices');
 
-        $this->indexer->indexSwap([$handler]);
+        $this->indexer->indexSwap($this->searchHandlers->getAll());
     }
 }

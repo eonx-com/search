@@ -182,7 +182,7 @@ class ClientStub implements ClientInterface
     /**
      * Spy on alias that had its index swapped
      *
-     * @return string[]
+     * @return string[] Alias => Index
      */
     public function getSwappedAliases(): array
     {
@@ -211,7 +211,7 @@ class ClientStub implements ClientInterface
     public function moveAlias(array $aliases): void
     {
         foreach ($aliases as $alias) {
-            $this->swappedAliases[] = $alias['alias'];
+            $this->swappedAliases[$alias['alias']] = $alias['index'];
         }
     }
 }

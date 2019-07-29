@@ -11,9 +11,9 @@ final class HandlerStub implements HandlerInterface
     /**
      * @inheritdoc
      */
-    public function getHandledClass(): string
+    public function getHandledClasses(): array
     {
-        return SearchableStub::class;
+        return [SearchableStub::class];
     }
 
     /**

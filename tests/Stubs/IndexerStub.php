@@ -17,9 +17,9 @@ class IndexerStub implements IndexerInterface
     private $cleanedHandlers = [];
 
     /**
-     * @var int
+     * @var \LoyaltyCorp\Search\Interfaces\HandlerInterface[]
      */
-    private $createdCount = 0;
+    private $created = [];
 
     /**
      * @var int
@@ -27,9 +27,9 @@ class IndexerStub implements IndexerInterface
     private $indicesSwapped = 0;
 
     /**
-     * @var int
+     * @var \LoyaltyCorp\Search\Interfaces\HandlerInterface[]
      */
-    private $populatedCount = 0;
+    private $populatedHandlers = [];
 
     /**
      * {@inheritdoc}
@@ -44,7 +44,7 @@ class IndexerStub implements IndexerInterface
      */
     public function create(HandlerInterface $searchHandler): void
     {
-        $this->createdCount++;
+        $this->created[] = $searchHandler;
     }
 
     /**
@@ -58,13 +58,13 @@ class IndexerStub implements IndexerInterface
     }
 
     /**
-     * Get number of created indices
+     * Get search handlers that have been passed for creation
      *
-     * @return int
+     * @return \LoyaltyCorp\Search\Interfaces\HandlerInterface[]
      */
-    public function getCreatedCount(): int
+    public function getCreatedHandlers(): array
     {
-        return $this->createdCount;
+        return $this->created;
     }
 
     /**
@@ -80,11 +80,11 @@ class IndexerStub implements IndexerInterface
     /**
      * Determine if indexed has caled populate
      *
-     * @return int
+     * @return \LoyaltyCorp\Search\Interfaces\HandlerInterface[]
      */
-    public function getPopulatedCount(): int
+    public function getPopulatedHandlers(): array
     {
-        return $this->populatedCount;
+        return $this->populatedHandlers;
     }
 
     /**
@@ -100,6 +100,6 @@ class IndexerStub implements IndexerInterface
      */
     public function populate(HandlerInterface $searchHandler, ?int $batchSize = null): void
     {
-        $this->populatedCount++;
+        $this->populatedHandlers[] = $searchHandler;
     }
 }

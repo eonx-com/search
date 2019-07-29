@@ -8,9 +8,9 @@ interface HandlerInterface
     /**
      * Get the class this search handler will support
      *
-     * @return string Fully Qualified Class Name
+     * @return string[] Fully Qualified Class Names that implement the Search Handler interface
      */
-    public function getHandledClass(): string;
+    public function getHandledClasses(): array;
 
     /**
      * Returns the index name that this handler is responsible for.

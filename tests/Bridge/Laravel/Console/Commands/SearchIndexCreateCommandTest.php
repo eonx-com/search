@@ -3,9 +3,8 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Bridge\Laravel\Console\Commands;
 
-use Illuminate\Container\Container;
-use Illuminate\Contracts\Container\Container as ContainerInterface;
 use LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexCreateCommand;
+use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputDefinition;
@@ -14,11 +13,11 @@ use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\HandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\OtherHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\IndexerStub;
 use Tests\LoyaltyCorp\Search\TestCase;
 
 /**
- * @covers \LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexCommand
  * @covers \LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexCreateCommand
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Required for thorough testing
@@ -26,48 +25,22 @@ use Tests\LoyaltyCorp\Search\TestCase;
 class SearchIndexCreateCommandTest extends TestCase
 {
     /**
-     * Ensure a tagged search handler that does not implement the interface is not actually attempted execution on
-     *
-     * @return void
-     *
-     * @throws \ReflectionException
-     */
-    public function testNonSearchHandlerRegisteredIsSkipped(): void
-    {
-        $indexer = new IndexerStub();
-        $container = new Container();
-        $container->tag([
-            IndexerStub::class
-        ], ['search_handler']);
-        $command = $this->createInstance([], new NullOutput(), $indexer, $container);
-
-        $command->handle();
-
-        // No indices because the tagged search handler does not have the HandlerInterface
-        self::assertSame(0, $indexer->getCreatedCount());
-    }
-
-    /**
      * Ensure the number of indices created matches the number of registered search handlers via container tagging
      *
      * @return void
      *
      * @throws \ReflectionException
      */
-    public function testNumberOfIndicesCreated(): void
+    public function testIndicesCreated(): void
     {
         $indexer = new IndexerStub();
-        $container = new Container();
-        $container->tag([
-            HandlerStub::class,
-            OtherHandlerStub::class
-        ], ['search_handler']);
-        $command = $this->createInstance([], new NullOutput(), $indexer, $container);
+        $handlers = [new HandlerStub(), new OtherHandlerStub()];
+        $command = $this->createInstance([], new NullOutput(), $indexer, new RegisteredSearchHandlerStub($handlers));
+        // Two search handlers registered should result in 2 'created' calls
 
         $command->handle();
 
-        // Two search handlers registered should result in 2 indices
-        self::assertSame(2, $indexer->getCreatedCount());
+        self::assertSame($handlers, $indexer->getCreatedHandlers());
     }
 
     /**
@@ -76,7 +49,7 @@ class SearchIndexCreateCommandTest extends TestCase
      * @param mixed[] $options Options to pass to the command
      * @param \Symfony\Component\Console\Output\OutputInterface $output The interface to output the result to
      * @param \LoyaltyCorp\Search\Interfaces\IndexerInterface|null $indexer
-     * @param \Illuminate\Contracts\Container\Container|null $container
+     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface|null $registeredHandlers
      *
      * @return \LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexCreateCommand
      *
@@ -86,7 +59,7 @@ class SearchIndexCreateCommandTest extends TestCase
         array $options,
         OutputInterface $output,
         ?IndexerInterface $indexer = null,
-        ?ContainerInterface $container = null
+        ?RegisteredSearchHandlerInterface $registeredHandlers = null
     ): SearchIndexCreateCommand {
         // Use reflection to access input and output properties as these are protected
         // and derived from the application/console input/output
@@ -100,8 +73,8 @@ class SearchIndexCreateCommandTest extends TestCase
 
         // Create instance
         $instance = new SearchIndexCreateCommand(
-            $container ?? new Container(),
-            $indexer ?? new IndexerStub()
+            $indexer ?? new IndexerStub(),
+            $registeredHandlers ?? new RegisteredSearchHandlerStub()
         );
 
         // Set input/output property values

@@ -3,20 +3,19 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Bridge\Laravel\Console\Commands;
 
-use Illuminate\Container\Container;
-use Illuminate\Contracts\Container\Container as ContainerInterface;
 use LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexCleanCommand;
+use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\HandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\OtherHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\IndexerStub;
 use Tests\LoyaltyCorp\Search\TestCase;
 
 /**
- * @covers \LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexCommand
  * @covers \LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexCleanCommand
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Required for thorough testing
@@ -33,19 +32,15 @@ class SearchIndexCleanCommandTest extends TestCase
     public function testIndexerHandlesAllTaggedSearchHandlers(): void
     {
         $indexer = new IndexerStub();
-        $container = new Container();
-        $container->tag([
-            HandlerStub::class,
-            OtherHandlerStub::class
-        ], ['search_handler']);
-        $command = $this->createInstance([], new NullOutput(), $indexer, $container);
+        $handlers = [new HandlerStub(), new OtherHandlerStub()];
+        // Two search handlers registered should result in 2 indices passed to clean method
+        $command = $this->createInstance([], new NullOutput(), $indexer, new RegisteredSearchHandlerStub($handlers));
 
         $command->handle();
 
-        // Two search handlers registered should result in 2 indices passed to clean method
-        $result = \array_map('\get_class', $indexer->getCleanedSearchHandlers());
+        $result = $indexer->getCleanedSearchHandlers();
 
-        self::assertSame([HandlerStub::class, OtherHandlerStub::class], $result);
+        self::assertSame($handlers, $result);
     }
 
     /**
@@ -54,7 +49,7 @@ class SearchIndexCleanCommandTest extends TestCase
      * @param mixed[] $options Options to pass to the command
      * @param \Symfony\Component\Console\Output\OutputInterface $output The interface to output the result to
      * @param \LoyaltyCorp\Search\Interfaces\IndexerInterface|null $indexer
-     * @param \Illuminate\Contracts\Container\Container|null $container
+     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface|null $registeredHandlers
      *
      * @return \LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexCleanCommand
      *
@@ -64,7 +59,7 @@ class SearchIndexCleanCommandTest extends TestCase
         array $options,
         OutputInterface $output,
         ?IndexerInterface $indexer = null,
-        ?ContainerInterface $container = null
+        ?RegisteredSearchHandlerInterface $registeredHandlers = null
     ): SearchIndexCleanCommand {
         // Use reflection to access input and output properties as these are protected
         // and derived from the application/console input/output
@@ -78,8 +73,8 @@ class SearchIndexCleanCommandTest extends TestCase
 
         // Create instance
         $instance = new SearchIndexCleanCommand(
-            $container ?? new Container(),
-            $indexer ?? new IndexerStub()
+            $indexer ?? new IndexerStub(),
+            $registeredHandlers ?? new RegisteredSearchHandlerStub()
         );
 
         // Set input/output property values

@@ -14,9 +14,9 @@ final class NotSearchableHandlerStub implements HandlerInterface
     /**
      * @inheritdoc
      */
-    public function getHandledClass(): string
+    public function getHandledClasses(): array
     {
-        return NotSearchableStub::class;
+        return [NotSearchableStub::class];
     }
 
     /**

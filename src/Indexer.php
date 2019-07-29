@@ -81,8 +81,6 @@ final class Indexer implements IndexerInterface
         // Determine which indices are not used by an alias
         $unusedIndices = \array_diff($allIndices, $indicesUsedByAlias);
 
-        // Out of the indices deemed to not have an alias associated, compare with
-
         // Remove any indices unused by a root alias
         foreach ($unusedIndices as $unusedIndex) {
             $this->elasticClient->deleteIndex($unusedIndex);
@@ -152,29 +150,11 @@ final class Indexer implements IndexerInterface
      */
     public function populate(HandlerInterface $searchHandler, ?int $batchSize = null): void
     {
-        $documents = [];
-        $iteration = 0;
-
-        // Iterate over all primary keys of the dedicated entity against the search handler
-        foreach ($this->entityManagerHelper->iterateAllIds(
-            $searchHandler->getHandledClass()
-        ) as $identifier) {
-            $documents[] = $identifier;
-
-            // Create documents in batches to avoid overloading memory & request size
-            if ($iteration > 0 && $iteration % ($batchSize ?? 100) === 0) {
-                $this->manager->handleUpdates($searchHandler->getHandledClass(), $documents);
-                $documents = [];
-            }
-
-            $iteration++;
-        }
-
-        // Handle creation of remaining documents that were not batched because the loop finished
-        if (\count($documents) > 0) {
-            $this->manager->handleUpdates(
-                $searchHandler->getHandledClass(),
-                $documents
+        // Populate index of search handler on a per-entity basis
+        foreach ($searchHandler->getHandledClasses() as $handlerClass) {
+            $this->populateIndex(
+                $handlerClass,
+                $batchSize
             );
         }
     }
@@ -196,5 +176,40 @@ final class Indexer implements IndexerInterface
         }
 
         return false;
+    }
+
+    /**
+     * Populate an index with all documents
+     *
+     * @param string $class
+     * @param int|null $batchSize
+     *
+     * @return void
+     */
+    private function populateIndex(string $class, ?int $batchSize = null): void
+    {
+        $documents = [];
+        $iteration = 0;
+
+        // Iterate over all primary keys of the dedicated entity against the search handler
+        foreach ($this->entityManagerHelper->iterateAllIds($class) as $identifier) {
+            $documents[] = $identifier;
+
+            // Create documents in batches to avoid overloading memory & request size
+            if ($iteration > 0 && $iteration % ($batchSize ?? 100) === 0) {
+                $this->manager->handleUpdates($class, $documents);
+                $documents = [];
+            }
+
+            $iteration++;
+        }
+
+        // Handle creation of remaining documents that were not batched because the loop finished
+        if (\count($documents) > 0) {
+            $this->manager->handleUpdates(
+                $class,
+                $documents
+            );
+        }
     }
 }

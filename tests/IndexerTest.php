@@ -45,14 +45,15 @@ class IndexerTest extends TestCase
         $client = new ClientStub(
             null,
             null,
+            // unrelated-index and irrelevant-index should not be touched, because they are unrelated to search handlers
             [['name' => 'unrelated-index'], ['name' => 'irrelevant-index'], ['name' => 'valid-123']]
         );
         $indexer = $this->createInstance($client);
+        $expected = ['valid-123'];
 
         $indexer->clean([new HandlerStub()]);
 
-        // unrelated-index and irrelevant-index should not be touched, because they are unrelated to search handlers
-        self::assertSame(['valid-123'], $client->getDeletedIndices());
+        self::assertSame($expected, $client->getDeletedIndices());
     }
 
     /**
@@ -69,10 +70,11 @@ class IndexerTest extends TestCase
             [['index' => 'valid', 'name' => 'anything']]
         );
         $indexer = $this->createInstance($client);
+        $expected = ['valid-unused'];
 
         $indexer->clean([new HandlerStub()]);
 
-        self::assertSame(['valid-unused'], $client->getDeletedIndices());
+        self::assertSame($expected, $client->getDeletedIndices());
     }
 
     /**
@@ -89,10 +91,11 @@ class IndexerTest extends TestCase
             [['name' => 'valid_new', 'index' => 'valid_201900502']]
         );
         $indexer = $this->createInstance($elasticClient);
+        $expected = ['valid_new'];
 
         $indexer->indexSwap([new HandlerStub()]);
 
-        self::assertSame(['valid_new'], $elasticClient->getDeletedAliases());
+        self::assertSame($expected, $elasticClient->getDeletedAliases());
     }
 
     /**
@@ -109,10 +112,12 @@ class IndexerTest extends TestCase
             [['name' => 'valid_new', 'index' => 'valid_201900502']]
         );
         $indexer = $this->createInstance($elasticClient);
+        // alias => index
+        $expected = ['valid' => 'valid_201900502'];
 
         $indexer->indexSwap([new HandlerStub()]);
 
-        self::assertSame(['valid'], $elasticClient->getSwappedAliases());
+        self::assertSame($expected, $elasticClient->getSwappedAliases());
     }
 
     /**
@@ -162,11 +167,12 @@ class IndexerTest extends TestCase
     {
         $elasticClient = new ClientStub(true);
         $indexer = $this->createInstance($elasticClient);
+        $expected = ['valid_new'];
 
         $indexer->create(new HandlerStub());
 
         // No deleted aliases because *_new was not existing already
-        self::assertSame(['valid_new'], $elasticClient->getDeletedAliases());
+        self::assertSame($expected, $elasticClient->getDeletedAliases());
     }
 
     /**

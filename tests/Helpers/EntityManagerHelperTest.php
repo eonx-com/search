@@ -6,6 +6,7 @@ namespace Tests\LoyaltyCorp\Search\Helpers;
 use Doctrine\ORM\EntityManagerInterface;
 use Illuminate\Container\Container;
 use LoyaltyCorp\Search\Exceptions\BindingResolutionException;
+use LoyaltyCorp\Search\Exceptions\DoctrineException;
 use LoyaltyCorp\Search\Helpers\EntityManagerHelper;
 use Tests\LoyaltyCorp\Search\DoctrineTestCase;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
@@ -42,6 +43,52 @@ class EntityManagerHelperTest extends DoctrineTestCase
          */
         $result = $entityManagerHelper->iterateAllIds('SomeFakeClass');
 
+        \iterator_to_array($result);
+    }
+
+    /**
+     * Ensure the iteration method catches Doctrine exceptions and decorates them
+     *
+     * @return void
+     *
+     * @throws \Doctrine\Common\Annotations\AnnotationException
+     * @throws \Doctrine\ORM\ORMException
+     */
+    public function testExceptionCatching(): void
+    {
+        $this->expectException(DoctrineException::class);
+        $this->expectExceptionMessage(
+            'Unable to iterate all primary keys of entity \'Tests\LoyaltyCorp\Search\Stubs\Entities\EntityStub\''
+        );
+
+        $container = new Container();
+        $entityManager = $this->getDoctrineEntityManager();
+
+        /**
+         * registry alias is used from Laravel-Doctrine to determine the actual Doctrine entity manager, as EoneoPay
+         * overloads the normal Doctrine entity manager interface binding
+         */
+        $container->singleton('registry', static function () use ($entityManager) {
+            return new RegistryStub($entityManager);
+        });
+        $container->singleton(
+            EntityManagerInterface::class,
+            static function () use ($entityManager): EntityManagerInterface {
+                return $entityManager;
+            }
+        );
+
+        $entityManagerHelper = $this->getInstance($container);
+        /**
+         * PhpStan & PhpStorm do not see generators as iterables
+         *
+         * @link https://github.com/phpstan/phpstan/issues/1246
+         *
+         * @var \Traversable $result
+         */
+        $result = $entityManagerHelper->iterateAllIds(EntityStub::class);
+
+        // Execute generator
         \iterator_to_array($result);
     }
 

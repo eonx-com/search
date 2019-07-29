@@ -10,7 +10,6 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\NullOutput;
-use Symfony\Component\Console\Output\OutputInterface;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\HandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\OtherHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub;
@@ -34,9 +33,8 @@ class SearchIndexFillCommandTest extends TestCase
     public function testIndexerPopulateCalled(): void
     {
         $indexer = new IndexerStub();
-        $output = new NullOutput();
         $handlers = [new HandlerStub(), new OtherHandlerStub()];
-        $command = $this->createInstance([], $output, $indexer, new RegisteredSearchHandlerStub($handlers));
+        $command = $this->createInstance($indexer, new RegisteredSearchHandlerStub($handlers));
 
         $command->handle();
 
@@ -46,20 +44,16 @@ class SearchIndexFillCommandTest extends TestCase
     /**
      * Create command instance
      *
-     * @param mixed[] $options Options to pass to the command
-     * @param \Symfony\Component\Console\Output\OutputInterface $output The interface to output the result to
-     * @param \LoyaltyCorp\Search\Interfaces\IndexerInterface|null $indexer
-     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface|null $registeredHandlers
+     * @param \LoyaltyCorp\Search\Interfaces\IndexerInterface $indexer
+     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface $registeredHandlers
      *
      * @return \LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexFillCommand
      *
      * @throws \ReflectionException If class being reflected does not exist
      */
     private function createInstance(
-        array $options,
-        OutputInterface $output,
-        ?IndexerInterface $indexer = null,
-        ?RegisteredSearchHandlerInterface $registeredHandlers = null
+        IndexerInterface $indexer,
+        RegisteredSearchHandlerInterface $registeredHandlers
     ): SearchIndexFillCommand {
         // Use reflection to access input and output properties as these are protected
         // and derived from the application/console input/output
@@ -73,16 +67,16 @@ class SearchIndexFillCommandTest extends TestCase
 
         // Create instance
         $instance = new SearchIndexFillCommand(
-            $indexer ?? new IndexerStub(),
-            $registeredHandlers ?? new RegisteredSearchHandlerStub()
+            $indexer,
+            $registeredHandlers
         );
 
         // Set input/output property values
         $inputProperty->setValue($instance, new ArrayInput(
-            $options,
+            [],
             new InputDefinition([new InputOption('batchSize')])
         ));
-        $outputProperty->setValue($instance, $output);
+        $outputProperty->setValue($instance, new NullOutput());
 
         return $instance;
     }

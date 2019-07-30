@@ -78,6 +78,25 @@ class IndexerTest extends TestCase
     }
 
     /**
+     * Ensure the cleaning process does not execute if dry run is true
+     *
+     * @return void
+     */
+    public function testCleaningIndicesRespectsDryOption(): void
+    {
+        $client = new ClientStub(
+            null,
+            null,
+            [['name' => 'unrelated-index'], ['name' => 'irrelevant-index'], ['name' => 'valid-123']]
+        );
+        $indexer = $this->createInstance($client);
+
+        $indexer->clean([new HandlerStub()], true);
+
+        self::assertSame([], $client->getDeletedIndices());
+    }
+
+    /**
      * Ensure dry running the index swap method does not call anything from elastic client
      *
      * @return void

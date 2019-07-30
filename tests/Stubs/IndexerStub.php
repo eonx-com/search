@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Stubs;
 
+use LoyaltyCorp\Search\Indexer\IndexCleanResult;
 use LoyaltyCorp\Search\Indexer\IndexSwapResult;
 use LoyaltyCorp\Search\Interfaces\HandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
@@ -35,9 +36,11 @@ class IndexerStub implements IndexerInterface
     /**
      * {@inheritdoc}
      */
-    public function clean(array $searchHandlers): void
+    public function clean(array $searchHandlers, ?bool $dryRun = null): IndexCleanResult
     {
         $this->cleanedHandlers = $searchHandlers;
+
+        return new IndexCleanResult([]);
     }
 
     /**
@@ -95,16 +98,17 @@ class IndexerStub implements IndexerInterface
     {
         $this->indicesSwapped++;
 
-        $data = [[], []];
+        $aliasesToMove = [];
+        $aliasesToDelete = [];
 
         foreach ($searchHandlers as $handler) {
             $rootIndex = $handler->getIndexName();
 
-            $data[0][] = ['alias' => $rootIndex, 'index' => \sprintf('%s_123', $rootIndex)];
-            $data[1][] = \sprintf('%s_new', $rootIndex);
+            $aliasesToMove[] = ['alias' => $rootIndex, 'index' => \sprintf('%s_123', $rootIndex)];
+            $aliasesToDelete[] = \sprintf('%s_new', $rootIndex);
         }
 
-        return new IndexSwapResult(... $data);
+        return new IndexSwapResult(... [$aliasesToMove, $aliasesToDelete]);
     }
 
     /**

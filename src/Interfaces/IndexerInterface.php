@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Interfaces;
 
+use LoyaltyCorp\Search\Indexer\IndexCleanResult;
 use LoyaltyCorp\Search\Indexer\IndexSwapResult;
 
 interface IndexerInterface
@@ -11,10 +12,11 @@ interface IndexerInterface
      * Remove any indices unused by a root alias that are/were applicable to search handlers
      *
      * @param \LoyaltyCorp\Search\Interfaces\HandlerInterface[] $searchHandlers
+     * @param bool|null $dryRun Do not execute if true
      *
-     * @return void
+     * @return \LoyaltyCorp\Search\Indexer\IndexCleanResult
      */
-    public function clean(array $searchHandlers): void;
+    public function clean(array $searchHandlers, ?bool $dryRun = null): IndexCleanResult;
 
     /**
      * Create a new index for the search handler
@@ -29,7 +31,7 @@ interface IndexerInterface
      * Atomically swap the root alias for a search handler, with the latest index created
      *
      * @param \LoyaltyCorp\Search\Interfaces\HandlerInterface[] $searchHandlers
-     * @param bool|null $dryRun Do not execute
+     * @param bool|null $dryRun Do not execute if true
      *
      * @return \LoyaltyCorp\Search\Indexer\IndexSwapResult
      */

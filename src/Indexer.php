@@ -5,6 +5,7 @@ namespace LoyaltyCorp\Search;
 
 use EoneoPay\Utils\DateTime;
 use LoyaltyCorp\Search\Exceptions\AliasNotFoundException;
+use LoyaltyCorp\Search\Indexer\IndexCleanResult;
 use LoyaltyCorp\Search\Indexer\IndexSwapResult;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\HandlerInterface;
@@ -49,7 +50,7 @@ final class Indexer implements IndexerInterface
     /**
      * {@inheritdoc}
      */
-    public function clean(array $searchHandlers): void
+    public function clean(array $searchHandlers, ?bool $dryRun = null): IndexCleanResult
     {
         $indicesUsedByAlias = [];
         $allIndices = [];
@@ -81,10 +82,18 @@ final class Indexer implements IndexerInterface
         // Determine which indices are not used by an alias
         $unusedIndices = \array_diff($allIndices, $indicesUsedByAlias);
 
+        $results = new IndexCleanResult($unusedIndices);
+
+        if (($dryRun ?? false) === true) {
+            return $results;
+        }
+
         // Remove any indices unused by a root alias
         foreach ($unusedIndices as $unusedIndex) {
             $this->elasticClient->deleteIndex($unusedIndex);
         }
+
+        return $results;
     }
 
     /**

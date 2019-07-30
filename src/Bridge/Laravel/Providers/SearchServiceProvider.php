@@ -11,10 +11,12 @@ use Illuminate\Support\ServiceProvider;
 use LoyaltyCorp\Search\Client;
 use LoyaltyCorp\Search\Helpers\EntityManagerHelper;
 use LoyaltyCorp\Search\Helpers\RegisteredSearchHandler;
+use LoyaltyCorp\Search\Indexer;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\HandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
+use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Manager;
 
@@ -33,6 +35,7 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
         return [
             ClientInterface::class,
             EntityManagerHelperInterface::class,
+            IndexerInterface::class,
             ManagerInterface::class,
             RegisteredSearchHandlerInterface::class
         ];
@@ -53,6 +56,8 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
                 ->setSSLVerification(false)
                 ->build());
         });
+
+        $this->app->singleton(IndexerInterface::class, Indexer::class);
 
         // Bind search manager
         $this->app->singleton(ManagerInterface::class, Manager::class);

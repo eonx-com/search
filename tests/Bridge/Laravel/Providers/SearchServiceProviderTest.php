@@ -13,6 +13,7 @@ use LoyaltyCorp\Search\Helpers\RegisteredSearchHandler;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
+use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Manager;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\HandlerStub;
@@ -61,6 +62,7 @@ final class SearchServiceProviderTest extends TestCase
         self::assertSame([
             ClientInterface::class,
             EntityManagerHelperInterface::class,
+            IndexerInterface::class,
             ManagerInterface::class,
             RegisteredSearchHandlerInterface::class
         ], (new SearchServiceProvider(new ApplicationStub()))->provides());

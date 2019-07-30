@@ -78,11 +78,11 @@ class IndexerTest extends TestCase
     }
 
     /**
-     * Ensure the swap method removes the _new alias
+     * Ensure dry running the index swap method does not call anything from elastic client
      *
      * @return void
      */
-    public function testIndexSwapperRemovesNewAlias(): void
+    public function testIndexSwapperDryRun(): void
     {
         $elasticClient = new ClientStub(
             true,
@@ -96,6 +96,27 @@ class IndexerTest extends TestCase
         $indexer->indexSwap([new HandlerStub()]);
 
         self::assertSame($expected, $elasticClient->getDeletedAliases());
+    }
+
+    /**
+     * Ensure the swap method removes the _new alias
+     *
+     * @return void
+     */
+    public function testIndexSwapperRemovesNewAlias(): void
+    {
+        $elasticClient = new ClientStub(
+            true,
+            null,
+            null,
+            [['name' => 'valid_new', 'index' => 'valid_201900502']]
+        );
+        $indexer = $this->createInstance($elasticClient);
+
+        $indexer->indexSwap([new HandlerStub()], true);
+
+        self::assertSame([], $elasticClient->getSwappedAliases());
+        self::assertSame([], $elasticClient->getDeletedAliases());
     }
 
     /**

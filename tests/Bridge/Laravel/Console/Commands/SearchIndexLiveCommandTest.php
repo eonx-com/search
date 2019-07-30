@@ -10,6 +10,7 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\NullOutput;
+use Symfony\Component\Console\Output\OutputInterface;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\HandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\IndexerStub;
@@ -45,6 +46,7 @@ class SearchIndexLiveCommandTest extends TestCase
      *
      * @param \LoyaltyCorp\Search\Interfaces\IndexerInterface|null $indexer
      * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface|null $registeredHandlers
+     * @param \Symfony\Component\Console\Output\OutputInterface|null $output
      *
      * @return \LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexLiveCommand
      *
@@ -52,7 +54,8 @@ class SearchIndexLiveCommandTest extends TestCase
      */
     private function createInstance(
         ?IndexerInterface $indexer = null,
-        ?RegisteredSearchHandlerInterface $registeredHandlers = null
+        ?RegisteredSearchHandlerInterface $registeredHandlers = null,
+        ?OutputInterface $output = null
     ): SearchIndexLiveCommand {
         // Use reflection to access input and output properties as these are protected
         // and derived from the application/console input/output
@@ -75,7 +78,7 @@ class SearchIndexLiveCommandTest extends TestCase
             [],
             new InputDefinition([new InputOption('batchSize')])
         ));
-        $outputProperty->setValue($instance, new NullOutput());
+        $outputProperty->setValue($instance, $output ?? new NullOutput());
 
         return $instance;
     }

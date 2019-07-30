@@ -28,7 +28,7 @@ final class SearchIndexLiveCommand extends Command
     public function __construct(IndexerInterface $indexer, RegisteredSearchHandlerInterface $searchHandlers)
     {
         $this->description = 'Atomically switches root aliases from search handlers to the latest index';
-        $this->signature = 'search:index:live';
+        $this->signature = 'search:index:live {--dry-run}';
 
         $this->indexer = $indexer;
         $this->searchHandlers = $searchHandlers;
@@ -43,8 +43,8 @@ final class SearchIndexLiveCommand extends Command
      */
     public function handle(): void
     {
-        $this->info('Swapping indices');
+        $results = $this->indexer->indexSwap($this->searchHandlers->getAll(), $this->hasOption('dry-run'));
 
-        $this->indexer->indexSwap($this->searchHandlers->getAll());
+        $this->table(...$results->getTableData());
     }
 }

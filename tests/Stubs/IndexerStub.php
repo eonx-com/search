@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Stubs;
 
+use LoyaltyCorp\Search\Indexer\IndexSwapResult;
 use LoyaltyCorp\Search\Interfaces\HandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 
@@ -90,9 +91,20 @@ class IndexerStub implements IndexerInterface
     /**
      * {@inheritdoc}
      */
-    public function indexSwap(array $searchHandlers): void
+    public function indexSwap(array $searchHandlers, ?bool $dryRun = null): IndexSwapResult
     {
         $this->indicesSwapped++;
+
+        $data = [[], []];
+
+        foreach ($searchHandlers as $handler) {
+            $rootIndex = $handler->getIndexName();
+
+            $data[0][] = ['alias' => $rootIndex, 'index' => \sprintf('%s_123', $rootIndex)];
+            $data[1][] = \sprintf('%s_new', $rootIndex);
+        }
+
+        return new IndexSwapResult(... $data);
     }
 
     /**

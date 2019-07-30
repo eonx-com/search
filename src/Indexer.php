@@ -5,6 +5,7 @@ namespace LoyaltyCorp\Search;
 
 use EoneoPay\Utils\DateTime;
 use LoyaltyCorp\Search\Exceptions\AliasNotFoundException;
+use LoyaltyCorp\Search\Indexer\IndexSwapResult;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\HandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
@@ -50,7 +51,6 @@ final class Indexer implements IndexerInterface
      */
     public function clean(array $searchHandlers): void
     {
-        //4) search:index:clean - Removes all indexes not pointed to by the root aliases
         $indicesUsedByAlias = [];
         $allIndices = [];
         $handlerIndices = [];
@@ -119,7 +119,7 @@ final class Indexer implements IndexerInterface
      *
      * @throws \LoyaltyCorp\Search\Exceptions\AliasNotFoundException
      */
-    public function indexSwap(array $searchHandlers): void
+    public function indexSwap(array $searchHandlers, ?bool $dryRun = null): IndexSwapResult
     {
         $aliasesToMove = [];
         $aliasedToRemove = [];
@@ -138,11 +138,19 @@ final class Indexer implements IndexerInterface
             $aliasedToRemove[] = $newAlias;
         }
 
+        $actions = new IndexSwapResult($aliasesToMove, $aliasedToRemove);
+
+        if (($dryRun ?? false) === true) {
+            return $actions;
+        }
+
         // Atomically switch which index the root alias is associated with
         $this->elasticClient->moveAlias($aliasesToMove);
 
         // Remove *_new alias for this handler
         $this->elasticClient->deleteAlias($aliasedToRemove);
+
+        return $actions;
     }
 
     /**

@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Interfaces;
 
+use LoyaltyCorp\Search\Indexer\IndexSwapResult;
+
 interface IndexerInterface
 {
     /**
@@ -27,10 +29,11 @@ interface IndexerInterface
      * Atomically swap the root alias for a search handler, with the latest index created
      *
      * @param \LoyaltyCorp\Search\Interfaces\HandlerInterface[] $searchHandlers
+     * @param bool|null $dryRun Do not execute
      *
-     * @return void
+     * @return \LoyaltyCorp\Search\Indexer\IndexSwapResult
      */
-    public function indexSwap(array $searchHandlers): void;
+    public function indexSwap(array $searchHandlers, ?bool $dryRun = null): IndexSwapResult;
 
     /**
      * Populate a search handler with relevant documents

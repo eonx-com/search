@@ -6,7 +6,7 @@ namespace Tests\LoyaltyCorp\Search\Stubs\Handlers;
 use LoyaltyCorp\Search\Interfaces\HandlerInterface;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\SearchableStub;
 
-final class HandlerStub implements HandlerInterface
+final class OtherHandlerStub implements HandlerInterface
 {
     /**
      * @inheritdoc
@@ -21,7 +21,7 @@ final class HandlerStub implements HandlerInterface
      */
     public function getIndexName(): string
     {
-        return 'valid';
+        return 'valid2';
     }
 
     /**

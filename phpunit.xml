@@ -4,7 +4,7 @@
          bootstrap="tests/bootstrap.php"
          verbose="true">
     <testsuites>
-        <testsuite name="Serch Test Suite">
+        <testsuite name="Search Test Suite">
             <directory>./tests</directory>
         </testsuite>
     </testsuites>

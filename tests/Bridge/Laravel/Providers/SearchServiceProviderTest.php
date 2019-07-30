@@ -7,16 +7,23 @@ use EoneoPay\Externals\Logger\Interfaces\LoggerInterface;
 use EoneoPay\Externals\Logger\Logger;
 use Illuminate\Contracts\Foundation\Application;
 use LoyaltyCorp\Search\Bridge\Laravel\Providers\SearchServiceProvider;
+use LoyaltyCorp\Search\Client;
+use LoyaltyCorp\Search\Helpers\EntityManagerHelper;
+use LoyaltyCorp\Search\Helpers\RegisteredSearchHandler;
+use LoyaltyCorp\Search\Interfaces\ClientInterface;
+use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
+use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Manager;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\HandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NotSearchableStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\SearchableStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Illuminate\Contracts\Foundation\ApplicationStub;
 use Tests\LoyaltyCorp\Search\TestCase;
 
 /**
  * @covers \LoyaltyCorp\Search\Bridge\Laravel\Providers\SearchServiceProvider
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Required for testing all services
  */
 final class SearchServiceProviderTest extends TestCase
 {
@@ -35,7 +42,13 @@ final class SearchServiceProviderTest extends TestCase
         (new SearchServiceProvider($application))->register();
 
         // Ensure services are bound
+        self::assertInstanceOf(Client::class, $application->make(ClientInterface::class));
         self::assertInstanceOf(Manager::class, $application->make(ManagerInterface::class));
+        self::assertInstanceOf(EntityManagerHelper::class, $application->make(EntityManagerHelperInterface::class));
+        self::assertInstanceOf(
+            RegisteredSearchHandler::class,
+            $application->make(RegisteredSearchHandlerInterface::class)
+        );
     }
 
     /**
@@ -45,7 +58,12 @@ final class SearchServiceProviderTest extends TestCase
      */
     public function testDeferredProvider(): void
     {
-        self::assertSame([ManagerInterface::class], (new SearchServiceProvider(new ApplicationStub()))->provides());
+        self::assertSame([
+            ClientInterface::class,
+            EntityManagerHelperInterface::class,
+            ManagerInterface::class,
+            RegisteredSearchHandlerInterface::class
+        ], (new SearchServiceProvider(new ApplicationStub()))->provides());
     }
 
     /**
@@ -55,22 +73,22 @@ final class SearchServiceProviderTest extends TestCase
      *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException If item requested from container doesn't exist
      */
-    public function testHandlerFiltering(): void
+    public function testRegisteredSearchHandlerInterfaceFiltering(): void
     {
         $application = $this->createApplication();
 
         // Tag handler for service provider
-        $application->tag([HandlerStub::class], ['search_handler']);
+        $application->tag([HandlerStub::class, NotSearchableStub::class], ['search_handler']);
+        // The only available handler is when using get should beHandlerStub
+        $expected = [new HandlerStub()];
 
         // Run registration
         (new SearchServiceProvider($application))->register();
 
         // Load manager from interface
-        $manager = $application->make(ManagerInterface::class);
+        $registeredHandlers = $application->make(RegisteredSearchHandlerInterface::class);
 
-        // Test stubs
-        self::assertTrue($manager->isSearchable(SearchableStub::class));
-        self::assertFalse($manager->isSearchable(NotSearchableStub::class));
+        self::assertEquals($expected, $registeredHandlers->getAll());
     }
 
     /**

@@ -5,6 +5,7 @@ namespace LoyaltyCorp\Search;
 
 use Elasticsearch\Client as BaseClient;
 use Exception;
+use LoyaltyCorp\Search\Exceptions\SearchCheckerException;
 use LoyaltyCorp\Search\Exceptions\SearchDeleteException;
 use LoyaltyCorp\Search\Exceptions\SearchUpdateException;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
@@ -90,6 +91,166 @@ final class Client implements ClientInterface
             $this->elastic->bulk(['body' => $bulk]);
         } catch (Exception $exception) {
             throw new SearchUpdateException('An error occurred while performing bulk update on backend', 0, $exception);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createAlias(string $indexName, string $aliasName): void
+    {
+        try {
+            $this->elastic->indices()->updateAliases(
+                ['body' => ['actions' => [['add' => ['index' => $indexName, 'alias' => $aliasName]]]]]
+            );
+        } catch (Exception $exception) {
+            throw new SearchUpdateException('Unable to add alias', 0, $exception);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function createIndex(
+        string $name,
+        ?array $mappings = null,
+        ?array $settings = null
+    ): void {
+        try {
+            $this->elastic->indices()->create([
+                'index' => $name,
+                'body' => \array_filter([
+                    'settings' => $settings,
+                    'mappings' => $mappings
+                ])
+            ]);
+        } catch (Exception $exception) {
+            throw new SearchUpdateException('Unable to create new index', 0, $exception);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function deleteAlias(array $aliases): void
+    {
+        $actions = [];
+        foreach ($aliases as $alias) {
+            $actions[] = ['remove' => ['index' => '_all', 'alias' => $alias]];
+        }
+
+        try {
+            $this->elastic->indices()->updateAliases(
+                ['body' => ['actions' => $actions]]
+            );
+        } catch (Exception $exception) {
+            throw new SearchDeleteException('Unable to delete alias', 0, $exception);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function deleteIndex(string $name): void
+    {
+        try {
+            $this->elastic->indices()->delete([
+                'index' => $name
+            ]);
+        } catch (Exception $exception) {
+            throw new SearchDeleteException('Unable to delete index', 0, $exception);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAliases(?string $name = null): array
+    {
+        try {
+            $aliases = [];
+
+            foreach ($this->elastic->cat()->aliases(\array_filter(['name' => $name])) as $alias) {
+                $aliases[$alias['alias']] = [
+                    'name' => $alias['alias'],
+                    'index' => $alias['index']
+                ];
+            }
+
+            return \array_values($aliases);
+        } catch (Exception $exception) {
+            throw new SearchCheckerException('An error ocurred obtaining a list of aliases', 0, $exception);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIndices(?string $name = null): array
+    {
+        try {
+            $indices = [];
+
+            foreach ($this->elastic->cat()->indices(\array_filter(['index' => $name])) as $index) {
+                // Key as index name just for local ease of mapping
+                $indices[$index['index']] = [
+                    'name' => $index['index']
+                ];
+            }
+
+            // Reset keys to numerical indexes & remove aliases key
+            return \array_values($indices);
+        } catch (Exception $exception) {
+            throw new SearchCheckerException('An error ocurred obtaining a list of indices', 0, $exception);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isAlias(string $name): bool
+    {
+        try {
+            return $this->elastic->indices()->existsAlias(['index' => '*', 'name' => $name]);
+        } catch (Exception $exception) {
+            throw new SearchCheckerException('An error occurred checking if alias exists', 0, $exception);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isIndex(string $name): bool
+    {
+        try {
+            return $this->elastic->indices()->exists(['index' => $name]);
+        } catch (Exception $exception) {
+            throw new SearchCheckerException('An error occurred checking if index exists', 0, $exception);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function moveAlias(array $aliases): void
+    {
+        $actions = [];
+
+        foreach ($aliases as $operation) {
+            $actions[] = ['remove' => ['index' => '_all', 'alias' => $operation['alias']]];
+            $actions[] = ['add' => ['index' => $operation['index'], 'alias' => $operation['alias']]];
+        }
+
+        try {
+            $this->elastic->indices()->updateAliases(
+                [
+                    'body' => [
+                        'actions' => $actions
+                    ]
+                ]
+            );
+        } catch (Exception $exception) {
+            throw new SearchUpdateException('Unable to atomically swap alias', 0, $exception);
         }
     }
 }

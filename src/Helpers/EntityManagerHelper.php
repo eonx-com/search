@@ -6,37 +6,40 @@ namespace LoyaltyCorp\Search\Helpers;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManagerInterface as DoctrineEntityManager;
 use Doctrine\ORM\ORMException;
-use EoneoPay\Externals\ORM\EntityManager;
-use Illuminate\Contracts\Container\Container as ContainerInterface;
-use LoyaltyCorp\Search\Exceptions\BindingResolutionException;
+use EoneoPay\Externals\ORM\Interfaces\EntityManagerInterface as EoneoPayEntityManagerInterface;
 use LoyaltyCorp\Search\Exceptions\DoctrineException;
 use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 
 class EntityManagerHelper implements EntityManagerHelperInterface
 {
     /**
-     * @var \Illuminate\Contracts\Container\Container
+     * @var \Doctrine\ORM\EntityManagerInterface
      */
-    private $container;
+    private $doctrineManager;
+
+    /**
+     * @var \EoneoPay\Externals\ORM\Interfaces\EntityManagerInterface
+     */
+    private $eoneoPayManager;
 
     /**
      * EntityManagerHelper constructor.
      *
-     * @param \Illuminate\Contracts\Container\Container $container
+     * @param \Doctrine\ORM\EntityManagerInterface $doctrineManager
+     * @param \EoneoPay\Externals\ORM\Interfaces\EntityManagerInterface $eoneoPayManager
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(DoctrineEntityManager $doctrineManager, EoneoPayEntityManagerInterface $eoneoPayManager)
     {
-        $this->container = $container;
+        $this->doctrineManager = $doctrineManager;
+        $this->eoneoPayManager = $eoneoPayManager;
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @throws \EoneoPay\Externals\ORM\Exceptions\ORMException
      */
     public function findAllIds(string $class, array $ids): array
     {
-        return (new EntityManager($this->getDoctrineEntityManager()))->findByIds($class, $ids);
+        return $this->eoneoPayManager->findByIds($class, $ids);
     }
 
     /**
@@ -47,12 +50,10 @@ class EntityManagerHelper implements EntityManagerHelperInterface
      */
     public function iterateAllIds(string $entityClass): iterable
     {
-        $entityManager = $this->getDoctrineEntityManager();
-
         try {
-            $primaryKeyField = $entityManager->getClassMetadata($entityClass)->getSingleIdentifierFieldName();
+            $primaryKeyField = $this->doctrineManager->getClassMetadata($entityClass)->getSingleIdentifierFieldName();
 
-            $iterableResult = $entityManager->createQuery(
+            $iterableResult = $this->doctrineManager->createQuery(
                 \sprintf('SELECT e.%s FROM %s e', $primaryKeyField, $entityClass)
             )->iterate();
         } catch (ORMException | DBALException $doctrineException) {
@@ -65,24 +66,5 @@ class EntityManagerHelper implements EntityManagerHelperInterface
         foreach ($iterableResult as $iteration => $row) {
             yield $row[$iteration][$primaryKeyField];
         }
-    }
-
-    /**
-     * Resolve the non-decorated doctrine entity manager
-     *
-     * @return \Doctrine\ORM\EntityManagerInterface
-     *
-     * @throws \LoyaltyCorp\Search\Exceptions\BindingResolutionException
-     */
-    private function getDoctrineEntityManager(): DoctrineEntityManager
-    {
-        $registry = $this->container->get('registry');
-
-        if (\method_exists($registry, 'getManager') &&
-            ($registry->getManager() instanceof DoctrineEntityManager) === true) {
-            return $registry->getManager();
-        }
-
-        throw new BindingResolutionException('Could not resolve Doctrine EntityManager');
     }
 }

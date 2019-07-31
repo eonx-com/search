@@ -3,15 +3,14 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Helpers;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Illuminate\Container\Container;
-use LoyaltyCorp\Search\Exceptions\BindingResolutionException;
+use Doctrine\ORM\EntityManagerInterface as DoctrineEntityManagerInterface;
+use EoneoPay\Externals\ORM\EntityManager;
+use EoneoPay\Externals\ORM\Interfaces\EntityManagerInterface as EoneoPayEntityManagerInterface;
 use LoyaltyCorp\Search\Exceptions\DoctrineException;
 use LoyaltyCorp\Search\Helpers\EntityManagerHelper;
 use Tests\LoyaltyCorp\Search\DoctrineTestCase;
-use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
 use Tests\LoyaltyCorp\Search\Stubs\Entities\EntityStub;
-use Tests\LoyaltyCorp\Search\Stubs\Vendor\Doctrine\RegistryStub;
+use Tests\LoyaltyCorp\Search\Stubs\Vendor\EoneoPay\EntityManagerStub as EoneoPayEntityManagerStub;
 
 /**
  * @covers \LoyaltyCorp\Search\Helpers\EntityManagerHelper
@@ -20,34 +19,6 @@ use Tests\LoyaltyCorp\Search\Stubs\Vendor\Doctrine\RegistryStub;
  */
 class EntityManagerHelperTest extends DoctrineTestCase
 {
-    /**
-     * Ensure resolution of Doctrine entity manager (undecorated) throws Exception if wrong type resolved from container
-     *
-     * @return void
-     *
-     * @throws \Exception
-     */
-    public function testDoctrineEntityManagerResolutionThrowsException(): void
-    {
-        $this->expectException(BindingResolutionException::class);
-        $this->expectExceptionMessage('Could not resolve Doctrine EntityManager');
-
-        $container = new Container();
-        $container->singleton('registry', ClientStub::class);
-        $entityManagerHelper = $this->getInstance($container);
-
-        /**
-         * PhpStan & PhpStorm do not see generators as iterables
-         *
-         * @link https://github.com/phpstan/phpstan/issues/1246
-         *
-         * @var \Traversable $result
-         */
-        $result = $entityManagerHelper->iterateAllIds('SomeFakeClass');
-
-        \iterator_to_array($result);
-    }
-
     /**
      * Ensure the iteration method catches Doctrine exceptions and decorates them
      *
@@ -62,25 +33,8 @@ class EntityManagerHelperTest extends DoctrineTestCase
         $this->expectExceptionMessage(
             'Unable to iterate all primary keys of entity \'Tests\LoyaltyCorp\Search\Stubs\Entities\EntityStub\''
         );
-
-        $container = new Container();
         $entityManager = $this->getDoctrineEntityManager();
-
-        /**
-         * registry alias is used from Laravel-Doctrine to determine the actual Doctrine entity manager, as EoneoPay
-         * overloads the normal Doctrine entity manager interface binding
-         */
-        $container->singleton('registry', static function () use ($entityManager) {
-            return new RegistryStub($entityManager);
-        });
-        $container->singleton(
-            EntityManagerInterface::class,
-            static function () use ($entityManager): EntityManagerInterface {
-                return $entityManager;
-            }
-        );
-
-        $entityManagerHelper = $this->getInstance($container);
+        $entityManagerHelper = $this->getInstance($entityManager);
         /**
          * PhpStan & PhpStorm do not see generators as iterables
          *
@@ -103,25 +57,11 @@ class EntityManagerHelperTest extends DoctrineTestCase
      */
     public function testFindingByManyIdsWrapper(): void
     {
-        $container = new Container();
         $entityManager = $this->getEntityManager();
         $entity = (new EntityStub())->setIdentifier('pk3');
         $entityManager->persist($entity);
         $entityManager->flush();
-        /**
-         * registry alias is used from Laravel-Doctrine to determine the actual Doctrine entity manager, as EoneoPay
-         * overloads the normal Doctrine entity manager interface binding
-         */
-        $container->singleton('registry', static function () use ($entityManager) {
-            return new RegistryStub($entityManager);
-        });
-        $container->singleton(
-            EntityManagerInterface::class,
-            static function () use ($entityManager): EntityManagerInterface {
-                return $entityManager;
-            }
-        );
-        $entityManagerHelper = $this->getInstance($container);
+        $entityManagerHelper = $this->getInstance($entityManager, new EntityManager($entityManager));
 
         $result = $entityManagerHelper->findAllIds(EntityStub::class, ['pk3']);
 
@@ -137,7 +77,6 @@ class EntityManagerHelperTest extends DoctrineTestCase
      */
     public function testIteratingIdentifiesOnlyHasFlushedEntities(): void
     {
-        $container = new Container();
         $entityManager = $this->getEntityManager();
 
         $entityManager->persist((new EntityStub())->setIdentifier('pk1'));
@@ -148,21 +87,7 @@ class EntityManagerHelperTest extends DoctrineTestCase
         // Do not flush this entity to prove only flushed data is relevant
         $entityManager->persist((new EntityStub())->setIdentifier('pk4'));
 
-        /**
-         * registry alias is used from Laravel-Doctrine to determine the actual Doctrine entity manager, as EoneoPay
-         * overloads the normal Doctrine entity manager interface binding
-         */
-        $container->singleton('registry', static function () use ($entityManager) {
-            return new RegistryStub($entityManager);
-        });
-        $container->singleton(
-            EntityManagerInterface::class,
-            static function () use ($entityManager): EntityManagerInterface {
-                return $entityManager;
-            }
-        );
-
-        $entityManagerHelper = $this->getInstance($container);
+        $entityManagerHelper = $this->getInstance($entityManager);
 
         /**
          * PhpStan & PhpStorm do not see generators as iterables
@@ -180,12 +105,18 @@ class EntityManagerHelperTest extends DoctrineTestCase
     /**
      * Get instantiated entity manager helper
      *
-     * @param \Illuminate\Container\Container|null $container
+     * @param \Doctrine\ORM\EntityManagerInterface $doctrineManager
+     * @param \EoneoPay\Externals\ORM\Interfaces\EntityManagerInterface|null $eoneoPayManager
      *
      * @return \LoyaltyCorp\Search\Helpers\EntityManagerHelper
      */
-    private function getInstance(?Container $container = null): EntityManagerHelper
-    {
-        return new EntityManagerHelper($container ?? new Container());
+    private function getInstance(
+        DoctrineEntityManagerInterface $doctrineManager,
+        ?EoneoPayEntityManagerInterface $eoneoPayManager = null
+    ): EntityManagerHelper {
+        return new EntityManagerHelper(
+            $doctrineManager,
+            $eoneoPayManager ?? new EoneoPayEntityManagerStub()
+        );
     }
 }

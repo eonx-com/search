@@ -3,11 +3,14 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Bridge\Laravel\Providers;
 
+use Doctrine\ORM\EntityManagerInterface as DoctrineEntityManagerInterface;
 use EoneoPay\Externals\Logger\Interfaces\LoggerInterface;
 use EoneoPay\Externals\Logger\Logger;
+use EoneoPay\Externals\ORM\Interfaces\EntityManagerInterface as EoneoPayEntityManagerInterface;
 use Illuminate\Contracts\Foundation\Application;
 use LoyaltyCorp\Search\Bridge\Laravel\Providers\SearchServiceProvider;
 use LoyaltyCorp\Search\Client;
+use LoyaltyCorp\Search\Exceptions\BindingResolutionException;
 use LoyaltyCorp\Search\Helpers\EntityManagerHelper;
 use LoyaltyCorp\Search\Helpers\RegisteredSearchHandler;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
@@ -16,8 +19,12 @@ use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Manager;
+use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\HandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NotSearchableStub;
+use Tests\LoyaltyCorp\Search\Stubs\Vendor\Doctrine\EntityManagerStub as DoctrineEntityManagerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Vendor\Doctrine\RegistryStub;
+use Tests\LoyaltyCorp\Search\Stubs\Vendor\EoneoPay\EntityManagerStub as EoneoPayEntityManagerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Illuminate\Contracts\Foundation\ApplicationStub;
 use Tests\LoyaltyCorp\Search\TestCase;
 
@@ -69,6 +76,26 @@ final class SearchServiceProviderTest extends TestCase
     }
 
     /**
+     * Ensure the Doctrine EntityManager resolution will throw our Exception if it cannot resolve
+     *
+     * @return void
+     *
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    public function testDoctrineEntityManagerResolutionThrowsException(): void
+    {
+        $this->expectException(BindingResolutionException::class);
+        $this->expectExceptionMessage('Could not resolve Entity Manager from application container');
+
+        $application = $this->createApplication();
+        $application->singleton('registry', ClientStub::class);
+
+        (new SearchServiceProvider($application))->register();
+
+        $application->make(EntityManagerHelperInterface::class);
+    }
+
+    /**
      * Test handlers are correctly filtered by service provider
      *
      * @return void
@@ -106,6 +133,18 @@ final class SearchServiceProviderTest extends TestCase
         $application->singleton(LoggerInterface::class, static function (): LoggerInterface {
             return new Logger();
         });
+
+        // Bind Doctrine EntityManager to container so app->make on interface works
+        $application->singleton(DoctrineEntityManagerInterface::class, static function (): DoctrineEntityManagerStub {
+            return new DoctrineEntityManagerStub();
+        });
+
+        // Bind eoneopay EntityManager to container so app->make on interface works
+        $application->singleton(EoneoPayEntityManagerInterface::class, static function (): EoneoPayEntityManagerStub {
+            return new EoneoPayEntityManagerStub();
+        });
+
+        $application->singleton('registry', RegistryStub::class);
 
         return $application;
     }

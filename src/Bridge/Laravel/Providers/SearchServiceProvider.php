@@ -3,12 +3,16 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Bridge\Laravel\Providers;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface as DoctrineEntityManagerInterface;
 use Elasticsearch\ClientBuilder;
 use EoneoPay\Externals\Logger\Interfaces\LoggerInterface;
+use EoneoPay\Externals\ORM\Interfaces\EntityManagerInterface as EoneoPayEntityManagerInterface;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 use LoyaltyCorp\Search\Client;
+use LoyaltyCorp\Search\Exceptions\BindingResolutionException;
 use LoyaltyCorp\Search\Helpers\EntityManagerHelper;
 use LoyaltyCorp\Search\Helpers\RegisteredSearchHandler;
 use LoyaltyCorp\Search\Indexer;
@@ -62,7 +66,22 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
         // Bind search manager
         $this->app->singleton(ManagerInterface::class, Manager::class);
         $this->app->singleton(EntityManagerHelperInterface::class, static function (Container $app) {
-            return new EntityManagerHelper($app);
+            /**
+             * @var \Doctrine\Common\Persistence\ManagerRegistry|mixed $endpoint
+             *
+             * @see https://youtrack.jetbrains.com/issue/WI-37859 - typehint required until PhpStorm recognises check
+             */
+            $registry = $app->get('registry');
+
+            if (($registry instanceof ManagerRegistry) === true &&
+                ($registry->getManager() instanceof DoctrineEntityManagerInterface) === true) {
+                return new EntityManagerHelper(
+                    $registry->getManager(),
+                    $app->make(EoneoPayEntityManagerInterface::class)
+                );
+            }
+
+            throw new BindingResolutionException('Could not resolve Entity Manager from application container');
         });
 
         $this->app->singleton(RegisteredSearchHandlerInterface::class, static function (Container $app) {

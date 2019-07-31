@@ -4,8 +4,9 @@ declare(strict_types=1);
 namespace LoyaltyCorp\Search\Helpers;
 
 use Doctrine\DBAL\DBALException;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityManagerInterface as DoctrineEntityManager;
 use Doctrine\ORM\ORMException;
+use EoneoPay\Externals\ORM\EntityManager;
 use Illuminate\Contracts\Container\Container as ContainerInterface;
 use LoyaltyCorp\Search\Exceptions\BindingResolutionException;
 use LoyaltyCorp\Search\Exceptions\DoctrineException;
@@ -26,6 +27,16 @@ class EntityManagerHelper implements EntityManagerHelperInterface
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @throws \EoneoPay\Externals\ORM\Exceptions\ORMException
+     */
+    public function findAllIds(string $class, array $ids): array
+    {
+        return (new EntityManager($this->getDoctrineEntityManager()))->findByIds($class, $ids);
     }
 
     /**
@@ -63,12 +74,12 @@ class EntityManagerHelper implements EntityManagerHelperInterface
      *
      * @throws \LoyaltyCorp\Search\Exceptions\BindingResolutionException
      */
-    private function getDoctrineEntityManager(): EntityManagerInterface
+    private function getDoctrineEntityManager(): DoctrineEntityManager
     {
         $registry = $this->container->get('registry');
 
         if (\method_exists($registry, 'getManager') &&
-            ($registry->getManager() instanceof EntityManagerInterface) === true) {
+            ($registry->getManager() instanceof DoctrineEntityManager) === true) {
             return $registry->getManager();
         }
 

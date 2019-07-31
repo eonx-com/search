@@ -177,6 +177,21 @@ final class Indexer implements IndexerInterface
     }
 
     /**
+     * Handle document updates from an array of entity identifiers
+     *
+     * @param string $class
+     * @param string[]|int[] $ids Array of primary keys for the given entity $class
+     *
+     * @return void
+     */
+    private function handleUpdatesFromPrimaryKeys(string $class, array $ids): void
+    {
+        $entities = $this->entityManagerHelper->findAllIds($class, $ids);
+
+        $this->manager->handleUpdates($class, $entities);
+    }
+
+    /**
      * Determine if provided index name starts with any of the specified values
      *
      * @param string $index
@@ -214,7 +229,7 @@ final class Indexer implements IndexerInterface
 
             // Create documents in batches to avoid overloading memory & request size
             if ($iteration > 0 && $iteration % ($batchSize ?? 100) === 0) {
-                $this->manager->handleUpdates($class, $documents);
+                $this->handleUpdatesFromPrimaryKeys($class, $documents);
                 $documents = [];
             }
 
@@ -223,10 +238,7 @@ final class Indexer implements IndexerInterface
 
         // Handle creation of remaining documents that were not batched because the loop finished
         if (\count($documents) > 0) {
-            $this->manager->handleUpdates(
-                $class,
-                $documents
-            );
+            $this->handleUpdatesFromPrimaryKeys($class, $documents);
         }
     }
 }

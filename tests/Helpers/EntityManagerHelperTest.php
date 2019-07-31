@@ -15,6 +15,8 @@ use Tests\LoyaltyCorp\Search\Stubs\Vendor\Doctrine\RegistryStub;
 
 /**
  * @covers \LoyaltyCorp\Search\Helpers\EntityManagerHelper
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Required for thorough testing
  */
 class EntityManagerHelperTest extends DoctrineTestCase
 {
@@ -90,6 +92,40 @@ class EntityManagerHelperTest extends DoctrineTestCase
 
         // Execute generator
         \iterator_to_array($result);
+    }
+
+    /**
+     * Ensure that finding by many Ids respects the existing entity manager
+     *
+     * @return void
+     *
+     * @throws \EoneoPay\Externals\ORM\Exceptions\ORMException
+     */
+    public function testFindingByManyIdsWrapper(): void
+    {
+        $container = new Container();
+        $entityManager = $this->getEntityManager();
+        $entity = (new EntityStub())->setIdentifier('pk3');
+        $entityManager->persist($entity);
+        $entityManager->flush();
+        /**
+         * registry alias is used from Laravel-Doctrine to determine the actual Doctrine entity manager, as EoneoPay
+         * overloads the normal Doctrine entity manager interface binding
+         */
+        $container->singleton('registry', static function () use ($entityManager) {
+            return new RegistryStub($entityManager);
+        });
+        $container->singleton(
+            EntityManagerInterface::class,
+            static function () use ($entityManager): EntityManagerInterface {
+                return $entityManager;
+            }
+        );
+        $entityManagerHelper = $this->getInstance($container);
+
+        $result = $entityManagerHelper->findAllIds(EntityStub::class, ['pk3']);
+
+        self::assertSame([$entity], $result);
     }
 
     /**

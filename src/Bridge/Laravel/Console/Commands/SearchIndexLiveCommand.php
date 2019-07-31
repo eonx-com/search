@@ -43,8 +43,24 @@ final class SearchIndexLiveCommand extends Command
      */
     public function handle(): void
     {
-        $results = $this->indexer->indexSwap($this->searchHandlers->getAll(), $this->hasOption('dry-run'));
+        $dryRun = $this->isDryRun();
+
+        if ($dryRun === true) {
+            $this->info(\sprintf('Dry run mode - No changes will be executed'));
+        }
+
+        $results = $this->indexer->indexSwap($this->searchHandlers->getAll(), $dryRun);
 
         $this->table(...$results->getTableData());
+    }
+
+    /**
+     * Determine if command is in dry-run mode
+     *
+     * @return bool
+     */
+    private function isDryRun(): bool
+    {
+        return (bool)$this->option('dry-run');
     }
 }

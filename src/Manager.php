@@ -136,6 +136,14 @@ final class Manager implements ManagerInterface
      */
     private function isHandled(HandlerInterface $handler, string $class): bool
     {
-        return \in_array($class, $handler->getHandledClasses(), true);
+        $implements = \class_implements($class);
+        $implements[] = $class;
+
+        $handles = $handler->getHandledClasses();
+        $intersect = \array_intersect($implements, $handles);
+
+        // If the supplied $class has any intersection of $implements, the handler
+        // handles this class.
+        return \count($intersect) > 0;
     }
 }

@@ -116,7 +116,10 @@ final class ManagerTest extends TestCase
      */
     public function testIsSearchableAsksHandler(): void
     {
-        $manager = new Manager(new RegisteredSearchHandlerStub([new HandlerStub()]), new Client(new ClientStub()));
+        $manager = new Manager(
+            new RegisteredSearchHandlerStub([new HandlerStub()]),
+            new Client(new ClientStub())
+        );
 
         self::assertTrue($manager->isSearchable(SearchableStub::class));
         self::assertFalse($manager->isSearchable(NotSearchableStub::class));

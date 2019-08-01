@@ -59,6 +59,7 @@ final class SearchIndexFillCommand extends Command
 
             $this->indexer->populate(
                 $searchHandler,
+                '_new',
                 \is_numeric($this->option('batchSize')) ? (int)$this->option('batchSize') : 20
             );
 

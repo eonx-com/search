@@ -37,11 +37,12 @@ interface ManagerInterface
      * based on those entities.
      *
      * @param string $class
+     * @param string $indexSuffix
      * @param object[] $objects
      *
      * @return void
      */
-    public function handleUpdates(string $class, array $objects): void;
+    public function handleUpdates(string $class, string $indexSuffix, array $objects): void;
 
     /**
      * Indicates if the class is used as part of the search

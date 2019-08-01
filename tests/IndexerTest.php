@@ -9,12 +9,17 @@ use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
+use Tests\LoyaltyCorp\Search\Stubs\Entities\EntityStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\EntityHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\HandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Helpers\EntityManagerHelperStub;
 use Tests\LoyaltyCorp\Search\Stubs\ManagerStub;
 
 /**
  * @covers \LoyaltyCorp\Search\Indexer
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Required for thorough testing
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods) Well tested code for all the cases.
  */
 class IndexerTest extends TestCase
 {
@@ -194,6 +199,27 @@ class IndexerTest extends TestCase
 
         // 2 calls to handleUpdate should be done, one within the batch loop, and one for the left over data
         self::assertSame(2, $manager->getUpdateCount());
+    }
+
+    /**
+     * Ensure objects are being passed through to the manager
+     *
+     * @return void
+     */
+    public function testPopulatePassesObjectsToManager(): void
+    {
+        $manager = new ManagerStub();
+        $entityManagerHelper = new EntityManagerHelperStub(2);
+        $indexer = $this->createInstance(null, $entityManagerHelper, $manager);
+        $expected = [new EntityStub(), new EntityStub()];
+        /**
+         * Despite these SearchableStub objects not being passed into the populate command
+         * the manager should have received it from the indexer as objects
+         */
+
+        $indexer->populate(new EntityHandlerStub(), 2);
+
+        self::assertEquals($expected, $manager->getUpdateObjects());
     }
 
     /**

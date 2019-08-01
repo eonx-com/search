@@ -18,6 +18,11 @@ class ManagerStub implements ManagerInterface
     private $updateCount = 0;
 
     /**
+     * @var mixed[]
+     */
+    private $updateObjects;
+
+    /**
      * {@inheritdoc}
      */
     public function getSearchMeta(object $object): array
@@ -35,6 +40,16 @@ class ManagerStub implements ManagerInterface
     }
 
     /**
+     * Getter for spying on the values passed into handleUpdates
+     *
+     * @return mixed[]
+     */
+    public function getUpdateObjects(): array
+    {
+        return $this->updateObjects;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function handleDeletes(array $ids): void
@@ -44,9 +59,10 @@ class ManagerStub implements ManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function handleUpdates(string $class, array $ids): void
+    public function handleUpdates(string $class, array $objects): void
     {
         $this->updateCount++;
+        $this->updateObjects = $objects;
     }
 
     /**

@@ -28,6 +28,18 @@ class EntityManagerHelperStub implements EntityManagerHelperInterface
     /**
      * {@inheritdoc}
      */
+    public function findAllIds(string $class, array $ids): array
+    {
+        return \class_exists($class) ? \array_fill(
+            0,
+            $this->numberOfIds,
+            new $class()
+        ) : [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function iterateAllIds(string $entityClass): iterable
     {
         // Generator for array values of 'abc-12*', where * equals iteration number based on $numberOfIds

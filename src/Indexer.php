@@ -165,12 +165,13 @@ final class Indexer implements IndexerInterface
     /**
      * {@inheritdoc}
      */
-    public function populate(HandlerInterface $searchHandler, ?int $batchSize = null): void
+    public function populate(HandlerInterface $searchHandler, string $indexSuffix, ?int $batchSize = null): void
     {
         // Populate index of search handler on a per-entity basis
         foreach ($searchHandler->getHandledClasses() as $handlerClass) {
             $this->populateIndex(
                 $handlerClass,
+                $indexSuffix,
                 $batchSize
             );
         }
@@ -180,15 +181,16 @@ final class Indexer implements IndexerInterface
      * Handle document updates from an array of entity identifiers
      *
      * @param string $class
+     * @param string $indexSuffix
      * @param string[]|int[] $ids Array of primary keys for the given entity $class
      *
      * @return void
      */
-    private function handleUpdatesFromPrimaryKeys(string $class, array $ids): void
+    private function handleUpdatesFromPrimaryKeys(string $class, string $indexSuffix, array $ids): void
     {
         $entities = $this->entityManagerHelper->findAllIds($class, $ids);
 
-        $this->manager->handleUpdates($class, $entities);
+        $this->manager->handleUpdates($class, $indexSuffix, $entities);
     }
 
     /**
@@ -214,11 +216,12 @@ final class Indexer implements IndexerInterface
      * Populate an index with all documents
      *
      * @param string $class
+     * @param string $indexSuffix
      * @param int|null $batchSize
      *
      * @return void
      */
-    private function populateIndex(string $class, ?int $batchSize = null): void
+    private function populateIndex(string $class, string $indexSuffix, ?int $batchSize = null): void
     {
         $documents = [];
         $iteration = 0;
@@ -229,7 +232,7 @@ final class Indexer implements IndexerInterface
 
             // Create documents in batches to avoid overloading memory & request size
             if ($iteration > 0 && $iteration % ($batchSize ?? 100) === 0) {
-                $this->handleUpdatesFromPrimaryKeys($class, $documents);
+                $this->handleUpdatesFromPrimaryKeys($class, $indexSuffix, $documents);
                 $documents = [];
             }
 
@@ -238,7 +241,7 @@ final class Indexer implements IndexerInterface
 
         // Handle creation of remaining documents that were not batched because the loop finished
         if (\count($documents) > 0) {
-            $this->handleUpdatesFromPrimaryKeys($class, $documents);
+            $this->handleUpdatesFromPrimaryKeys($class, $indexSuffix, $documents);
         }
     }
 }

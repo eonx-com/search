@@ -29,13 +29,29 @@ class SearchIndexFillCommandTest extends SearchIndexCommandTestCase
     public function testIndexerPopulateCalled(): void
     {
         $indexer = new IndexerStub();
-        $handlers = [new HandlerStub(), new OtherHandlerStub()];
+
+        $handlerStub = new HandlerStub();
+        $otherHandler = new OtherHandlerStub();
+        $handlers = [$handlerStub, $otherHandler];
         $command = $this->createInstance($indexer, new RegisteredSearchHandlerStub($handlers));
         $this->bootstrapCommand($command, null, null, ['batchSize']);
 
+        $expectedPopulated = [
+            [
+                'searchHandler' => $handlerStub,
+                'indexSuffix' => '_new',
+                'batchSize' => 20
+            ],
+            [
+                'searchHandler' => $otherHandler,
+                'indexSuffix' => '_new',
+                'batchSize' => 20
+            ]
+        ];
+
         $command->handle();
 
-        self::assertSame($handlers, $indexer->getPopulatedHandlers());
+        self::assertSame($expectedPopulated, $indexer->getPopulatedHandlers());
     }
 
     /**

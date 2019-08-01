@@ -70,11 +70,11 @@ final class ManagerTest extends TestCase
         $manager = new Manager($handlers, new Client($stub));
 
         // Test an unsupported class doesn't do anything
-        $manager->handleUpdates(NotSearchableStub::class, []);
+        $manager->handleUpdates(NotSearchableStub::class, '_new', []);
         self::assertNull($stub->getBulkParameters());
 
         // Test supported class only generates body for valid classes
-        $manager->handleUpdates(SearchableStub::class, [
+        $manager->handleUpdates(SearchableStub::class, '_new', [
             new NoDocumentBodyStub(),
             new NoSearchIdStub(),
             new SearchableStub()
@@ -82,8 +82,14 @@ final class ManagerTest extends TestCase
 
         self::assertSame(
             [
-                'body' =>
-                    [['index' => ['_index' => 'valid', '_type' => 'doc', '_id' => 'searchable']], ['search' => 'body']]
+                'body' => [
+                    ['index' => [
+                        '_index' => 'valid_new',
+                        '_type' => 'doc',
+                        '_id' => 'searchable'
+                    ]],
+                    ['search' => 'body']
+                ]
             ],
             $stub->getBulkParameters()
         );
@@ -102,7 +108,7 @@ final class ManagerTest extends TestCase
 
         // Tests whats going to happen when handleUpdates is called with objects that result
         // in no transformations
-        $manager->handleUpdates(SearchableStub::class, [
+        $manager->handleUpdates(SearchableStub::class, '', [
             new NoDocumentBodyStub()
         ]);
 

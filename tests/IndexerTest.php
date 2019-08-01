@@ -195,7 +195,7 @@ class IndexerTest extends TestCase
         $entityManagerHelper = new EntityManagerHelperStub(6);
         $indexer = $this->createInstance(null, $entityManagerHelper, $manager);
 
-        $indexer->populate(new HandlerStub(), 5);
+        $indexer->populate(new HandlerStub(), '', 5);
 
         // 2 calls to handleUpdate should be done, one within the batch loop, and one for the left over data
         self::assertSame(2, $manager->getUpdateCount());
@@ -211,13 +211,22 @@ class IndexerTest extends TestCase
         $manager = new ManagerStub();
         $entityManagerHelper = new EntityManagerHelperStub(2);
         $indexer = $this->createInstance(null, $entityManagerHelper, $manager);
-        $expected = [new EntityStub(), new EntityStub()];
+
+        $expected = [[
+            'class' => EntityStub::class,
+            'indexSuffix' => '_new',
+            'objects' => [
+                new EntityStub(),
+                new EntityStub()
+            ]
+        ]];
+
         /**
          * Despite these SearchableStub objects not being passed into the populate command
          * the manager should have received it from the indexer as objects
          */
 
-        $indexer->populate(new EntityHandlerStub(), 2);
+        $indexer->populate(new EntityHandlerStub(), '_new', 2);
 
         self::assertEquals($expected, $manager->getUpdateObjects());
     }

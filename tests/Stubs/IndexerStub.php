@@ -29,7 +29,7 @@ class IndexerStub implements IndexerInterface
     private $indicesSwapped = 0;
 
     /**
-     * @var \LoyaltyCorp\Search\Interfaces\HandlerInterface[]
+     * @var mixed[]
      */
     private $populatedHandlers = [];
 
@@ -82,9 +82,9 @@ class IndexerStub implements IndexerInterface
     }
 
     /**
-     * Determine if indexed has caled populate
+     * Determine if indexed has called populate
      *
-     * @return \LoyaltyCorp\Search\Interfaces\HandlerInterface[]
+     * @return mixed[]
      */
     public function getPopulatedHandlers(): array
     {
@@ -114,8 +114,8 @@ class IndexerStub implements IndexerInterface
     /**
      * {@inheritdoc}
      */
-    public function populate(HandlerInterface $searchHandler, ?int $batchSize = null): void
+    public function populate(HandlerInterface $searchHandler, string $indexSuffix, ?int $batchSize = null): void
     {
-        $this->populatedHandlers[] = $searchHandler;
+        $this->populatedHandlers[] = \compact('searchHandler', 'indexSuffix', 'batchSize');
     }
 }

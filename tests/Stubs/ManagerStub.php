@@ -59,10 +59,10 @@ class ManagerStub implements ManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function handleUpdates(string $class, array $objects): void
+    public function handleUpdates(string $class, string $indexSuffix, array $objects): void
     {
         $this->updateCount++;
-        $this->updateObjects = $objects;
+        $this->updateObjects[] = \compact('class', 'indexSuffix', 'objects');
     }
 
     /**

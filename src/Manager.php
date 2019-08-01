@@ -72,7 +72,7 @@ final class Manager implements ManagerInterface
     /**
      * @inheritdoc
      */
-    public function handleUpdates(string $class, array $objects): void
+    public function handleUpdates(string $class, string $indexSuffix, array $objects): void
     {
         foreach ($this->handlers->getAll() as $handler) {
             if ($this->isHandled($handler, $class) === false) {
@@ -108,7 +108,9 @@ final class Manager implements ManagerInterface
                 continue;
             }
 
-            $this->client->bulkUpdate($handler->getIndexName(), $transformed);
+            $index = \sprintf('%s%s', $handler->getIndexName(), $indexSuffix);
+
+            $this->client->bulkUpdate($index, $transformed);
         }
     }
 

@@ -47,6 +47,9 @@ class ClientStub extends Client
         }
 
         $this->bulk = $params;
+
+        // This must return an array to be compatible with base client
+        return [];
     }
 
     /**

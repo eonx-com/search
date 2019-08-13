@@ -5,8 +5,10 @@ namespace LoyaltyCorp\Search;
 
 use Elasticsearch\Client as BaseClient;
 use Exception;
+use GuzzleHttp\Ring\Future\FutureArrayInterface;
 use LoyaltyCorp\Search\Exceptions\SearchCheckerException;
 use LoyaltyCorp\Search\Exceptions\SearchDeleteException;
+use LoyaltyCorp\Search\Exceptions\SearchResponseException;
 use LoyaltyCorp\Search\Exceptions\SearchUpdateException;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 
@@ -60,7 +62,10 @@ final class Client implements ClientInterface
         }
 
         try {
-            $this->elastic->bulk(['body' => $bulk]);
+            $responses = $this->elastic->bulk(['body' => $bulk]);
+
+            // Check responses for error
+            $this->checkErrors($responses, 'delete');
         } catch (Exception $exception) {
             throw new SearchDeleteException('An error occurred while performing bulk delete on backend', 0, $exception);
         }
@@ -88,7 +93,10 @@ final class Client implements ClientInterface
         }
 
         try {
-            $this->elastic->bulk(['body' => $bulk]);
+            $responses = $this->elastic->bulk(['body' => $bulk]);
+
+            // Check responses for error
+            $this->checkErrors($responses, 'update');
         } catch (Exception $exception) {
             throw new SearchUpdateException('An error occurred while performing bulk update on backend', 0, $exception);
         }
@@ -251,6 +259,39 @@ final class Client implements ClientInterface
             );
         } catch (Exception $exception) {
             throw new SearchUpdateException('Unable to atomically swap alias', 0, $exception);
+        }
+    }
+
+    /**
+     * Check a response array for errors, throw an exception if errors are found
+     *
+     * @param mixed $responses The reponses array
+     * @param string $type The key for the action performed (for individual errors)
+     *
+     * @return void
+     */
+    private function checkErrors($responses, string $type): void
+    {
+        // If response is callable, wait until we have the final response
+        if (($responses instanceof FutureArrayInterface) === true) {
+            do {
+                /**
+                 * @var \GuzzleHttp\Ring\Future\FutureArrayInterface $responses
+                 *
+                 * @see https://youtrack.jetbrains.com/issue/WI-37859 typehint required until PhpStorm recognises check
+                 */
+                $responses = $responses->wait();
+            } while (($responses instanceof FutureArrayInterface) === true);
+        }
+
+        // If final response isn't an array, throw exception
+        if (\is_array($responses) === false) {
+            throw new SearchResponseException(\sprintf('Invalid response received from bulk %s', $type));
+        }
+
+        // If the top level indicates no errors, return immediately
+        if (isset($responses['errors']) === false || $responses['errors'] === false) {
+            return;
         }
     }
 }

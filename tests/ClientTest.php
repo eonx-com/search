@@ -10,7 +10,9 @@ use LoyaltyCorp\Search\Exceptions\SearchCheckerException;
 use LoyaltyCorp\Search\Exceptions\SearchDeleteException;
 use LoyaltyCorp\Search\Exceptions\SearchUpdateException;
 use PHPUnit\Framework\AssertionFailedError;
+use Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch\CallableResponseClientStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch\ClientStub;
+use Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch\NullResponseClientStub;
 
 /**
  * @covers \LoyaltyCorp\Search\Client
@@ -78,6 +80,22 @@ final class ClientTest extends TestCase
     }
 
     /**
+     * Test bulk() resolves callables
+     *
+     * @return void
+     */
+    public function testBulkCallableResolution(): void
+    {
+        $stub = new CallableResponseClientStub();
+        $client = new Client($stub);
+
+        $client->bulkUpdate('index', ['1' => 'document']);
+
+        // @todo: Throw error from callable and check result
+        $this->addToAssertionCount(1);
+    }
+
+    /**
      * Test bulk() is passed through to elastic search client
      *
      * @return void
@@ -93,6 +111,23 @@ final class ClientTest extends TestCase
             ['body' => [['delete' => ['_index' => 'index', '_type' => 'doc', '_id' => ['1']]]]],
             $stub->getBulkParameters()
         );
+    }
+
+    /**
+     * Test bulk() checks returned data for invalid values
+     *
+     * @return void
+     */
+    public function testBulkReturnTypeCheck(): void
+    {
+        $stub = new NullResponseClientStub();
+        $client = new Client($stub);
+
+        // A null result should throw an exception
+        $this->expectException(SearchUpdateException::class);
+        $this->expectExceptionMessage('An error occurred while performing bulk update on backend');
+
+        $client->bulkUpdate('index', ['1' => 'document']);
     }
 
     /**

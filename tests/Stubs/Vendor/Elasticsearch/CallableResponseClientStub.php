@@ -12,6 +12,23 @@ use React\Promise\Deferred;
 class CallableResponseClientStub extends ClientStub
 {
     /**
+     * @var mixed[]
+     */
+    private $errors;
+
+    /**
+     * Create deferred response stub
+     *
+     * @param mixed[] $errors Errors to return after resolution
+     */
+    public function __construct(?array $errors = null)
+    {
+        $this->errors = $errors ?? [];
+
+        parent::__construct(false);
+    }
+
+    /**
      * @noinspection PhpMissingParentCallCommonInspection Parent is intentionally ignored as per class comment
      *
      * @inheritdoc
@@ -23,8 +40,8 @@ class CallableResponseClientStub extends ClientStub
         /** @noinspection PhpMethodParametersCountMismatchInspection Constructor exists in trait */
         return new FutureArray(
             $outer->promise(),
-            static function () use ($outer): void {
-                $outer->resolve(['errors' => false]);
+            function () use ($outer): void {
+                $outer->resolve($this->errors);
             }
         );
     }

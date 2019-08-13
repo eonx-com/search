@@ -6,6 +6,7 @@ namespace Tests\LoyaltyCorp\Search;
 use Elasticsearch\ClientBuilder;
 use GuzzleHttp\Ring\Client\MockHandler;
 use LoyaltyCorp\Search\Client;
+use LoyaltyCorp\Search\Exceptions\BulkFailureException;
 use LoyaltyCorp\Search\Exceptions\SearchCheckerException;
 use LoyaltyCorp\Search\Exceptions\SearchDeleteException;
 use LoyaltyCorp\Search\Exceptions\SearchUpdateException;
@@ -91,7 +92,7 @@ final class ClientTest extends TestCase
 
         $client->bulkUpdate('index', ['1' => 'document']);
 
-        // @todo: Throw error from callable and check result
+        // If call was successful there should be no return/exception
         $this->addToAssertionCount(1);
     }
 
@@ -124,8 +125,8 @@ final class ClientTest extends TestCase
         $client = new Client($stub);
 
         // A null result should throw an exception
-        $this->expectException(SearchUpdateException::class);
-        $this->expectExceptionMessage('An error occurred while performing bulk update on backend');
+        $this->expectException(BulkFailureException::class);
+        $this->expectExceptionMessage('Invalid response received from bulk update');
 
         $client->bulkUpdate('index', ['1' => 'document']);
     }
@@ -197,6 +198,78 @@ final class ClientTest extends TestCase
 
         // @todo
         self::assertSame($expected, []);
+    }
+
+    /**
+     * Test bulk() resolves errors from responses
+     *
+     * @return void
+     */
+    public function testErrorResolutionWithErrors(): void
+    {
+        $stub = new CallableResponseClientStub([
+            'errors' => true,
+            'items' => [
+                [
+                    'create' => []
+                ],
+                [
+                    'update' => [
+                        'error' => [
+                            'index' => 'my_index',
+                            'index_uuid' => 'maU4iW15SmyoZadsmRiNWw',
+                            'reason' => '[my_index][1]: version conflict, document already exists',
+                            'shard' => 3,
+                            'type' => 'version_conflict_engine_exception'
+                        ]
+                    ]
+                ],
+                [
+                    'update' => []
+                ]
+            ]
+        ]);
+        $client = new Client($stub);
+
+        // Callable contains an error specifically for testing
+        $this->expectException(BulkFailureException::class);
+        $this->expectExceptionMessage('At least one record returned an error during bulk update');
+
+        $client->bulkUpdate('index', ['1' => 'document']);
+    }
+
+    /**
+     * Test bulk() ignores error context if no errors for type were found
+     *
+     * @return void
+     */
+    public function testErrorResolutionWithErrorsFromDifferentType(): void
+    {
+        $stub = new CallableResponseClientStub([
+            'errors' => true,
+            'items' => [
+                [
+                    'create' => [
+                        'error' => [
+                            'index' => 'my_index',
+                            'index_uuid' => 'maU4iW15SmyoZadsmRiNWw',
+                            'reason' => '[my_index][1]: version conflict, document already exists',
+                            'shard' => 3,
+                            'type' => 'version_conflict_engine_exception'
+                        ]
+                    ]
+                ],
+                [
+                    'update' => []
+                ]
+            ]
+        ]);
+        $client = new Client($stub);
+
+        $client->bulkUpdate('index', ['1' => 'document']);
+
+        // No exception should be thrown since the error is on create and we've called update
+        $this->addToAssertionCount(1);
     }
 
     /**

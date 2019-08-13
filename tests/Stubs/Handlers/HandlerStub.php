@@ -9,6 +9,33 @@ use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\SearchableStub;
 final class HandlerStub implements HandlerInterface
 {
     /**
+     * {@inheritdoc}
+     */
+    public static function getMappings(): array
+    {
+        return [
+            'doc' => [
+                'properties' => [
+                    'createdAt' => [
+                        'type' => 'date'
+                    ]
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSettings(): array
+    {
+        return [
+            'number_of_replicas' => 1,
+            'number_of_shards' => 1
+        ];
+    }
+
+    /**
      * @inheritdoc
      */
     public function getHandledClasses(): array

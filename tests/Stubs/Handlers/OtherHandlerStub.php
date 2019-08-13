@@ -9,6 +9,22 @@ use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\SearchableStub;
 final class OtherHandlerStub implements HandlerInterface
 {
     /**
+     * {@inheritdoc}
+     */
+    public static function getMappings(): array
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSettings(): array
+    {
+        return [];
+    }
+
+    /**
      * @inheritdoc
      */
     public function getHandledClasses(): array

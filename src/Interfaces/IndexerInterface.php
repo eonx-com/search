@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Interfaces;
 
+use DateTime;
 use LoyaltyCorp\Search\Indexer\IndexCleanResult;
 use LoyaltyCorp\Search\Indexer\IndexSwapResult;
 
@@ -22,10 +23,11 @@ interface IndexerInterface
      * Create a new index for the search handler
      *
      * @param \LoyaltyCorp\Search\Interfaces\HandlerInterface $searchHandler
+     * @param \DateTime|null $now
      *
      * @return void
      */
-    public function create(HandlerInterface $searchHandler): void;
+    public function create(HandlerInterface $searchHandler, ?DateTime $now = null): void;
 
     /**
      * Atomically swap the root alias for a search handler, with the latest index created

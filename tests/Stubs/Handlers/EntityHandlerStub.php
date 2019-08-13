@@ -11,6 +11,22 @@ class EntityHandlerStub implements HandlerInterface
     /**
      * {@inheritdoc}
      */
+    public static function getMappings(): array
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSettings(): array
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getHandledClasses(): array
     {
         return [EntityStub::class];

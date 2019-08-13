@@ -6,6 +6,20 @@ namespace LoyaltyCorp\Search\Interfaces;
 interface HandlerInterface
 {
     /**
+     * Returns Elasticsearch mappings for index creation.
+     *
+     * @return mixed[]
+     */
+    public static function getMappings(): array;
+
+    /**
+     * Returns Elasticsearch settings for index creation.
+     *
+     * @return mixed[]
+     */
+    public static function getSettings(): array;
+
+    /**
      * Get the class this search handler will support
      *
      * @return string[] Fully Qualified Class Names that implement the Search Handler interface

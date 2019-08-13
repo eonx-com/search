@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search;
 
+use DateTime as BaseDateTime;
 use EoneoPay\Utils\DateTime;
 use LoyaltyCorp\Search\Exceptions\AliasNotFoundException;
 use LoyaltyCorp\Search\Indexer\IndexCleanResult;
@@ -101,11 +102,12 @@ final class Indexer implements IndexerInterface
      *
      * @throws \EoneoPay\Utils\Exceptions\InvalidDateTimeStringException
      */
-    public function create(HandlerInterface $searchHandler): void
+    public function create(HandlerInterface $searchHandler, ?BaseDateTime $now = null): void
     {
         $index = $searchHandler->getIndexName();
 
-        $dateStamp = (new DateTime())->format('Ymdhis');
+        $now = $now ?? new DateTime();
+        $dateStamp = $now->format('Ymdhis');
 
         // Format new index name based on root search handler index name, and the current date
         $newIndex = \sprintf('%s_%s', $index, $dateStamp);
@@ -113,7 +115,11 @@ final class Indexer implements IndexerInterface
         // Alias to correlate the index with the 'latest' one (re)created
         $tempAlias = \sprintf('%s_new', $index);
 
-        $this->elasticClient->createIndex($newIndex);
+        $this->elasticClient->createIndex(
+            $newIndex,
+            $searchHandler::getMappings(),
+            $searchHandler::getSettings()
+        );
 
         // Remove _new alias if already exists index, before we re-use the temporary alias name
         if ($this->elasticClient->isAlias($tempAlias) === true) {

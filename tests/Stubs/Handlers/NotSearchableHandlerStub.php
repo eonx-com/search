@@ -12,6 +12,22 @@ use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NotSearchableStub;
 final class NotSearchableHandlerStub implements HandlerInterface
 {
     /**
+     * {@inheritdoc}
+     */
+    public static function getMappings(): array
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSettings(): array
+    {
+        return [];
+    }
+
+    /**
      * @inheritdoc
      */
     public function getHandledClasses(): array

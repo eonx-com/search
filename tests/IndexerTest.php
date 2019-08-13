@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search;
 
+use EoneoPay\Utils\DateTime;
 use LoyaltyCorp\Search\Exceptions\AliasNotFoundException;
 use LoyaltyCorp\Search\Indexer;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
@@ -35,9 +36,29 @@ class IndexerTest extends TestCase
         $elasticClient = new ClientStub();
         $indexer = $this->createInstance($elasticClient);
 
-        $indexer->create(new HandlerStub());
+        $expectedAlias = 'valid_new';
+        $expectedIndexCreate = [
+            'name' => 'valid_20190102030405',
+            'mappings' => [
+                'doc' => [
+                    'properties' => [
+                        'createdAt' => [
+                            'type' => 'date'
+                        ]
+                    ]
+                ]
+            ],
+            'settings' => [
+                'number_of_replicas' => 1,
+                'number_of_shards' => 1
+            ]
+        ];
 
-        self::assertSame(['valid_new'], $elasticClient->getCreatedAliases());
+        $now = new DateTime('2019-01-02T03:04:05');
+        $indexer->create(new HandlerStub(), $now);
+
+        self::assertSame([$expectedAlias], $elasticClient->getCreatedAliases());
+        self::assertSame([$expectedIndexCreate], $elasticClient->getCreatedIndices());
     }
 
     /**

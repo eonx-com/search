@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Stubs;
 
+use DateTime;
 use LoyaltyCorp\Search\Indexer\IndexCleanResult;
 use LoyaltyCorp\Search\Indexer\IndexSwapResult;
 use LoyaltyCorp\Search\Interfaces\HandlerInterface;
@@ -46,7 +47,7 @@ class IndexerStub implements IndexerInterface
     /**
      * {@inheritdoc}
      */
-    public function create(HandlerInterface $searchHandler): void
+    public function create(HandlerInterface $searchHandler, ?DateTime $now = null): void
     {
         $this->created[] = $searchHandler;
     }

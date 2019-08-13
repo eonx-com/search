@@ -102,7 +102,7 @@ class ClientStub implements ClientInterface
      */
     public function createIndex(string $name, ?array $mappings = null, ?array $settings = null): void
     {
-        $this->createdIndices[] = $name;
+        $this->createdIndices[] = \compact('name', 'mappings', 'settings');
     }
 
     /**

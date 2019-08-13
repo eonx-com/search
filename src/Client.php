@@ -5,6 +5,8 @@ namespace LoyaltyCorp\Search;
 
 use Elasticsearch\Client as BaseClient;
 use Exception;
+use GuzzleHttp\Ring\Future\FutureArrayInterface;
+use LoyaltyCorp\Search\Exceptions\BulkFailureException;
 use LoyaltyCorp\Search\Exceptions\SearchCheckerException;
 use LoyaltyCorp\Search\Exceptions\SearchDeleteException;
 use LoyaltyCorp\Search\Exceptions\SearchUpdateException;
@@ -30,6 +32,7 @@ final class Client implements ClientInterface
     /**
      * @inheritdoc
      *
+     * @throws \LoyaltyCorp\Search\Exceptions\BulkFailureException If there is at least one record with an error
      * @throws \LoyaltyCorp\Search\Exceptions\SearchDeleteException If backend client throws an exception via bulk()
      */
     public function bulkDelete(array $searchIds): void
@@ -60,15 +63,19 @@ final class Client implements ClientInterface
         }
 
         try {
-            $this->elastic->bulk(['body' => $bulk]);
+            $responses = $this->elastic->bulk(['body' => $bulk]);
         } catch (Exception $exception) {
             throw new SearchDeleteException('An error occurred while performing bulk delete on backend', 0, $exception);
         }
+
+        // Check responses for error
+        $this->checkBulkResponsesForErrors($responses, 'delete');
     }
 
     /**
      * @inheritdoc
      *
+     * @throws \LoyaltyCorp\Search\Exceptions\BulkFailureException If there is at least one record with an error
      * @throws \LoyaltyCorp\Search\Exceptions\SearchUpdateException If backend client throws an exception via bulk()
      */
     public function bulkUpdate(string $index, array $documents): void
@@ -88,10 +95,13 @@ final class Client implements ClientInterface
         }
 
         try {
-            $this->elastic->bulk(['body' => $bulk]);
+            $responses = $this->elastic->bulk(['body' => $bulk]);
         } catch (Exception $exception) {
             throw new SearchUpdateException('An error occurred while performing bulk update on backend', 0, $exception);
         }
+
+        // Check responses for error
+        $this->checkBulkResponsesForErrors($responses, 'update');
     }
 
     /**
@@ -119,10 +129,7 @@ final class Client implements ClientInterface
         try {
             $this->elastic->indices()->create([
                 'index' => $name,
-                'body' => \array_filter([
-                    'settings' => $settings,
-                    'mappings' => $mappings
-                ])
+                'body' => \array_filter(\compact('settings', 'mappings'))
             ]);
         } catch (Exception $exception) {
             throw new SearchUpdateException('Unable to create new index', 0, $exception);
@@ -252,5 +259,98 @@ final class Client implements ClientInterface
         } catch (Exception $exception) {
             throw new SearchUpdateException('Unable to atomically swap alias', 0, $exception);
         }
+    }
+
+    /**
+     * Check a bulk response array for errors, throw an exception if errors are found
+     *
+     * @param mixed $response The response from the bulk action
+     * @param string $type The bulk action that was performed
+     *
+     * @return void
+     *
+     * @throws \LoyaltyCorp\Search\Exceptions\BulkFailureException If there is at least one record with an error
+     */
+    private function checkBulkResponsesForErrors($response, string $type): void
+    {
+        $responses = $this->extractBulkResponseItems($response, $type);
+
+        $errors = [];
+
+        /**
+         * @var mixed[] $item
+         *
+         * @see https://youtrack.jetbrains.com/issue/WI-37859 typehint required until PhpStorm recognises === check
+         */
+        foreach ($responses as $item) {
+            // If item isn't the right type or it's not an error, skip
+            if (isset($item[$type]) === false ||
+                \is_array($item[$type]) === false ||
+                isset($item[$type]['error']) === false ||
+                $item[$type]['error'] === false) {
+                continue;
+            }
+
+            // Get error
+            $errors[] = $item[$type]['error'];
+        }
+
+        // If there are no errors, return
+        if (\count($errors) === 0) {
+            return;
+        }
+
+        // Throw bulk exception
+        throw new BulkFailureException(
+            $errors,
+            \sprintf('At least one record returned an error during bulk %s', $type)
+        );
+    }
+
+    /**
+     * Extract items from bulk response
+     *
+     * @param mixed $response The response from the bulk action
+     * @param string $type The bulk action that was performed
+     *
+     * @return mixed[]
+     */
+    private function extractBulkResponseItems($response, string $type): array
+    {
+        // If response is callable, wait until we have the final response
+        if (($response instanceof FutureArrayInterface) === true) {
+            $response = $this->unwrapPromise($response);
+        }
+
+        // If final response isn't an array, throw exception
+        if (\is_array($response) === false) {
+            throw new BulkFailureException([], \sprintf('Invalid response received from bulk %s', $type));
+        }
+
+        // If the top level indicates no errors or items, return nothing
+        if (isset($response['errors']) === false ||
+            $response['errors'] === false ||
+            isset($response['items']) === false ||
+            \is_array($response['items']) === false) {
+            return [];
+        }
+
+        return $response['items'];
+    }
+
+    /**
+     * Wait for a promise to resolve and unwrap the response
+     *
+     * @param \GuzzleHttp\Ring\Future\FutureArrayInterface $promise
+     *
+     * @return mixed
+     */
+    private function unwrapPromise(FutureArrayInterface $promise)
+    {
+        do {
+            $promise = $promise->wait();
+        } while (($promise instanceof FutureArrayInterface) === true);
+
+        return $promise;
     }
 }

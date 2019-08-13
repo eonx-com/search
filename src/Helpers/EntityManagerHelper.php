@@ -56,11 +56,11 @@ class EntityManagerHelper implements EntityManagerHelperInterface
             $iterableResult = $this->doctrineManager->createQuery(
                 \sprintf('SELECT e.%s FROM %s e', $primaryKeyField, $entityClass)
             )->iterate();
-        } catch (ORMException | DBALException $doctrineException) {
+        } /** @noinspection PhpRedundantCatchClauseInspection */ catch (ORMException | DBALException $exception) {
             throw new DoctrineException(
                 \sprintf('Unable to iterate all primary keys of entity \'%s\'', $entityClass),
                 0,
-                $doctrineException
+                $exception
             );
         }
         foreach ($iterableResult as $iteration => $row) {

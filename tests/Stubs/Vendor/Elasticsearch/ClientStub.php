@@ -35,7 +35,7 @@ class ClientStub extends Client
     }
 
     /**
-     * @noinspection PhpMissingParentCallCommonInspection Parent is intentionally ignored as per class comment
+     * @noinspection PhpMissingParentCallCommonInspection ReturnTypeCanBeDeclaredInspection
      *
      * @inheritdoc
      */
@@ -47,6 +47,9 @@ class ClientStub extends Client
         }
 
         $this->bulk = $params;
+
+        // This must return an array to be compatible with base client
+        return [];
     }
 
     /**

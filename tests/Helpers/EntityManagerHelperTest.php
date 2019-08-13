@@ -10,7 +10,7 @@ use LoyaltyCorp\Search\Exceptions\DoctrineException;
 use LoyaltyCorp\Search\Helpers\EntityManagerHelper;
 use Tests\LoyaltyCorp\Search\DoctrineTestCase;
 use Tests\LoyaltyCorp\Search\Stubs\Entities\EntityStub;
-use Tests\LoyaltyCorp\Search\Stubs\Vendor\EoneoPay\EntityManagerStub as EoneoPayEntityManagerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Vendor\EoneoPay\Externals\ORM\EntityManagerStub as EoneoPayEntityManagerStub;
 
 /**
  * @covers \LoyaltyCorp\Search\Helpers\EntityManagerHelper
@@ -52,8 +52,6 @@ class EntityManagerHelperTest extends DoctrineTestCase
      * Ensure that finding by many Ids respects the existing entity manager
      *
      * @return void
-     *
-     * @throws \EoneoPay\Externals\ORM\Exceptions\ORMException
      */
     public function testFindingByManyIdsWrapper(): void
     {

@@ -24,7 +24,7 @@ use Tests\LoyaltyCorp\Search\Stubs\Handlers\HandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NotSearchableStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Doctrine\EntityManagerStub as DoctrineEntityManagerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Doctrine\RegistryStub;
-use Tests\LoyaltyCorp\Search\Stubs\Vendor\EoneoPay\EntityManagerStub as EoneoPayEntityManagerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Vendor\EoneoPay\Externals\ORM\EntityManagerStub as EoneoPayEntityManagerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Illuminate\Contracts\Foundation\ApplicationStub;
 use Tests\LoyaltyCorp\Search\TestCase;
 

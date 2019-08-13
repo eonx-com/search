@@ -35,7 +35,7 @@ class ClientStub extends Client
     }
 
     /**
-     * @noinspection PhpMissingParentCallCommonInspection Parent is intentionally ignored as per class comment
+     * @noinspection PhpMissingParentCallCommonInspection ReturnTypeCanBeDeclaredInspection
      *
      * @inheritdoc
      */

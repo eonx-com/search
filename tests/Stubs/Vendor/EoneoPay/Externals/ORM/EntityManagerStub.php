@@ -1,12 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Tests\LoyaltyCorp\Search\Stubs\Vendor\EoneoPay;
+namespace Tests\LoyaltyCorp\Search\Stubs\Vendor\EoneoPay\Externals\ORM;
 
 use EoneoPay\Externals\ORM\Interfaces\EntityInterface;
 use EoneoPay\Externals\ORM\Interfaces\EntityManagerInterface;
 use EoneoPay\Externals\ORM\Interfaces\Query\FilterCollectionInterface;
 use EoneoPay\Externals\ORM\Interfaces\RepositoryInterface;
+use Tests\LoyaltyCorp\Search\Stubs\Vendor\EoneoPay\Externals\ORM\Query\FilterCollectionStub;
 
 class EntityManagerStub implements EntityManagerInterface
 {
@@ -30,6 +31,7 @@ class EntityManagerStub implements EntityManagerInterface
      */
     public function getFilters(): FilterCollectionInterface
     {
+        return new FilterCollectionStub();
     }
 
     /**
@@ -37,6 +39,7 @@ class EntityManagerStub implements EntityManagerInterface
      */
     public function getRepository(string $class): RepositoryInterface
     {
+        return new RepositoryStub();
     }
 
     /**

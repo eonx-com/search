@@ -20,6 +20,7 @@ class CallableResponseClientStub extends ClientStub
     {
         $outer = new Deferred();
 
+        /** @noinspection PhpMethodParametersCountMismatchInspection Constructor exists in trait */
         return new FutureArray(
             $outer->promise(),
             static function () use ($outer): void {

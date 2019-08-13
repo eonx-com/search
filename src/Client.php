@@ -127,10 +127,7 @@ final class Client implements ClientInterface
         try {
             $this->elastic->indices()->create([
                 'index' => $name,
-                'body' => \array_filter([
-                    'settings' => $settings,
-                    'mappings' => $mappings
-                ])
+                'body' => \array_filter(\compact('settings', 'mappings'))
             ]);
         } catch (Exception $exception) {
             throw new SearchUpdateException('Unable to create new index', 0, $exception);

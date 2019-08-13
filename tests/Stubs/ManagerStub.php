@@ -27,6 +27,7 @@ class ManagerStub implements ManagerInterface
      */
     public function getSearchMeta(object $object): array
     {
+        return [];
     }
 
     /**
@@ -70,5 +71,6 @@ class ManagerStub implements ManagerInterface
      */
     public function isSearchable(string $class): bool
     {
+        return true;
     }
 }

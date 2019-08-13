@@ -9,7 +9,7 @@ namespace Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch;
 class NullResponseClientStub extends ClientStub
 {
     /**
-     * @noinspection PhpMissingParentCallCommonInspection Parent is intentionally ignored as per class comment
+     * @noinspection PhpMissingParentCallCommonInspection ReturnTypeCanBeDeclaredInspection
      *
      * @inheritdoc
      */

@@ -21,6 +21,7 @@ use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Manager;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\HandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\NonDoctrineHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NotSearchableStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Doctrine\EntityManagerStub as DoctrineEntityManagerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Doctrine\RegistryStub;
@@ -107,14 +108,16 @@ final class SearchServiceProviderTest extends TestCase
         $application = $this->createApplication();
 
         // Tag handler for service provider
-        $application->tag([HandlerStub::class, NotSearchableStub::class], ['search_handler']);
+        $application->tag(
+            [HandlerStub::class, NotSearchableStub::class, NonDoctrineHandlerStub::class],
+            ['search_handler']
+        );
         // The only available handler is when using get should beHandlerStub
-        $expected = [new HandlerStub()];
+        $expected = [new HandlerStub(), new NonDoctrineHandlerStub()];
 
-        // Run registration
-        (new SearchServiceProvider($application))->register();
+        $serviceProvider = new SearchServiceProvider($application);
+        $serviceProvider->register();
 
-        // Load manager from interface
         $registeredHandlers = $application->make(RegisteredSearchHandlerInterface::class);
 
         self::assertEquals($expected, $registeredHandlers->getAll());

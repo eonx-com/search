@@ -3,35 +3,14 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Interfaces;
 
-interface HandlerInterface
+interface HandlerInterface extends SearchInterface
 {
-    /**
-     * Returns Elasticsearch mappings for index creation.
-     *
-     * @return mixed[]
-     */
-    public static function getMappings(): array;
-
-    /**
-     * Returns Elasticsearch settings for index creation.
-     *
-     * @return mixed[]
-     */
-    public static function getSettings(): array;
-
     /**
      * Get the class this search handler will support
      *
      * @return string[] Fully Qualified Class Names that implement the Search Handler interface
      */
     public function getHandledClasses(): array;
-
-    /**
-     * Returns the index name that this handler is responsible for.
-     *
-     * @return string
-     */
-    public function getIndexName(): string;
 
     /**
      * Returns the identifier used externally for the object.
@@ -41,14 +20,4 @@ interface HandlerInterface
      * @return mixed|null
      */
     public function getSearchId(object $object);
-
-    /**
-     * Transforms objects supplied into serialized search arrays that
-     * should be indexed.
-     *
-     * @param mixed $object
-     *
-     * @return mixed[][]
-     */
-    public function transform($object): ?array;
 }

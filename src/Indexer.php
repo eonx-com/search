@@ -180,15 +180,22 @@ final class Indexer implements IndexerInterface
              *
              * @see https://youtrack.jetbrains.com/issue/WI-37859 - typehint required until PhpStorm recognises === check
              */
-            // Populate index of search handler on a per-entity basis
-            foreach ($searchHandler->getHandledClasses() as $handlerClass) {
-                $this->populateIndex(
-                    $handlerClass,
-                    $indexSuffix,
-                    $batchSize
-                );
-            }
+            $this->populateDoctrineHandlerIndex($searchHandler, $indexSuffix, $batchSize);
+
+            return;
         }
+
+        // handle non doctrine indexes.
+        $documents = $searchHandler->transform();
+        if ($documents === null || \count($documents) === 0) {
+            // there were no transformed documents created by the handler, we have
+            // nothing to update
+            return;
+        }
+
+        $index = \sprintf('%s%s', $searchHandler->getIndexName(), $indexSuffix);
+
+        $this->elasticClient->bulkUpdate($index, $documents);
     }
 
     /**
@@ -224,6 +231,30 @@ final class Indexer implements IndexerInterface
         }
 
         return false;
+    }
+
+    /**
+     * Handle populating of a handler which is doctrine specific.
+     *
+     * @param \LoyaltyCorp\Search\Interfaces\HandlerInterface $searchHandler
+     * @param string $indexSuffix
+     * @param int|null $batchSize
+     *
+     * @return void
+     */
+    private function populateDoctrineHandlerIndex(
+        HandlerInterface $searchHandler,
+        string $indexSuffix,
+        ?int $batchSize = null
+    ): void {
+        // Populate index of search handler on a per-entity basis
+        foreach ($searchHandler->getHandledClasses() as $handlerClass) {
+            $this->populateIndex(
+                $handlerClass,
+                $indexSuffix,
+                $batchSize
+            );
+        }
     }
 
     /**

@@ -4,17 +4,21 @@ declare(strict_types=1);
 namespace Tests\LoyaltyCorp\Search;
 
 use EoneoPay\Utils\DateTime;
+use LoyaltyCorp\Search\Client;
 use LoyaltyCorp\Search\Exceptions\AliasNotFoundException;
 use LoyaltyCorp\Search\Indexer;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
+use LoyaltyCorp\Search\Interfaces\SearchInterface;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
 use Tests\LoyaltyCorp\Search\Stubs\Entities\EntityStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\EntityHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\HandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\NonDoctrineHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Helpers\EntityManagerHelperStub;
 use Tests\LoyaltyCorp\Search\Stubs\ManagerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch\ClientStub as ElasticClientStub;
 
 /**
  * @covers \LoyaltyCorp\Search\Indexer
@@ -24,6 +28,42 @@ use Tests\LoyaltyCorp\Search\Stubs\ManagerStub;
  */
 class IndexerTest extends TestCase
 {
+    /**
+     * Generate data to test non doctrine handler populates index.
+     *
+     * @return iterable
+     */
+    public function generatePopulateDataForNonDoctrineHandler(): iterable
+    {
+        $data = [
+            'handler' => new NonDoctrineHandlerStub([
+                'request-id' => ['key' => 'value']
+            ]),
+            'expected' => [
+                'body' => [
+                    [
+                        'index' => [
+                            '_index' => 'non-doctrine-index_new',
+                            '_type' => 'doc',
+                            '_id' => 'request-id'
+                        ]
+                    ],
+                    ['key' => 'value']
+                ]
+            ]
+        ];
+
+        yield 'Handler with data' => $data;
+
+        $data = [
+            'handler' => new NonDoctrineHandlerStub([]),
+            'expected' => null
+        ];
+
+        yield 'Handler with no data' => $data;
+    }
+
+
     /**
      * Ensure the search handler index + '_new' index gets created
      *
@@ -233,14 +273,16 @@ class IndexerTest extends TestCase
         $entityManagerHelper = new EntityManagerHelperStub(2);
         $indexer = $this->createInstance(null, $entityManagerHelper, $manager);
 
-        $expected = [[
-            'class' => EntityStub::class,
-            'indexSuffix' => '_new',
-            'objects' => [
-                new EntityStub(),
-                new EntityStub()
+        $expected = [
+            [
+                'class' => EntityStub::class,
+                'indexSuffix' => '_new',
+                'objects' => [
+                    new EntityStub(),
+                    new EntityStub()
+                ]
             ]
-        ]];
+        ];
 
         /**
          * Despite these SearchableStub objects not being passed into the populate command
@@ -250,6 +292,27 @@ class IndexerTest extends TestCase
         $indexer->populate(new EntityHandlerStub(), '_new', 2);
 
         self::assertEquals($expected, $manager->getUpdateObjects());
+    }
+
+    /**
+     * Test populating a non doctrine handler into search.
+     *
+     * @param \LoyaltyCorp\Search\Interfaces\SearchInterface $handler
+     * @param mixed[]|null $expected
+     *
+     * @return void
+     *
+     * @dataProvider generatePopulateDataForNonDoctrineHandler
+     */
+    public function testPopulatingNonDoctrineHandler(SearchInterface $handler, ?array $expected = null): void
+    {
+        $elasticClient = new ElasticClientStub();
+        $client = new Client($elasticClient);
+        $indexer = $this->createInstance($client);
+
+        $indexer->populate($handler, '_new');
+
+        self::assertSame($expected, $elasticClient->getBulkParameters());
     }
 
     /**

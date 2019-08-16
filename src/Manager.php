@@ -7,6 +7,7 @@ use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\HandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
+use LoyaltyCorp\Search\Interfaces\SearchInterface;
 
 final class Manager implements ManagerInterface
 {
@@ -131,13 +132,18 @@ final class Manager implements ManagerInterface
     /**
      * Determine if object is supported (handled) by the given search handler
      *
-     * @param \LoyaltyCorp\Search\Interfaces\HandlerInterface $handler
+     * @param \LoyaltyCorp\Search\Interfaces\SearchInterface $handler
      * @param string $class
      *
      * @return bool
      */
-    private function isHandled(HandlerInterface $handler, string $class): bool
+    private function isHandled(SearchInterface $handler, string $class): bool
     {
+        // this only handlers HandlerInterface.
+        if ($handler instanceof HandlerInterface === false) {
+            return false;
+        }
+
         $implements = \class_implements($class);
         $implements[] = $class;
 

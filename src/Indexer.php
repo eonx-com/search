@@ -13,6 +13,7 @@ use LoyaltyCorp\Search\Interfaces\HandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
+use LoyaltyCorp\Search\Interfaces\SearchInterface;
 
 final class Indexer implements IndexerInterface
 {
@@ -57,7 +58,7 @@ final class Indexer implements IndexerInterface
         $allIndices = [];
         $handlerIndices = [];
 
-        /** @var \LoyaltyCorp\Search\Interfaces\HandlerInterface[] $searchHandlers */
+        /** @var \LoyaltyCorp\Search\Interfaces\SearchInterface[] $searchHandlers */
         foreach ($searchHandlers as $searchHandler) {
             $handlerIndices[] = $searchHandler->getIndexName();
         }
@@ -102,7 +103,7 @@ final class Indexer implements IndexerInterface
      *
      * @throws \EoneoPay\Utils\Exceptions\InvalidDateTimeStringException
      */
-    public function create(HandlerInterface $searchHandler, ?BaseDateTime $now = null): void
+    public function create(SearchInterface $searchHandler, ?BaseDateTime $now = null): void
     {
         $index = $searchHandler->getIndexName();
 
@@ -171,15 +172,22 @@ final class Indexer implements IndexerInterface
     /**
      * {@inheritdoc}
      */
-    public function populate(HandlerInterface $searchHandler, string $indexSuffix, ?int $batchSize = null): void
+    public function populate(SearchInterface $searchHandler, string $indexSuffix, ?int $batchSize = null): void
     {
-        // Populate index of search handler on a per-entity basis
-        foreach ($searchHandler->getHandledClasses() as $handlerClass) {
-            $this->populateIndex(
-                $handlerClass,
-                $indexSuffix,
-                $batchSize
-            );
+        if ($searchHandler instanceof HandlerInterface === true) {
+            /**
+             * @var \LoyaltyCorp\Search\Interfaces\HandlerInterface $searchHandler
+             *
+             * @see https://youtrack.jetbrains.com/issue/WI-37859 - typehint required until PhpStorm recognises === check
+             */
+            // Populate index of search handler on a per-entity basis
+            foreach ($searchHandler->getHandledClasses() as $handlerClass) {
+                $this->populateIndex(
+                    $handlerClass,
+                    $indexSuffix,
+                    $batchSize
+                );
+            }
         }
     }
 

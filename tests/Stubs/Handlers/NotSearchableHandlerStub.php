@@ -54,7 +54,7 @@ final class NotSearchableHandlerStub implements HandlerInterface
     /**
      * @inheritdoc
      */
-    public function transform($object): ?array
+    public function transform($object = null): ?array
     {
         return \method_exists($object, 'toArray') ? $object->toArray() : null;
     }

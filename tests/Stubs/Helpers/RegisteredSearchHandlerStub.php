@@ -16,4 +16,13 @@ use LoyaltyCorp\Search\Helpers\RegisteredSearchHandler;
  */
 class RegisteredSearchHandlerStub extends RegisteredSearchHandler
 {
+    /**
+     * RegisteredSearchHandlerStub constructor.
+     *
+     * @param \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[]|null $searchHandlers
+     */
+    public function __construct(?array $searchHandlers = null)
+    {
+        parent::__construct($searchHandlers ?? []);
+    }
 }

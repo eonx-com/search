@@ -65,7 +65,7 @@ class RegisteredSearchHandlerTest extends TestCase
     /**
      * Create an instance of RegisteredSearchHandler
      *
-     * @param \LoyaltyCorp\Search\Interfaces\EntitySearchHandlerHandlerInterface[]|null $searchHandlers
+     * @param \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[]|null $searchHandlers
      *
      * @return \LoyaltyCorp\Search\Helpers\RegisteredSearchHandler
      */

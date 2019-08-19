@@ -31,7 +31,7 @@ class IndexerTest extends TestCase
     /**
      * Generate data to test non doctrine handler populates index.
      *
-     * @return iterable
+     * @return mixed[]
      */
     public function generatePopulateDataForNonDoctrineHandler(): iterable
     {

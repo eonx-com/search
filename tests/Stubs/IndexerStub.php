@@ -6,8 +6,8 @@ namespace Tests\LoyaltyCorp\Search\Stubs;
 use DateTime;
 use LoyaltyCorp\Search\Indexer\IndexCleanResult;
 use LoyaltyCorp\Search\Indexer\IndexSwapResult;
-use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
+use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 
 /**
  * @coversNothing

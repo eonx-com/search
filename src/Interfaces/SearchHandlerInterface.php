@@ -32,7 +32,7 @@ interface SearchHandlerInterface
      *
      * @param mixed|null $object
      *
-     * @return mixed[][]
+     * @return mixed[][]|null
      */
     public function transform($object = null): ?array;
 }

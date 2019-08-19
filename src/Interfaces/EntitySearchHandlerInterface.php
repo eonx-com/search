@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Interfaces;
 
-interface EntitySearchHandlerHandlerInterface extends SearchHandlerInterface
+interface EntitySearchHandlerInterface extends SearchHandlerInterface
 {
     /**
      * Get the class this search handler will support

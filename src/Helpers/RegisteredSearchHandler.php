@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Helpers;
 
-use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerHandlerInterface;
+use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 
 class RegisteredSearchHandler implements RegisteredSearchHandlerInterface
@@ -40,7 +40,7 @@ class RegisteredSearchHandler implements RegisteredSearchHandlerInterface
         $entityHandlers = [];
 
         foreach ($handlers as $handler) {
-            if ($handler instanceof EntitySearchHandlerHandlerInterface === true) {
+            if ($handler instanceof EntitySearchHandlerInterface === true) {
                 $entityHandlers[] = $handler;
             }
         }

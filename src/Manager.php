@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace LoyaltyCorp\Search;
 
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
-use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerHandlerInterface;
+use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 
@@ -131,12 +131,12 @@ final class Manager implements ManagerInterface
     /**
      * Determine if object is supported (handled) by the given search handler
      *
-     * @param \LoyaltyCorp\Search\Interfaces\EntitySearchHandlerHandlerInterface $handler
+     * @param \LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface $handler
      * @param string $class
      *
      * @return bool
      */
-    private function isHandled(EntitySearchHandlerHandlerInterface $handler, string $class): bool
+    private function isHandled(EntitySearchHandlerInterface $handler, string $class): bool
     {
         $implements = \class_implements($class);
         $implements[] = $class;

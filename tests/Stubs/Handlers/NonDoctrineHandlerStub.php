@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Stubs\Handlers;
 
-use LoyaltyCorp\Search\Interfaces\SearchInterface;
+use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 
 /**
  * @coversNothing
  */
-class NonDoctrineHandlerStub implements SearchInterface
+class NonDoctrineHandlerStub implements SearchHandlerInterface
 {
     /**
      * @var mixed[]

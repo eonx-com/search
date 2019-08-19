@@ -8,14 +8,14 @@ use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 class RegisteredSearchHandler implements RegisteredSearchHandlerInterface
 {
     /**
-     * @var \LoyaltyCorp\Search\Interfaces\SearchInterface[]
+     * @var \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[]
      */
     private $searchHandlers;
 
     /**
      * RegisteredSearchHandlers constructor.
      *
-     * @param \LoyaltyCorp\Search\Interfaces\SearchInterface[] $searchHandlers
+     * @param \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[] $searchHandlers
      */
     public function __construct(array $searchHandlers)
     {

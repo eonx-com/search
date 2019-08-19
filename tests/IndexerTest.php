@@ -10,7 +10,7 @@ use LoyaltyCorp\Search\Indexer;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
-use LoyaltyCorp\Search\Interfaces\SearchInterface;
+use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
 use Tests\LoyaltyCorp\Search\Stubs\Entities\EntityStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\EntityEntitySearchHandlerStub;
@@ -297,14 +297,14 @@ class IndexerTest extends TestCase
     /**
      * Test populating a non doctrine handler into search.
      *
-     * @param \LoyaltyCorp\Search\Interfaces\SearchInterface $handler
+     * @param \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface $handler
      * @param mixed[]|null $expected
      *
      * @return void
      *
      * @dataProvider generatePopulateDataForNonDoctrineHandler
      */
-    public function testPopulatingNonDoctrineHandler(SearchInterface $handler, ?array $expected = null): void
+    public function testPopulatingNonDoctrineHandler(SearchHandlerInterface $handler, ?array $expected = null): void
     {
         $elasticClient = new ElasticClientStub();
         $client = new Client($elasticClient);

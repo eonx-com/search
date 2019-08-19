@@ -9,11 +9,11 @@ use LoyaltyCorp\Search\Exceptions\AliasNotFoundException;
 use LoyaltyCorp\Search\Indexer\IndexCleanResult;
 use LoyaltyCorp\Search\Indexer\IndexSwapResult;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
-use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
+use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
-use LoyaltyCorp\Search\Interfaces\SearchInterface;
+use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 
 final class Indexer implements IndexerInterface
 {
@@ -58,7 +58,7 @@ final class Indexer implements IndexerInterface
         $allIndices = [];
         $handlerIndices = [];
 
-        /** @var \LoyaltyCorp\Search\Interfaces\SearchInterface[] $searchHandlers */
+        /** @var \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[] $searchHandlers */
         foreach ($searchHandlers as $searchHandler) {
             $handlerIndices[] = $searchHandler->getIndexName();
         }
@@ -103,7 +103,7 @@ final class Indexer implements IndexerInterface
      *
      * @throws \EoneoPay\Utils\Exceptions\InvalidDateTimeStringException
      */
-    public function create(SearchInterface $searchHandler, ?BaseDateTime $now = null): void
+    public function create(SearchHandlerInterface $searchHandler, ?BaseDateTime $now = null): void
     {
         $index = $searchHandler->getIndexName();
 
@@ -172,11 +172,11 @@ final class Indexer implements IndexerInterface
     /**
      * {@inheritdoc}
      */
-    public function populate(SearchInterface $searchHandler, string $indexSuffix, ?int $batchSize = null): void
+    public function populate(SearchHandlerInterface $searchHandler, string $indexSuffix, ?int $batchSize = null): void
     {
-        if ($searchHandler instanceof EntitySearchHandlerInterface === true) {
+        if ($searchHandler instanceof EntitySearchHandlerHandlerInterface === true) {
             /**
-             * @var \LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface $searchHandler
+             * @var \LoyaltyCorp\Search\Interfaces\EntitySearchHandlerHandlerInterface $searchHandler
              *
              * @see https://youtrack.jetbrains.com/issue/WI-37859 - typehint required until PhpStorm ===
              */
@@ -226,14 +226,14 @@ final class Indexer implements IndexerInterface
     /**
      * Handle populating of a handler which is doctrine specific.
      *
-     * @param \LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface $searchHandler
+     * @param \LoyaltyCorp\Search\Interfaces\EntitySearchHandlerHandlerInterface $searchHandler
      * @param string $indexSuffix
      * @param int|null $batchSize
      *
      * @return void
      */
     private function populateEntityHandlerIndex(
-        EntitySearchHandlerInterface $searchHandler,
+        EntitySearchHandlerHandlerInterface $searchHandler,
         string $indexSuffix,
         ?int $batchSize = null
     ): void {
@@ -250,12 +250,12 @@ final class Indexer implements IndexerInterface
     /**
      * Populate search handler index.
      *
-     * @param \LoyaltyCorp\Search\Interfaces\SearchInterface $searchHandler
+     * @param \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface $searchHandler
      * @param string $indexSuffix
      *
      * @return void
      */
-    private function populateHandlerIndex(SearchInterface $searchHandler, string $indexSuffix): void
+    private function populateHandlerIndex(SearchHandlerInterface $searchHandler, string $indexSuffix): void
     {
         // handle non doctrine indexes.
         $documents = $searchHandler->transform();

@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Stubs\Handlers;
 
-use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
+use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerHandlerInterface;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NotSearchableStub;
 
 /**
  * @coversNothing
  */
-final class NotSearchableEntitySearchHandlerStub implements EntitySearchHandlerInterface
+final class NotSearchableEntitySearchHandlerStub implements EntitySearchHandlerHandlerInterface
 {
     /**
      * {@inheritdoc}

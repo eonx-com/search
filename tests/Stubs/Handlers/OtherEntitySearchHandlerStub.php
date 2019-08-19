@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Stubs\Handlers;
 
-use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
+use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerHandlerInterface;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\SearchableStub;
 
-final class OtherEntitySearchHandlerStub implements EntitySearchHandlerInterface
+final class OtherEntitySearchHandlerStub implements EntitySearchHandlerHandlerInterface
 {
     /**
      * {@inheritdoc}

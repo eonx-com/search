@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Interfaces;
 
-interface SearchInterface
+interface SearchHandlerInterface
 {
     /**
      * Returns the index name that this handler is responsible for.

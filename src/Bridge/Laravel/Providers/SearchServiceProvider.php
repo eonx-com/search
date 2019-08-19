@@ -21,7 +21,7 @@ use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
-use LoyaltyCorp\Search\Interfaces\SearchInterface;
+use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 use LoyaltyCorp\Search\Manager;
 
 /**
@@ -87,8 +87,8 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
         $this->app->singleton(RegisteredSearchHandlerInterface::class, static function (Container $app) {
             $searchHandlers = [];
             foreach ($app->tagged('search_handler') as $searchHandler) {
-                /** @var \LoyaltyCorp\Search\Interfaces\SearchInterface|mixed $searchHandler */
-                if (($searchHandler instanceof SearchInterface) === false) {
+                /** @var \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface|mixed $searchHandler */
+                if (($searchHandler instanceof SearchHandlerInterface) === false) {
                     continue;
                 }
 

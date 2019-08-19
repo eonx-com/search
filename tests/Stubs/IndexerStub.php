@@ -6,7 +6,7 @@ namespace Tests\LoyaltyCorp\Search\Stubs;
 use DateTime;
 use LoyaltyCorp\Search\Indexer\IndexCleanResult;
 use LoyaltyCorp\Search\Indexer\IndexSwapResult;
-use LoyaltyCorp\Search\Interfaces\SearchInterface;
+use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 
 /**
@@ -15,12 +15,12 @@ use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 class IndexerStub implements IndexerInterface
 {
     /**
-     * @var \LoyaltyCorp\Search\Interfaces\SearchInterface[]
+     * @var \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[]
      */
     private $cleanedHandlers = [];
 
     /**
-     * @var \LoyaltyCorp\Search\Interfaces\SearchInterface[]
+     * @var \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[]
      */
     private $created = [];
 
@@ -47,7 +47,7 @@ class IndexerStub implements IndexerInterface
     /**
      * {@inheritdoc}
      */
-    public function create(SearchInterface $searchHandler, ?DateTime $now = null): void
+    public function create(SearchHandlerInterface $searchHandler, ?DateTime $now = null): void
     {
         $this->created[] = $searchHandler;
     }
@@ -55,7 +55,7 @@ class IndexerStub implements IndexerInterface
     /**
      * Spy method to look at cleaned handlers
      *
-     * @return \LoyaltyCorp\Search\Interfaces\SearchInterface[]
+     * @return \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[]
      */
     public function getCleanedSearchHandlers(): array
     {
@@ -65,7 +65,7 @@ class IndexerStub implements IndexerInterface
     /**
      * Get search handlers that have been passed for creation
      *
-     * @return \LoyaltyCorp\Search\Interfaces\SearchInterface[]
+     * @return \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[]
      */
     public function getCreatedHandlers(): array
     {
@@ -115,7 +115,7 @@ class IndexerStub implements IndexerInterface
     /**
      * {@inheritdoc}
      */
-    public function populate(SearchInterface $searchHandler, string $indexSuffix, ?int $batchSize = null): void
+    public function populate(SearchHandlerInterface $searchHandler, string $indexSuffix, ?int $batchSize = null): void
     {
         $this->populatedHandlers[] = \compact('searchHandler', 'indexSuffix', 'batchSize');
     }

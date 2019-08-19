@@ -9,7 +9,7 @@ use LoyaltyCorp\Search\Exceptions\AliasNotFoundException;
 use LoyaltyCorp\Search\Indexer\IndexCleanResult;
 use LoyaltyCorp\Search\Indexer\IndexSwapResult;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
-use LoyaltyCorp\Search\Interfaces\HandlerInterface;
+use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
@@ -174,11 +174,11 @@ final class Indexer implements IndexerInterface
      */
     public function populate(SearchInterface $searchHandler, string $indexSuffix, ?int $batchSize = null): void
     {
-        if ($searchHandler instanceof HandlerInterface === true) {
+        if ($searchHandler instanceof EntitySearchHandlerInterface === true) {
             /**
-             * @var \LoyaltyCorp\Search\Interfaces\HandlerInterface $searchHandler
+             * @var \LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface $searchHandler
              *
-             * @see https://youtrack.jetbrains.com/issue/WI-37859 - typehint required until PhpStorm recognises === check
+             * @see https://youtrack.jetbrains.com/issue/WI-37859 - typehint required until PhpStorm ===
              */
             $this->populateDoctrineHandlerIndex($searchHandler, $indexSuffix, $batchSize);
 
@@ -236,14 +236,14 @@ final class Indexer implements IndexerInterface
     /**
      * Handle populating of a handler which is doctrine specific.
      *
-     * @param \LoyaltyCorp\Search\Interfaces\HandlerInterface $searchHandler
+     * @param \LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface $searchHandler
      * @param string $indexSuffix
      * @param int|null $batchSize
      *
      * @return void
      */
     private function populateDoctrineHandlerIndex(
-        HandlerInterface $searchHandler,
+        EntitySearchHandlerInterface $searchHandler,
         string $indexSuffix,
         ?int $batchSize = null
     ): void {

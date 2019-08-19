@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace LoyaltyCorp\Search;
 
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
-use LoyaltyCorp\Search\Interfaces\HandlerInterface;
+use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Interfaces\SearchInterface;
@@ -140,7 +140,7 @@ final class Manager implements ManagerInterface
     private function isHandled(SearchInterface $handler, string $class): bool
     {
         // this only handlers HandlerInterface.
-        if ($handler instanceof HandlerInterface === false) {
+        if ($handler instanceof EntitySearchHandlerInterface === false) {
             return false;
         }
 

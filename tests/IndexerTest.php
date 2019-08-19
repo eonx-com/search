@@ -13,8 +13,8 @@ use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Interfaces\SearchInterface;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
 use Tests\LoyaltyCorp\Search\Stubs\Entities\EntityStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\EntityHandlerStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\HandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\EntityEntitySearchHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\EntitySearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NonDoctrineHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Helpers\EntityManagerHelperStub;
 use Tests\LoyaltyCorp\Search\Stubs\ManagerStub;
@@ -95,7 +95,7 @@ class IndexerTest extends TestCase
         ];
 
         $now = new DateTime('2019-01-02T03:04:05');
-        $indexer->create(new HandlerStub(), $now);
+        $indexer->create(new EntitySearchHandlerStub(), $now);
 
         self::assertSame([$expectedAlias], $elasticClient->getCreatedAliases());
         self::assertSame([$expectedIndexCreate], $elasticClient->getCreatedIndices());
@@ -117,7 +117,7 @@ class IndexerTest extends TestCase
         $indexer = $this->createInstance($client);
         $expected = ['valid-123'];
 
-        $indexer->clean([new HandlerStub()]);
+        $indexer->clean([new EntitySearchHandlerStub()]);
 
         self::assertSame($expected, $client->getDeletedIndices());
     }
@@ -138,7 +138,7 @@ class IndexerTest extends TestCase
         $indexer = $this->createInstance($client);
         $expected = ['valid-unused'];
 
-        $indexer->clean([new HandlerStub()]);
+        $indexer->clean([new EntitySearchHandlerStub()]);
 
         self::assertSame($expected, $client->getDeletedIndices());
     }
@@ -157,7 +157,7 @@ class IndexerTest extends TestCase
         );
         $indexer = $this->createInstance($client);
 
-        $indexer->clean([new HandlerStub()], true);
+        $indexer->clean([new EntitySearchHandlerStub()], true);
 
         self::assertSame([], $client->getDeletedIndices());
     }
@@ -178,7 +178,7 @@ class IndexerTest extends TestCase
         $indexer = $this->createInstance($elasticClient);
         $expected = ['valid_new'];
 
-        $indexer->indexSwap([new HandlerStub()]);
+        $indexer->indexSwap([new EntitySearchHandlerStub()]);
 
         self::assertSame($expected, $elasticClient->getDeletedAliases());
     }
@@ -198,7 +198,7 @@ class IndexerTest extends TestCase
         );
         $indexer = $this->createInstance($elasticClient);
 
-        $indexer->indexSwap([new HandlerStub()], true);
+        $indexer->indexSwap([new EntitySearchHandlerStub()], true);
 
         self::assertSame([], $elasticClient->getSwappedAliases());
         self::assertSame([], $elasticClient->getDeletedAliases());
@@ -221,7 +221,7 @@ class IndexerTest extends TestCase
         // alias => index
         $expected = ['valid' => 'valid_201900502'];
 
-        $indexer->indexSwap([new HandlerStub()]);
+        $indexer->indexSwap([new EntitySearchHandlerStub()]);
 
         self::assertSame($expected, $elasticClient->getSwappedAliases());
     }
@@ -239,7 +239,7 @@ class IndexerTest extends TestCase
         $elasticClient = new ClientStub(true);
         $indexer = $this->createInstance($elasticClient);
 
-        $indexer->indexSwap([new HandlerStub()]);
+        $indexer->indexSwap([new EntitySearchHandlerStub()]);
     }
 
     /**
@@ -256,7 +256,7 @@ class IndexerTest extends TestCase
         $entityManagerHelper = new EntityManagerHelperStub(6);
         $indexer = $this->createInstance(null, $entityManagerHelper, $manager);
 
-        $indexer->populate(new HandlerStub(), '', 5);
+        $indexer->populate(new EntitySearchHandlerStub(), '', 5);
 
         // 2 calls to handleUpdate should be done, one within the batch loop, and one for the left over data
         self::assertSame(2, $manager->getUpdateCount());
@@ -289,7 +289,7 @@ class IndexerTest extends TestCase
          * the manager should have received it from the indexer as objects
          */
 
-        $indexer->populate(new EntityHandlerStub(), '_new', 2);
+        $indexer->populate(new EntityEntitySearchHandlerStub(), '_new', 2);
 
         self::assertEquals($expected, $manager->getUpdateObjects());
     }
@@ -328,7 +328,7 @@ class IndexerTest extends TestCase
         $indexer = $this->createInstance($elasticClient);
         $expected = ['valid_new'];
 
-        $indexer->create(new HandlerStub());
+        $indexer->create(new EntitySearchHandlerStub());
 
         // No deleted aliases because *_new was not existing already
         self::assertSame($expected, $elasticClient->getDeletedAliases());

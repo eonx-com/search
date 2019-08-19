@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace Tests\LoyaltyCorp\Search\Helpers;
 
 use LoyaltyCorp\Search\Helpers\RegisteredSearchHandler;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\EntityHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\NonDoctrineHandlerStub;
 use Tests\LoyaltyCorp\Search\TestCase;
 
 /**
@@ -18,12 +20,46 @@ class RegisteredSearchHandlerTest extends TestCase
      */
     public function testGettingAllHandlersMatchesSuppliedHandlers(): void
     {
-        $handlers = [];
-        $registeredHandlers = $this->createInstance();
+        $entitySearchHandler = new EntityHandlerStub();
+        $otherSearchHandler = new NonDoctrineHandlerStub();
+
+        $expected = [
+            $entitySearchHandler,
+            $otherSearchHandler
+        ];
+
+        $registeredHandlers = $this->createInstance([
+            $entitySearchHandler,
+            $otherSearchHandler
+        ]);
 
         $result = $registeredHandlers->getAll();
 
-        self::assertSame($handlers, $result);
+        self::assertSame($expected, $result);
+    }
+
+    /**
+     * Test getting only entity search handlers.
+     *
+     * @return void
+     */
+    public function testGettingEntitySearchHandlersOnly(): void
+    {
+        $entitySearchHandler = new EntityHandlerStub();
+        $otherSearchHandler = new NonDoctrineHandlerStub();
+
+        $expected = [
+            $entitySearchHandler
+        ];
+
+        $registeredHandlers = $this->createInstance([
+            $entitySearchHandler,
+            $otherSearchHandler
+        ]);
+
+        $result = $registeredHandlers->getEntityHandlers();
+
+        self::assertSame($expected, $result);
     }
 
     /**

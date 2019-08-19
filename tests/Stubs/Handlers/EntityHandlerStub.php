@@ -6,7 +6,7 @@ namespace Tests\LoyaltyCorp\Search\Stubs\Handlers;
 use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerHandlerInterface;
 use Tests\LoyaltyCorp\Search\Stubs\Entities\EntityStub;
 
-class EntityEntitySearchHandlerStub implements EntitySearchHandlerHandlerInterface
+class EntityHandlerStub implements EntitySearchHandlerHandlerInterface
 {
     /**
      * {@inheritdoc}

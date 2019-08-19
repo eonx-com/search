@@ -7,7 +7,6 @@ use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
-use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 
 final class Manager implements ManagerInterface
 {
@@ -42,7 +41,7 @@ final class Manager implements ManagerInterface
 
         $ids = [];
 
-        foreach ($this->handlers->getAll() as $handler) {
+        foreach ($this->handlers->getEntityHandlers() as $handler) {
             if ($this->isHandled($handler, $class) === false) {
                 continue;
             }
@@ -75,7 +74,7 @@ final class Manager implements ManagerInterface
      */
     public function handleUpdates(string $class, string $indexSuffix, array $objects): void
     {
-        foreach ($this->handlers->getAll() as $handler) {
+        foreach ($this->handlers->getEntityHandlers() as $handler) {
             if ($this->isHandled($handler, $class) === false) {
                 continue;
             }
@@ -120,7 +119,7 @@ final class Manager implements ManagerInterface
      */
     public function isSearchable(string $class): bool
     {
-        foreach ($this->handlers->getAll() as $handler) {
+        foreach ($this->handlers->getEntityHandlers() as $handler) {
             if ($this->isHandled($handler, $class) === true) {
                 return true;
             }
@@ -132,18 +131,13 @@ final class Manager implements ManagerInterface
     /**
      * Determine if object is supported (handled) by the given search handler
      *
-     * @param \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface $handler
+     * @param \LoyaltyCorp\Search\Interfaces\EntitySearchHandlerHandlerInterface $handler
      * @param string $class
      *
      * @return bool
      */
-    private function isHandled(SearchHandlerInterface $handler, string $class): bool
+    private function isHandled(EntitySearchHandlerHandlerInterface $handler, string $class): bool
     {
-        // this only handlers HandlerInterface.
-        if ($handler instanceof EntitySearchHandlerHandlerInterface === false) {
-            return false;
-        }
-
         $implements = \class_implements($class);
         $implements[] = $class;
 

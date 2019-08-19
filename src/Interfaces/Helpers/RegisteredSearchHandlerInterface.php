@@ -11,4 +11,11 @@ interface RegisteredSearchHandlerInterface
      * @return \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[]
      */
     public function getAll(): array;
+
+    /**
+     * Get entity search handlers that have been registered in the container.
+     *
+     * @return \LoyaltyCorp\Search\Interfaces\EntitySearchHandlerHandlerInterface[]
+     */
+    public function getEntityHandlers(): array;
 }

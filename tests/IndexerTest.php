@@ -13,7 +13,7 @@ use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
 use Tests\LoyaltyCorp\Search\Stubs\Entities\EntityStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\EntityEntitySearchHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\EntityHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\EntitySearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NonDoctrineHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Helpers\EntityManagerHelperStub;
@@ -289,7 +289,7 @@ class IndexerTest extends TestCase
          * the manager should have received it from the indexer as objects
          */
 
-        $indexer->populate(new EntityEntitySearchHandlerStub(), '_new', 2);
+        $indexer->populate(new EntityHandlerStub(), '_new', 2);
 
         self::assertEquals($expected, $manager->getUpdateObjects());
     }

@@ -185,17 +185,7 @@ final class Indexer implements IndexerInterface
             return;
         }
 
-        // handle non doctrine indexes.
-        $documents = $searchHandler->transform();
-        if ($documents === null || \count($documents) === 0) {
-            // there were no transformed documents created by the handler, we have
-            // nothing to update
-            return;
-        }
-
-        $index = \sprintf('%s%s', $searchHandler->getIndexName(), $indexSuffix);
-
-        $this->elasticClient->bulkUpdate($index, $documents);
+        $this->populateHandlerIndex($searchHandler, $indexSuffix);
     }
 
     /**
@@ -255,6 +245,29 @@ final class Indexer implements IndexerInterface
                 $batchSize
             );
         }
+    }
+
+    /**
+     * Populate search handler index.
+     *
+     * @param \LoyaltyCorp\Search\Interfaces\SearchInterface $searchHandler
+     * @param string $indexSuffix
+     *
+     * @return void
+     */
+    private function populateHandlerIndex(SearchInterface $searchHandler, string $indexSuffix): void
+    {
+        // handle non doctrine indexes.
+        $documents = $searchHandler->transform();
+        if ($documents === null || \count($documents) === 0) {
+            // there were no transformed documents created by the handler, we have
+            // nothing to update
+            return;
+        }
+
+        $index = \sprintf('%s%s', $searchHandler->getIndexName(), $indexSuffix);
+
+        $this->elasticClient->bulkUpdate($index, $documents);
     }
 
     /**

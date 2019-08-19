@@ -180,7 +180,7 @@ final class Indexer implements IndexerInterface
              *
              * @see https://youtrack.jetbrains.com/issue/WI-37859 - typehint required until PhpStorm ===
              */
-            $this->populateDoctrineHandlerIndex($searchHandler, $indexSuffix, $batchSize);
+            $this->populateEntityHandlerIndex($searchHandler, $indexSuffix, $batchSize);
 
             return;
         }
@@ -242,7 +242,7 @@ final class Indexer implements IndexerInterface
      *
      * @return void
      */
-    private function populateDoctrineHandlerIndex(
+    private function populateEntityHandlerIndex(
         EntitySearchHandlerInterface $searchHandler,
         string $indexSuffix,
         ?int $batchSize = null

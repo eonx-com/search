@@ -20,4 +20,14 @@ interface EntitySearchHandlerInterface extends SearchHandlerInterface
      * @return mixed|null
      */
     public function getSearchId(object $object);
+
+    /**
+     * Transforms objects supplied into serialized search arrays that
+     * should be indexed.
+     *
+     * @param mixed $object
+     *
+     * @return mixed[][]|null
+     */
+    public function transform($object): ?array;
 }

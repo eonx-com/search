@@ -25,14 +25,4 @@ interface SearchHandlerInterface
      * @return mixed[]
      */
     public static function getSettings(): array;
-
-    /**
-     * Transforms objects supplied into serialized search arrays that
-     * should be indexed.
-     *
-     * @param mixed|null $object
-     *
-     * @return mixed[][]|null
-     */
-    public function transform($object = null): ?array;
 }

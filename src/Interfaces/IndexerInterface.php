@@ -42,11 +42,11 @@ interface IndexerInterface
     /**
      * Populate a search handler with relevant documents
      *
-     * @param \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface $searchHandler
+     * @param \LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface $searchHandler
      * @param string $indexSuffix
      * @param int|null $batchSize
      *
      * @return void
      */
-    public function populate(SearchHandlerInterface $searchHandler, string $indexSuffix, ?int $batchSize = null): void;
+    public function populate(EntitySearchHandlerInterface $searchHandler, string $indexSuffix, ?int $batchSize = null): void;
 }

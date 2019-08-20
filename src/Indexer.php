@@ -172,20 +172,19 @@ final class Indexer implements IndexerInterface
     /**
      * {@inheritdoc}
      */
-    public function populate(SearchHandlerInterface $searchHandler, string $indexSuffix, ?int $batchSize = null): void
-    {
-        if ($searchHandler instanceof EntitySearchHandlerInterface === true) {
-            /**
-             * @var \LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface $searchHandler
-             *
-             * @see https://youtrack.jetbrains.com/issue/WI-37859 - typehint required until PhpStorm ===
-             */
-            $this->populateEntityHandlerIndex($searchHandler, $indexSuffix, $batchSize);
-
-            return;
+    public function populate(
+        EntitySearchHandlerInterface $searchHandler,
+        string $indexSuffix,
+        ?int $batchSize = null
+    ): void {
+        // Populate index of search handler on a per-entity basis
+        foreach ($searchHandler->getHandledClasses() as $handlerClass) {
+            $this->populateIndex(
+                $handlerClass,
+                $indexSuffix,
+                $batchSize
+            );
         }
-
-        $this->populateHandlerIndex($searchHandler, $indexSuffix);
     }
 
     /**
@@ -221,53 +220,6 @@ final class Indexer implements IndexerInterface
         }
 
         return false;
-    }
-
-    /**
-     * Handle populating of a handler which is doctrine specific.
-     *
-     * @param \LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface $searchHandler
-     * @param string $indexSuffix
-     * @param int|null $batchSize
-     *
-     * @return void
-     */
-    private function populateEntityHandlerIndex(
-        EntitySearchHandlerInterface $searchHandler,
-        string $indexSuffix,
-        ?int $batchSize = null
-    ): void {
-        // Populate index of search handler on a per-entity basis
-        foreach ($searchHandler->getHandledClasses() as $handlerClass) {
-            $this->populateIndex(
-                $handlerClass,
-                $indexSuffix,
-                $batchSize
-            );
-        }
-    }
-
-    /**
-     * Populate search handler index.
-     *
-     * @param \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface $searchHandler
-     * @param string $indexSuffix
-     *
-     * @return void
-     */
-    private function populateHandlerIndex(SearchHandlerInterface $searchHandler, string $indexSuffix): void
-    {
-        // handle non doctrine indexes.
-        $documents = $searchHandler->transform();
-        if ($documents === null || \count($documents) === 0) {
-            // there were no transformed documents created by the handler, we have
-            // nothing to update
-            return;
-        }
-
-        $index = \sprintf('%s%s', $searchHandler->getIndexName(), $indexSuffix);
-
-        $this->elasticClient->bulkUpdate($index, $documents);
     }
 
     /**

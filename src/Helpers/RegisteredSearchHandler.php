@@ -36,10 +36,9 @@ class RegisteredSearchHandler implements RegisteredSearchHandlerInterface
      */
     public function getEntityHandlers(): array
     {
-        $handlers = $this->searchHandlers;
         $entityHandlers = [];
 
-        foreach ($handlers as $handler) {
+        foreach ($this->searchHandlers as $handler) {
             if ($handler instanceof EntitySearchHandlerInterface === true) {
                 $entityHandlers[] = $handler;
             }

@@ -48,5 +48,9 @@ interface IndexerInterface
      *
      * @return void
      */
-    public function populate(EntitySearchHandlerInterface $searchHandler, string $indexSuffix, ?int $batchSize = null): void;
+    public function populate(
+        EntitySearchHandlerInterface $searchHandler,
+        string $indexSuffix,
+        ?int $batchSize = null
+    ): void;
 }

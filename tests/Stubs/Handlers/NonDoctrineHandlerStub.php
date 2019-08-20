@@ -48,12 +48,4 @@ class NonDoctrineHandlerStub implements SearchHandlerInterface
     {
         return 'non-doctrine-index';
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function transform($object = null): ?array
-    {
-        return $this->transformed;
-    }
 }

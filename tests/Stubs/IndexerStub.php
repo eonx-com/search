@@ -116,8 +116,11 @@ class IndexerStub implements IndexerInterface
     /**
      * {@inheritdoc}
      */
-    public function populate(EntitySearchHandlerInterface $searchHandler, string $indexSuffix, ?int $batchSize = null): void
-    {
+    public function populate(
+        EntitySearchHandlerInterface $searchHandler,
+        string $indexSuffix,
+        ?int $batchSize = null
+    ): void {
         $this->populatedHandlers[] = \compact('searchHandler', 'indexSuffix', 'batchSize');
     }
 }

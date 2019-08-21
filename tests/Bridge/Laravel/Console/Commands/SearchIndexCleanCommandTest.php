@@ -6,8 +6,8 @@ namespace Tests\LoyaltyCorp\Search\Bridge\Laravel\Console\Commands;
 use LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexCleanCommand;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\HandlerStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\OtherHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\EntitySearchHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\OtherEntitySearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\IndexerStub;
 use Tests\LoyaltyCorp\Search\TestCases\SearchIndexCommandTestCase;
@@ -29,7 +29,7 @@ class SearchIndexCleanCommandTest extends SearchIndexCommandTestCase
     public function testIndexerHandlesAllTaggedSearchHandlers(): void
     {
         $indexer = new IndexerStub();
-        $handlers = [new HandlerStub(), new OtherHandlerStub()];
+        $handlers = [new EntitySearchHandlerStub(), new OtherEntitySearchHandlerStub()];
         // Two search handlers registered should result in 2 indices passed to clean method
         $command = $this->createInstance($indexer, new RegisteredSearchHandlerStub($handlers));
         $this->bootstrapCommand($command);

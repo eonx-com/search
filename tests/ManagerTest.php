@@ -5,8 +5,8 @@ namespace Tests\LoyaltyCorp\Search;
 
 use LoyaltyCorp\Search\Client;
 use LoyaltyCorp\Search\Manager;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\HandlerStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\NotSearchableHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\EntitySearchHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\NotSearchableEntitySearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NoDocumentBodyStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NoSearchIdStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NotSearchableStub;
@@ -26,7 +26,7 @@ final class ManagerTest extends TestCase
      */
     public function testGetSearchMetaFunctionality(): void
     {
-        $handlers = new RegisteredSearchHandlerStub([new HandlerStub()]);
+        $handlers = new RegisteredSearchHandlerStub([new EntitySearchHandlerStub()]);
         $manager = new Manager($handlers, new Client(new ClientStub()));
 
         // Test against a searchable object
@@ -47,7 +47,7 @@ final class ManagerTest extends TestCase
     public function testHandleDeletesFunctionality(): void
     {
         $stub = new ClientStub();
-        $handlers = new RegisteredSearchHandlerStub([new HandlerStub()]);
+        $handlers = new RegisteredSearchHandlerStub([new EntitySearchHandlerStub()]);
         $manager = new Manager($handlers, new Client($stub));
 
         // Test method passes through to elasticsearch
@@ -66,7 +66,7 @@ final class ManagerTest extends TestCase
     public function testHandleUpdatesFunctionality(): void
     {
         $stub = new ClientStub();
-        $handlers = new RegisteredSearchHandlerStub([new HandlerStub()]);
+        $handlers = new RegisteredSearchHandlerStub([new EntitySearchHandlerStub()]);
         $manager = new Manager($handlers, new Client($stub));
 
         // Test an unsupported class doesn't do anything
@@ -103,7 +103,7 @@ final class ManagerTest extends TestCase
     public function testHandleUpdatesWhenNoTransformationsOccur(): void
     {
         $stub = new ClientStub();
-        $handlers = new RegisteredSearchHandlerStub([new HandlerStub()]);
+        $handlers = new RegisteredSearchHandlerStub([new EntitySearchHandlerStub()]);
         $manager = new Manager($handlers, new Client($stub));
 
         // Tests whats going to happen when handleUpdates is called with objects that result
@@ -123,7 +123,7 @@ final class ManagerTest extends TestCase
     public function testIsSearchableAsksHandler(): void
     {
         $manager = new Manager(
-            new RegisteredSearchHandlerStub([new HandlerStub()]),
+            new RegisteredSearchHandlerStub([new EntitySearchHandlerStub()]),
             new Client(new ClientStub())
         );
 
@@ -138,7 +138,7 @@ final class ManagerTest extends TestCase
      */
     public function testSearchMetaReturnsNothingWhenSearchIdNulled(): void
     {
-        $handlers = new RegisteredSearchHandlerStub([new NotSearchableHandlerStub()]);
+        $handlers = new RegisteredSearchHandlerStub([new NotSearchableEntitySearchHandlerStub()]);
         $manager = new Manager(
             $handlers,
             new Client(new ClientStub())

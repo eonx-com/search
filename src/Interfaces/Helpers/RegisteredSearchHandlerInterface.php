@@ -8,7 +8,14 @@ interface RegisteredSearchHandlerInterface
     /**
      * Get all search handlers that have been registered in the container
      *
-     * @return \LoyaltyCorp\Search\Interfaces\HandlerInterface[]
+     * @return \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[]
      */
     public function getAll(): array;
+
+    /**
+     * Get entity search handlers that have been registered in the container.
+     *
+     * @return \LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface[]
+     */
+    public function getEntityHandlers(): array;
 }

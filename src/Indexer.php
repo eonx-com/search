@@ -9,10 +9,11 @@ use LoyaltyCorp\Search\Exceptions\AliasNotFoundException;
 use LoyaltyCorp\Search\Indexer\IndexCleanResult;
 use LoyaltyCorp\Search\Indexer\IndexSwapResult;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
-use LoyaltyCorp\Search\Interfaces\HandlerInterface;
+use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
+use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 
 final class Indexer implements IndexerInterface
 {
@@ -57,7 +58,7 @@ final class Indexer implements IndexerInterface
         $allIndices = [];
         $handlerIndices = [];
 
-        /** @var \LoyaltyCorp\Search\Interfaces\HandlerInterface[] $searchHandlers */
+        /** @var \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[] $searchHandlers */
         foreach ($searchHandlers as $searchHandler) {
             $handlerIndices[] = $searchHandler->getIndexName();
         }
@@ -102,7 +103,7 @@ final class Indexer implements IndexerInterface
      *
      * @throws \EoneoPay\Utils\Exceptions\InvalidDateTimeStringException
      */
-    public function create(HandlerInterface $searchHandler, ?BaseDateTime $now = null): void
+    public function create(SearchHandlerInterface $searchHandler, ?BaseDateTime $now = null): void
     {
         $index = $searchHandler->getIndexName();
 
@@ -171,8 +172,11 @@ final class Indexer implements IndexerInterface
     /**
      * {@inheritdoc}
      */
-    public function populate(HandlerInterface $searchHandler, string $indexSuffix, ?int $batchSize = null): void
-    {
+    public function populate(
+        EntitySearchHandlerInterface $searchHandler,
+        string $indexSuffix,
+        ?int $batchSize = null
+    ): void {
         // Populate index of search handler on a per-entity basis
         foreach ($searchHandler->getHandledClasses() as $handlerClass) {
             $this->populateIndex(

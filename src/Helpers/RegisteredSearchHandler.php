@@ -3,19 +3,20 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Helpers;
 
+use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 
 class RegisteredSearchHandler implements RegisteredSearchHandlerInterface
 {
     /**
-     * @var \LoyaltyCorp\Search\Interfaces\HandlerInterface[]
+     * @var \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[]
      */
     private $searchHandlers;
 
     /**
      * RegisteredSearchHandlers constructor.
      *
-     * @param \LoyaltyCorp\Search\Interfaces\HandlerInterface[] $searchHandlers
+     * @param \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[] $searchHandlers
      */
     public function __construct(array $searchHandlers)
     {
@@ -28,5 +29,21 @@ class RegisteredSearchHandler implements RegisteredSearchHandlerInterface
     public function getAll(): array
     {
         return $this->searchHandlers;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityHandlers(): array
+    {
+        $entityHandlers = [];
+
+        foreach ($this->searchHandlers as $handler) {
+            if ($handler instanceof EntitySearchHandlerInterface === true) {
+                $entityHandlers[] = $handler;
+            }
+        }
+
+        return $entityHandlers;
     }
 }

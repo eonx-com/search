@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Stubs\Handlers;
 
-use LoyaltyCorp\Search\Interfaces\HandlerInterface;
+use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\SearchableStub;
 
-final class OtherHandlerStub implements HandlerInterface
+final class OtherEntitySearchHandlerStub implements EntitySearchHandlerInterface
 {
     /**
      * {@inheritdoc}
@@ -51,7 +51,7 @@ final class OtherHandlerStub implements HandlerInterface
     /**
      * @inheritdoc
      */
-    public function transform($object): ?array
+    public function transform($object = null): ?array
     {
         return \method_exists($object, 'toArray') ? $object->toArray() : null;
     }

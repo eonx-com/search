@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace LoyaltyCorp\Search;
 
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
-use LoyaltyCorp\Search\Interfaces\HandlerInterface;
+use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 
@@ -41,7 +41,7 @@ final class Manager implements ManagerInterface
 
         $ids = [];
 
-        foreach ($this->handlers->getAll() as $handler) {
+        foreach ($this->handlers->getEntityHandlers() as $handler) {
             if ($this->isHandled($handler, $class) === false) {
                 continue;
             }
@@ -74,7 +74,7 @@ final class Manager implements ManagerInterface
      */
     public function handleUpdates(string $class, string $indexSuffix, array $objects): void
     {
-        foreach ($this->handlers->getAll() as $handler) {
+        foreach ($this->handlers->getEntityHandlers() as $handler) {
             if ($this->isHandled($handler, $class) === false) {
                 continue;
             }
@@ -119,7 +119,7 @@ final class Manager implements ManagerInterface
      */
     public function isSearchable(string $class): bool
     {
-        foreach ($this->handlers->getAll() as $handler) {
+        foreach ($this->handlers->getEntityHandlers() as $handler) {
             if ($this->isHandled($handler, $class) === true) {
                 return true;
             }
@@ -131,12 +131,12 @@ final class Manager implements ManagerInterface
     /**
      * Determine if object is supported (handled) by the given search handler
      *
-     * @param \LoyaltyCorp\Search\Interfaces\HandlerInterface $handler
+     * @param \LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface $handler
      * @param string $class
      *
      * @return bool
      */
-    private function isHandled(HandlerInterface $handler, string $class): bool
+    private function isHandled(EntitySearchHandlerInterface $handler, string $class): bool
     {
         $implements = \class_implements($class);
         $implements[] = $class;

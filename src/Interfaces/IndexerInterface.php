@@ -12,7 +12,7 @@ interface IndexerInterface
     /**
      * Remove any indices unused by a root alias that are/were applicable to search handlers
      *
-     * @param \LoyaltyCorp\Search\Interfaces\HandlerInterface[] $searchHandlers
+     * @param \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[] $searchHandlers
      * @param bool|null $dryRun Do not execute if true
      *
      * @return \LoyaltyCorp\Search\Indexer\IndexCleanResult
@@ -22,17 +22,17 @@ interface IndexerInterface
     /**
      * Create a new index for the search handler
      *
-     * @param \LoyaltyCorp\Search\Interfaces\HandlerInterface $searchHandler
+     * @param \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface $searchHandler
      * @param \DateTime|null $now
      *
      * @return void
      */
-    public function create(HandlerInterface $searchHandler, ?DateTime $now = null): void;
+    public function create(SearchHandlerInterface $searchHandler, ?DateTime $now = null): void;
 
     /**
      * Atomically swap the root alias for a search handler, with the latest index created
      *
-     * @param \LoyaltyCorp\Search\Interfaces\HandlerInterface[] $searchHandlers
+     * @param \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[] $searchHandlers
      * @param bool|null $dryRun Do not execute if true
      *
      * @return \LoyaltyCorp\Search\Indexer\IndexSwapResult
@@ -42,11 +42,15 @@ interface IndexerInterface
     /**
      * Populate a search handler with relevant documents
      *
-     * @param \LoyaltyCorp\Search\Interfaces\HandlerInterface $searchHandler
+     * @param \LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface $searchHandler
      * @param string $indexSuffix
      * @param int|null $batchSize
      *
      * @return void
      */
-    public function populate(HandlerInterface $searchHandler, string $indexSuffix, ?int $batchSize = null): void;
+    public function populate(
+        EntitySearchHandlerInterface $searchHandler,
+        string $indexSuffix,
+        ?int $batchSize = null
+    ): void;
 }

@@ -3,30 +3,26 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Stubs\Helpers;
 
-use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
+use LoyaltyCorp\Search\Helpers\RegisteredSearchHandler;
 
-class RegisteredSearchHandlerStub implements RegisteredSearchHandlerInterface
+/**
+ * This stub extends from the original class, as the functionality it provides
+ * is no different from the real class. This can be changed in future if more logic
+ * is added to the real class.
+ *
+ * @noinspection EmptyClassInspection Class intentionally left empty for tests
+ *
+ * @coversNothing
+ */
+class RegisteredSearchHandlerStub extends RegisteredSearchHandler
 {
-    /**
-     * @var \LoyaltyCorp\Search\Interfaces\HandlerInterface[]
-     */
-    private $handlers;
-
     /**
      * RegisteredSearchHandlerStub constructor.
      *
-     * @param \LoyaltyCorp\Search\Interfaces\HandlerInterface[]|null $handlers
+     * @param \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[]|null $searchHandlers
      */
-    public function __construct(?array $handlers = null)
+    public function __construct(?array $searchHandlers = null)
     {
-        $this->handlers = $handlers ?? [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAll(): array
-    {
-        return $this->handlers;
+        parent::__construct($searchHandlers ?? []);
     }
 }

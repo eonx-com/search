@@ -47,7 +47,8 @@ final class SearchIndexFillCommand extends Command
         $allSearchHandlers = $this->searchHandlers->getAll();
         $totalHandlers = \count($allSearchHandlers);
 
-        foreach ($this->searchHandlers->getAll() as $iteration => $searchHandler) {
+        // Fill only handles entity search handlers.
+        foreach ($this->searchHandlers->getEntityHandlers() as $iteration => $searchHandler) {
             $this->output->write(
                 \sprintf(
                     '[%d/%d] Populating documents for \'%s\'... ',

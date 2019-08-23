@@ -27,7 +27,7 @@ interface EntitySearchHandlerInterface extends SearchHandlerInterface
      *
      * @param mixed $object
      *
-     * @return mixed[][]|null
+     * @return mixed[]|null
      */
     public function transform($object): ?array;
 }

@@ -10,7 +10,7 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\BufferedOutput;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\EntitySearchHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\IndexerStub;
 use Tests\LoyaltyCorp\Search\TestCases\SearchIndexCommandTestCase;
@@ -32,7 +32,7 @@ class SearchIndexLiveCommandTest extends SearchIndexCommandTestCase
     public function testDryRunModeIsNotDefault(): void
     {
         $indexer = new IndexerStub();
-        $handlers = [new EntitySearchHandlerStub()];
+        $handlers = [new TransformableSearchHandlerStub()];
         $command = $this->createInstance($indexer, new RegisteredSearchHandlerStub($handlers));
         $output = new BufferedOutput();
         $this->bootstrapCommand($command, null, $output, ['dry-run']);
@@ -52,7 +52,7 @@ class SearchIndexLiveCommandTest extends SearchIndexCommandTestCase
     public function testDryRunModeOutputsMessage(): void
     {
         $indexer = new IndexerStub();
-        $handlers = [new EntitySearchHandlerStub()];
+        $handlers = [new TransformableSearchHandlerStub()];
         $command = $this->createInstance($indexer, new RegisteredSearchHandlerStub($handlers));
         $output = new BufferedOutput();
         $this->bootstrapCommand(
@@ -79,7 +79,7 @@ class SearchIndexLiveCommandTest extends SearchIndexCommandTestCase
     public function testSearchHandlersPassedToIndexSwapMethod(): void
     {
         $indexer = new IndexerStub();
-        $handlers = [new EntitySearchHandlerStub()];
+        $handlers = [new TransformableSearchHandlerStub()];
         $command = $this->createInstance($indexer, new RegisteredSearchHandlerStub($handlers));
         $this->bootstrapCommand($command, null, null, ['dry-run']);
 

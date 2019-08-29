@@ -3,13 +3,10 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Stubs\Handlers;
 
-use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NotSearchableStub;
+use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\SearchableStub;
 
-/**
- * @coversNothing
- */
-final class NotSearchableEntitySearchHandlerStub implements EntitySearchHandlerInterface
+final class OtherTransformableSearchHandlerStub implements TransformableSearchHandlerInterface
 {
     /**
      * {@inheritdoc}
@@ -28,11 +25,19 @@ final class NotSearchableEntitySearchHandlerStub implements EntitySearchHandlerI
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getFillIterable(): iterable
+    {
+        return [];
+    }
+
+    /**
      * @inheritdoc
      */
     public function getHandledClasses(): array
     {
-        return [NotSearchableStub::class];
+        return [SearchableStub::class];
     }
 
     /**
@@ -40,7 +45,7 @@ final class NotSearchableEntitySearchHandlerStub implements EntitySearchHandlerI
      */
     public function getIndexName(): string
     {
-        return 'valid';
+        return 'valid2';
     }
 
     /**
@@ -48,7 +53,7 @@ final class NotSearchableEntitySearchHandlerStub implements EntitySearchHandlerI
      */
     public function getSearchId(object $object)
     {
-        return null;
+        return \method_exists($object, 'getSearchId') ? $object->getSearchId() : null;
     }
 
     /**

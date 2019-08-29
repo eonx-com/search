@@ -3,17 +3,40 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Stubs\Handlers;
 
-use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
+use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\SearchableStub;
 
-final class OtherEntitySearchHandlerStub implements EntitySearchHandlerInterface
+final class TransformableSearchHandlerStub implements TransformableSearchHandlerInterface
 {
+    /**
+     * @var mixed[]|null
+     */
+    private $objects;
+
+    /**
+     * Constructor
+     *
+     * @param mixed[]|null $objects
+     */
+    public function __construct(?array $objects = null)
+    {
+        $this->objects = $objects;
+    }
+
     /**
      * {@inheritdoc}
      */
     public static function getMappings(): array
     {
-        return [];
+        return [
+            'doc' => [
+                'properties' => [
+                    'createdAt' => [
+                        'type' => 'date'
+                    ]
+                ]
+            ]
+        ];
     }
 
     /**
@@ -21,7 +44,18 @@ final class OtherEntitySearchHandlerStub implements EntitySearchHandlerInterface
      */
     public static function getSettings(): array
     {
-        return [];
+        return [
+            'number_of_replicas' => 1,
+            'number_of_shards' => 1
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFillIterable(): iterable
+    {
+        return $this->objects ?? [];
     }
 
     /**
@@ -37,7 +71,7 @@ final class OtherEntitySearchHandlerStub implements EntitySearchHandlerInterface
      */
     public function getIndexName(): string
     {
-        return 'valid2';
+        return 'valid';
     }
 
     /**

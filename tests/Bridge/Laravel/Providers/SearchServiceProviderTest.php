@@ -20,7 +20,7 @@ use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Manager;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\EntitySearchHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NonDoctrineHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NotSearchableStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Doctrine\EntityManagerStub as DoctrineEntityManagerStub;
@@ -109,11 +109,11 @@ final class SearchServiceProviderTest extends TestCase
 
         // Tag handler for service provider
         $application->tag(
-            [EntitySearchHandlerStub::class, NotSearchableStub::class, NonDoctrineHandlerStub::class],
+            [TransformableSearchHandlerStub::class, NotSearchableStub::class, NonDoctrineHandlerStub::class],
             ['search_handler']
         );
         // The only available handler is when using get should beHandlerStub
-        $expected = [new EntitySearchHandlerStub(), new NonDoctrineHandlerStub()];
+        $expected = [new TransformableSearchHandlerStub(), new NonDoctrineHandlerStub()];
 
         $serviceProvider = new SearchServiceProvider($application);
         $serviceProvider->register();

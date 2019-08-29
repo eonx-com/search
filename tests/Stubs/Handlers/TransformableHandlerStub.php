@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Stubs\Handlers;
 
-use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
+use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 use Tests\LoyaltyCorp\Search\Stubs\Entities\EntityStub;
 
-class EntityHandlerStub implements EntitySearchHandlerInterface
+class TransformableHandlerStub implements TransformableSearchHandlerInterface
 {
     /**
      * {@inheritdoc}
@@ -20,6 +20,14 @@ class EntityHandlerStub implements EntitySearchHandlerInterface
      * {@inheritdoc}
      */
     public static function getSettings(): array
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFillIterable(): iterable
     {
         return [];
     }

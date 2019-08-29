@@ -3,25 +3,20 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Stubs\Handlers;
 
-use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\SearchableStub;
+use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NotSearchableStub;
 
-final class EntitySearchHandlerStub implements EntitySearchHandlerInterface
+/**
+ * @coversNothing
+ */
+final class NotSearchableSearchHandlerStub implements TransformableSearchHandlerInterface
 {
     /**
      * {@inheritdoc}
      */
     public static function getMappings(): array
     {
-        return [
-            'doc' => [
-                'properties' => [
-                    'createdAt' => [
-                        'type' => 'date'
-                    ]
-                ]
-            ]
-        ];
+        return [];
     }
 
     /**
@@ -29,10 +24,15 @@ final class EntitySearchHandlerStub implements EntitySearchHandlerInterface
      */
     public static function getSettings(): array
     {
-        return [
-            'number_of_replicas' => 1,
-            'number_of_shards' => 1
-        ];
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFillIterable(): iterable
+    {
+        return [];
     }
 
     /**
@@ -40,7 +40,7 @@ final class EntitySearchHandlerStub implements EntitySearchHandlerInterface
      */
     public function getHandledClasses(): array
     {
-        return [SearchableStub::class];
+        return [NotSearchableStub::class];
     }
 
     /**
@@ -56,7 +56,7 @@ final class EntitySearchHandlerStub implements EntitySearchHandlerInterface
      */
     public function getSearchId(object $object)
     {
-        return \method_exists($object, 'getSearchId') ? $object->getSearchId() : null;
+        return null;
     }
 
     /**

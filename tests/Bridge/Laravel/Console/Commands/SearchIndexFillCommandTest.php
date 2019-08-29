@@ -6,8 +6,8 @@ namespace Tests\LoyaltyCorp\Search\Bridge\Laravel\Console\Commands;
 use LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexFillCommand;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\EntitySearchHandlerStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\OtherEntitySearchHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\OtherTransformableSearchHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\IndexerStub;
 use Tests\LoyaltyCorp\Search\TestCases\SearchIndexCommandTestCase;
@@ -30,8 +30,8 @@ class SearchIndexFillCommandTest extends SearchIndexCommandTestCase
     {
         $indexer = new IndexerStub();
 
-        $handlerStub = new EntitySearchHandlerStub();
-        $otherHandler = new OtherEntitySearchHandlerStub();
+        $handlerStub = new TransformableSearchHandlerStub();
+        $otherHandler = new OtherTransformableSearchHandlerStub();
         $handlers = [$handlerStub, $otherHandler];
         $command = $this->createInstance($indexer, new RegisteredSearchHandlerStub($handlers));
         $this->bootstrapCommand($command, null, null, ['batchSize']);

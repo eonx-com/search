@@ -22,7 +22,9 @@ use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
+use LoyaltyCorp\Search\Interfaces\TransformerInterface;
 use LoyaltyCorp\Search\Manager;
+use LoyaltyCorp\Search\Transformer;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) High coupling required to ensure all services are bound
@@ -38,10 +40,10 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
     {
         return [
             ClientInterface::class,
-            EntityManagerHelperInterface::class,
             IndexerInterface::class,
             ManagerInterface::class,
-            RegisteredSearchHandlerInterface::class
+            RegisteredSearchHandlerInterface::class,
+            TransformerInterface::class
         ];
     }
 
@@ -97,5 +99,7 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
 
             return new RegisteredSearchHandler($searchHandlers);
         });
+
+        $this->app->singleton(TransformerInterface::class, Transformer::class);
     }
 }

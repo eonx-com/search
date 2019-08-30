@@ -4,18 +4,22 @@ declare(strict_types=1);
 namespace Tests\LoyaltyCorp\Search;
 
 use LoyaltyCorp\Search\Client;
+use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Manager;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
+use LoyaltyCorp\Search\Transformer;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NotSearchableSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NoDocumentBodyStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NoSearchIdStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NotSearchableStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\SearchableStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch\ClientStub;
 
 /**
  * @covers \LoyaltyCorp\Search\Manager
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) required to test
  */
 final class ManagerTest extends TestCase
 {
@@ -27,7 +31,7 @@ final class ManagerTest extends TestCase
     public function testGetSearchMetaFunctionality(): void
     {
         $handlers = new RegisteredSearchHandlerStub([new TransformableSearchHandlerStub()]);
-        $manager = new Manager($handlers, new Client(new ClientStub()));
+        $manager = $this->getManager($handlers);
 
         // Test against a searchable object
         self::assertSame(['valid' => 'searchable'], $manager->getSearchMeta(new SearchableStub()));
@@ -48,7 +52,7 @@ final class ManagerTest extends TestCase
     {
         $stub = new ClientStub();
         $handlers = new RegisteredSearchHandlerStub([new TransformableSearchHandlerStub()]);
-        $manager = new Manager($handlers, new Client($stub));
+        $manager = $this->getManager($handlers, new Client($stub));
 
         // Test method passes through to elasticsearch
         $manager->handleDeletes(['index' => [['9']]]);
@@ -67,7 +71,7 @@ final class ManagerTest extends TestCase
     {
         $stub = new ClientStub();
         $handlers = new RegisteredSearchHandlerStub([new TransformableSearchHandlerStub()]);
-        $manager = new Manager($handlers, new Client($stub));
+        $manager = $this->getManager($handlers, new Client($stub));
 
         // Test an unsupported class doesn't do anything
         $manager->handleUpdates(NotSearchableStub::class, '_new', []);
@@ -104,7 +108,7 @@ final class ManagerTest extends TestCase
     {
         $stub = new ClientStub();
         $handlers = new RegisteredSearchHandlerStub([new TransformableSearchHandlerStub()]);
-        $manager = new Manager($handlers, new Client($stub));
+        $manager = $this->getManager($handlers, new Client($stub));
 
         // Tests whats going to happen when handleUpdates is called with objects that result
         // in no transformations
@@ -116,22 +120,6 @@ final class ManagerTest extends TestCase
     }
 
     /**
-     * Test isSearchable() asks the handler whether it's supported or not
-     *
-     * @return void
-     */
-    public function testIsSearchableAsksHandler(): void
-    {
-        $manager = new Manager(
-            new RegisteredSearchHandlerStub([new TransformableSearchHandlerStub()]),
-            new Client(new ClientStub())
-        );
-
-        self::assertTrue($manager->isSearchable(SearchableStub::class));
-        self::assertFalse($manager->isSearchable(NotSearchableStub::class));
-    }
-
-    /**
      * Ensure no results are returned when a handler is passed an object that has no searchId
      *
      * @return void
@@ -139,13 +127,29 @@ final class ManagerTest extends TestCase
     public function testSearchMetaReturnsNothingWhenSearchIdNulled(): void
     {
         $handlers = new RegisteredSearchHandlerStub([new NotSearchableSearchHandlerStub()]);
-        $manager = new Manager(
-            $handlers,
-            new Client(new ClientStub())
-        );
+        $manager = $this->getManager($handlers);
 
         $result = $manager->getSearchMeta(new NotSearchableStub());
 
         self::assertSame([], $result);
+    }
+
+    /**
+     * Gets the manager under test.
+     *
+     * @param \Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub $handlers
+     * @param \LoyaltyCorp\Search\Interfaces\ClientInterface|null $client
+     *
+     * @return \LoyaltyCorp\Search\Manager
+     */
+    private function getManager(
+        RegisteredSearchHandlerStub $handlers,
+        ?ClientInterface $client = null
+    ): Manager {
+        return new Manager(
+            $handlers,
+            $client ?? new Client(new ClientStub()),
+            new Transformer()
+        );
     }
 }

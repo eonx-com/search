@@ -3,6 +3,14 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Interfaces;
 
+/**
+ * This manager is used to aid in the automatic dispatching of events
+ * by an application to handle search indexing in an asynchronous way.
+ *
+ * This manager requires TransformableSearchHandler implementations that
+ * will automatically handle transformations of objects into the
+ * Elasticsearch representations.
+ */
 interface ManagerInterface
 {
     /**
@@ -45,12 +53,17 @@ interface ManagerInterface
     public function handleUpdates(string $class, string $indexSuffix, array $objects): void;
 
     /**
-     * Indicates if the class is used as part of the search
-     * index update process.
+     * Handles an array of objects against a specific handler.
      *
-     * @param string $class
+     * @param \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface $handler
+     * @param string $indexSuffix
+     * @param mixed[] $objects
      *
-     * @return bool
+     * @return void
      */
-    public function isSearchable(string $class): bool;
+    public function handleUpdatesWithHandler(
+        TransformableSearchHandlerInterface $handler,
+        string $indexSuffix,
+        array $objects
+    ): void;
 }

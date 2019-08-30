@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Tests\LoyaltyCorp\Search\Stubs;
 
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
+use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 
 /**
  * @coversNothing
@@ -69,8 +70,10 @@ class ManagerStub implements ManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function isSearchable(string $class): bool
-    {
-        return true;
+    public function handleUpdatesWithHandler(
+        TransformableSearchHandlerInterface $handler,
+        string $indexSuffix,
+        array $objects
+    ): void {
     }
 }

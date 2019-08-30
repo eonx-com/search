@@ -18,11 +18,12 @@ use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
+use LoyaltyCorp\Search\Interfaces\TransformerInterface;
 use LoyaltyCorp\Search\Manager;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NonDoctrineHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NotSearchableStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Doctrine\EntityManagerStub as DoctrineEntityManagerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Doctrine\RegistryStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\EoneoPay\Externals\ORM\EntityManagerStub as EoneoPayEntityManagerStub;
@@ -69,10 +70,10 @@ final class SearchServiceProviderTest extends TestCase
     {
         self::assertSame([
             ClientInterface::class,
-            EntityManagerHelperInterface::class,
             IndexerInterface::class,
             ManagerInterface::class,
-            RegisteredSearchHandlerInterface::class
+            RegisteredSearchHandlerInterface::class,
+            TransformerInterface::class
         ], (new SearchServiceProvider(new ApplicationStub()))->provides());
     }
 

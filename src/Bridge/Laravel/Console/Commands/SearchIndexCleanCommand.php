@@ -46,6 +46,6 @@ final class SearchIndexCleanCommand extends Command
         $this->info('Removing all unused indices across search handlers');
 
         // Warn - prompt
-        $this->indexer->clean($this->searchHandlers->getAll());
+        $this->indexer->clean($this->searchHandlers->getEntityHandlers());
     }
 }

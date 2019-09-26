@@ -12,7 +12,7 @@ interface IndexerInterface
     /**
      * Remove any indices unused by a root alias that are/were applicable to search handlers
      *
-     * @param \LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface[] $searchHandlers
+     * @param \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[] $searchHandlers
      * @param bool|null $dryRun Do not execute if true
      *
      * @return \LoyaltyCorp\Search\Indexer\IndexCleanResult
@@ -32,7 +32,7 @@ interface IndexerInterface
     /**
      * Atomically swap the root alias for a search handler, with the latest index created
      *
-     * @param \LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface[] $searchHandlers
+     * @param \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[] $searchHandlers
      * @param bool|null $dryRun Do not execute if true
      *
      * @return \LoyaltyCorp\Search\Indexer\IndexSwapResult

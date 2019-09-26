@@ -49,7 +49,7 @@ final class SearchIndexLiveCommand extends Command
             $this->info(\sprintf('Dry run mode - No changes will be executed'));
         }
 
-        $results = $this->indexer->indexSwap($this->searchHandlers->getEntityHandlers(), $dryRun);
+        $results = $this->indexer->indexSwap($this->searchHandlers->getAll(), $dryRun);
 
         $this->table(...$results->getTableData());
     }

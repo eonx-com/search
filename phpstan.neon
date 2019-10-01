@@ -9,3 +9,6 @@ parameters:
         -
             message: '#Tests\\LoyaltyCorp\\Search\\Stubs\\Vendor\\Elasticsearch\\ClientStub::__construct\(\) does not call parent constructor from Elasticsearch\\Client.#'
             path: tests/Stubs/Vendor/Elasticsearch/ClientStub.php
+        -
+            message: '#Tests\\LoyaltyCorp\\Search\\Stubs\\CatStub::__construct\(\) does not call parent constructor from Elasticsearch\\Namespaces\\AbstractNamespace.#'
+            path: tests/Stubs/CatStub.php

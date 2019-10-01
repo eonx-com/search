@@ -18,6 +18,11 @@ class ClientStub implements ClientInterface
     private $aliases;
 
     /**
+     * @var int[]
+     */
+    private $count;
+
+    /**
      * @var mixed[]
      */
     private $createdAliases = [];
@@ -69,17 +74,20 @@ class ClientStub implements ClientInterface
      * @param bool|null $isIndex
      * @param mixed[]|null $indices
      * @param mixed[]|null $aliases
+     * @param int[]|null $count
      */
     public function __construct(
         ?bool $isAlias = null,
         ?bool $isIndex = null,
         ?array $indices = null,
-        ?array $aliases = null
+        ?array $aliases = null,
+        ?array $count = null
     ) {
         $this->aliases = $aliases ?? [];
         $this->indices = $indices ?? [];
         $this->isAlias = $isAlias ?? false;
         $this->isIndex = $isIndex ?? false;
+        $this->count = \array_reverse($count ?? []);
     }
 
     /**
@@ -102,7 +110,7 @@ class ClientStub implements ClientInterface
      */
     public function count(string $index): int
     {
-        return 0;
+        return \array_pop($this->count) ?? 0;
     }
 
     /**

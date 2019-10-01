@@ -141,7 +141,7 @@ final class ClientTest extends TestCase
     }
 
     /**
-     *
+     * Test elastic client returning count data
      *
      * @return void
      */

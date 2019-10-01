@@ -6,6 +6,7 @@ namespace Tests\LoyaltyCorp\Search;
 use EoneoPay\Utils\DateTime;
 use LoyaltyCorp\Search\Exceptions\AliasNotFoundException;
 use LoyaltyCorp\Search\Indexer;
+use LoyaltyCorp\Search\Indexer\IndexSwapResult;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
@@ -120,6 +121,27 @@ class IndexerTest extends TestCase
         $indexer->clean([new EntitySearchHandlerStub()], true);
 
         self::assertSame([], $client->getDeletedIndices());
+    }
+
+    /**
+     * Ensure that skipping an index to be swapped happens when appropriate
+     *
+     * @return void
+     */
+    public function testIndexSwapWithNoSwap(): void
+    {
+        $elasticClient = new ClientStub(
+            true,
+            null,
+            null,
+            [['name' => 'valid_new', 'index' => 'valid_201900502']],
+            [0, 10] // index_new alias has 0 documents, root alias has 10
+        );
+        $indexer = $this->createInstance($elasticClient);
+
+        $result = $indexer->indexSwap([new EntitySearchHandlerStub()], true);
+
+        self::assertEquals(new IndexSwapResult([], ['valid_new'], ['valid_201900502']), $result);
     }
 
     /**

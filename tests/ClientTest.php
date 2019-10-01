@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search;
 
+use Elasticsearch\Client as BaseClient;
 use Elasticsearch\ClientBuilder;
 use GuzzleHttp\Ring\Client\MockHandler;
 use LoyaltyCorp\Search\Client;
@@ -10,6 +11,7 @@ use LoyaltyCorp\Search\Exceptions\BulkFailureException;
 use LoyaltyCorp\Search\Exceptions\SearchCheckerException;
 use LoyaltyCorp\Search\Exceptions\SearchDeleteException;
 use LoyaltyCorp\Search\Exceptions\SearchUpdateException;
+use LoyaltyCorp\Search\Helpers\ClientBulkResponseHelper;
 use PHPUnit\Framework\AssertionFailedError;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch\CallableResponseClientStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch\ClientStub;
@@ -88,7 +90,7 @@ final class ClientTest extends TestCase
     public function testBulkCallableResolution(): void
     {
         $stub = new CallableResponseClientStub();
-        $client = new Client($stub);
+        $client = $this->createInstance($stub);
 
         $client->bulkUpdate('index', ['1' => 'document']);
 
@@ -104,7 +106,7 @@ final class ClientTest extends TestCase
     public function testBulkPassthrough(): void
     {
         $stub = new ClientStub();
-        $client = new Client($stub);
+        $client = $this->createInstance($stub);
 
         $client->bulkDelete(['index' => [['1']]]);
 
@@ -122,7 +124,7 @@ final class ClientTest extends TestCase
     public function testBulkReturnTypeCheck(): void
     {
         $stub = new NullResponseClientStub();
-        $client = new Client($stub);
+        $client = $this->createInstance($stub);
 
         // A null result should throw an exception
         $this->expectException(BulkFailureException::class);
@@ -141,7 +143,7 @@ final class ClientTest extends TestCase
     {
         $response = [];
         $elasticClient = $this->createElasticClient($response);
-        $client = new Client($elasticClient);
+        $client = $this->createInstance($elasticClient);
 
         $client->createAlias('index1', 'big_alias');
 
@@ -158,7 +160,7 @@ final class ClientTest extends TestCase
     {
         $response = [];
         $elasticClient = $this->createElasticClient($response);
-        $client = new Client($elasticClient);
+        $client = $this->createInstance($elasticClient);
 
         $client->createIndex('big_index');
 
@@ -175,7 +177,7 @@ final class ClientTest extends TestCase
     {
         $response = [];
         $elasticClient = $this->createElasticClient($response);
-        $client = new Client($elasticClient);
+        $client = $this->createInstance($elasticClient);
 
         $client->deleteAlias(['big_alias']);
 
@@ -191,7 +193,7 @@ final class ClientTest extends TestCase
     {
         $response = [];
         $elasticClient = $this->createElasticClient($response);
-        $client = new Client($elasticClient);
+        $client = $this->createInstance($elasticClient);
         $expected = [];
 
         $client->deleteIndex('index1');
@@ -229,7 +231,7 @@ final class ClientTest extends TestCase
                 ]
             ]
         ]);
-        $client = new Client($stub);
+        $client = $this->createInstance($stub);
 
         // Callable contains an error specifically for testing
         $this->expectException(BulkFailureException::class);
@@ -264,7 +266,7 @@ final class ClientTest extends TestCase
                 ]
             ]
         ]);
-        $client = new Client($stub);
+        $client = $this->createInstance($stub);
 
         $client->bulkUpdate('index', ['1' => 'document']);
 
@@ -288,7 +290,7 @@ final class ClientTest extends TestCase
         array $arguments,
         string $exception
     ): void {
-        $client = new Client(new ClientStub(true));
+        $client = $this->createInstance(new ClientStub(true));
 
         $this->expectException($exception);
 
@@ -304,7 +306,7 @@ final class ClientTest extends TestCase
     {
         $response = [];
         $elasticClient = $this->createElasticClient($response, 200);
-        $client = new Client($elasticClient);
+        $client = $this->createInstance($elasticClient);
 
         $result = $client->isAlias('nice_alias');
 
@@ -322,7 +324,7 @@ final class ClientTest extends TestCase
         $this->expectExceptionMessage('An error occurred checking if alias exists');
 
         $elasticClient = $this->createElasticClient([], 500);
-        $client = new Client($elasticClient);
+        $client = $this->createInstance($elasticClient);
 
         $client->isAlias('nice_alias');
     }
@@ -336,7 +338,7 @@ final class ClientTest extends TestCase
     {
         $response = [];
         $elasticClient = $this->createElasticClient($response, 200);
-        $client = new Client($elasticClient);
+        $client = $this->createInstance($elasticClient);
 
         $result = $client->isIndex('nice_alias');
 
@@ -354,7 +356,7 @@ final class ClientTest extends TestCase
         $this->expectExceptionMessage('An error occurred checking if index exists');
 
         $elasticClient = $this->createElasticClient([], 500);
-        $client = new Client($elasticClient);
+        $client = $this->createInstance($elasticClient);
 
         $client->isIndex('index_1');
     }
@@ -368,7 +370,7 @@ final class ClientTest extends TestCase
     {
         $response = [];
         $elasticClient = $this->createElasticClient($response, 404);
-        $client = new Client($elasticClient);
+        $client = $this->createInstance($elasticClient);
 
         $result = $client->isAlias('nice_alias');
 
@@ -384,7 +386,7 @@ final class ClientTest extends TestCase
     {
         $response = [];
         $elasticClient = $this->createElasticClient($response, 404);
-        $client = new Client($elasticClient);
+        $client = $this->createInstance($elasticClient);
 
         $result = $client->isIndex('nice_alias');
 
@@ -400,7 +402,7 @@ final class ClientTest extends TestCase
     {
         $response = [['alias' => 'alias1', 'index' => 'index1'], ['alias' => 'alias2', 'index' => 'index1']];
         $elasticClient = $this->createElasticClient($response);
-        $client = new Client($elasticClient);
+        $client = $this->createInstance($elasticClient);
         $expected = [['name' => 'alias1', 'index' => 'index1'], ['name' => 'alias2', 'index' => 'index1']];
 
         $result = $client->getAliases();
@@ -420,7 +422,7 @@ final class ClientTest extends TestCase
 
         $response = [['alias' => 'alias1', 'index' => 'index1'], ['alias' => 'alias2', 'index' => 'index1']];
         $elasticClient = $this->createElasticClient($response, 400);
-        $client = new Client($elasticClient);
+        $client = $this->createInstance($elasticClient);
 
         $client->getAliases();
     }
@@ -434,7 +436,7 @@ final class ClientTest extends TestCase
     {
         $response = [['index' => 'index1'], ['index' => 'index2']];
         $elasticClient = $this->createElasticClient($response);
-        $client = new Client($elasticClient);
+        $client = $this->createInstance($elasticClient);
         $expected = [['name' => 'index1'], ['name' => 'index2']];
 
         $result = $client->getIndices();
@@ -454,7 +456,7 @@ final class ClientTest extends TestCase
 
         $response = [['index' => 'index1'], ['index' => 'index2']];
         $elasticClient = $this->createElasticClient($response, 400);
-        $client = new Client($elasticClient);
+        $client = $this->createInstance($elasticClient);
 
         $client->getIndices();
     }
@@ -468,7 +470,7 @@ final class ClientTest extends TestCase
     {
         $response = [];
         $elasticClient = $this->createElasticClient($response);
-        $client = new Client($elasticClient);
+        $client = $this->createInstance($elasticClient);
 
         $client->moveAlias([['alias' => 'index', 'index' => 'index_20190502']]);
 
@@ -483,7 +485,7 @@ final class ClientTest extends TestCase
     public function testNonIterableItemsAreSkipped(): void
     {
         $stub = new ClientStub();
-        $client = new Client($stub);
+        $client = $this->createInstance($stub);
 
         $client->bulkDelete(['index' => [['7']], 'not-iterable']);
 
@@ -501,7 +503,7 @@ final class ClientTest extends TestCase
      *
      * @return \Elasticsearch\Client
      */
-    private function createElasticClient(array $response, ?int $statusCode = null): \Elasticsearch\Client
+    private function createElasticClient(array $response, ?int $statusCode = null): BaseClient
     {
         // In-memory resource stream for speedy tests
         $stream = \fopen('php://memory', 'b+');
@@ -529,5 +531,18 @@ final class ClientTest extends TestCase
                 new MockHandler($mockResponse)
             )
             ->build();
+    }
+
+    /**
+     * Instantaite a client class
+     *
+     * @param \Elasticsearch\Client $client
+     *
+     * @return \LoyaltyCorp\Search\Client
+     */
+    private function createInstance(BaseClient $client): Client
+    {
+        // BulkResponseHelper class is not stubbed because it's a literal dependency of the client
+        return new Client($client, new ClientBulkResponseHelper());
     }
 }

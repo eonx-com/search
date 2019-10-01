@@ -7,6 +7,8 @@ use LoyaltyCorp\Search\Interfaces\ClientInterface;
 
 /**
  * @coversNothing
+ *
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods) Well tested code for all the cases
  */
 class ClientStub implements ClientInterface
 {
@@ -93,6 +95,14 @@ class ClientStub implements ClientInterface
     public function bulkUpdate(string $index, array $documents): void
     {
         $this->updatedIndices[] = \compact('index', 'documents');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function count(string $index): int
+    {
+        return 0;
     }
 
     /**
@@ -196,6 +206,16 @@ class ClientStub implements ClientInterface
     }
 
     /**
+     * Get list if indices updated.
+     *
+     * @return mixed[]
+     */
+    public function getUpdatedIndices(): array
+    {
+        return $this->updatedIndices;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function isAlias(string $name): bool
@@ -219,15 +239,5 @@ class ClientStub implements ClientInterface
         foreach ($aliases as $alias) {
             $this->swappedAliases[$alias['alias']] = $alias['index'];
         }
-    }
-
-    /**
-     * Get list if indices updated.
-     *
-     * @return mixed[]
-     */
-    public function getUpdatedIndices(): array
-    {
-        return $this->updatedIndices;
     }
 }

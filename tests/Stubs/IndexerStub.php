@@ -102,15 +102,17 @@ class IndexerStub implements IndexerInterface
 
         $aliasesToMove = [];
         $aliasesToDelete = [];
+        $aliasesToSkip = [];
 
         foreach ($searchHandlers as $handler) {
             $rootIndex = $handler->getIndexName();
 
             $aliasesToMove[] = ['alias' => $rootIndex, 'index' => \sprintf('%s_123', $rootIndex)];
             $aliasesToDelete[] = \sprintf('%s_new', $rootIndex);
+            $aliasesToSkip[] = $rootIndex;
         }
 
-        return new IndexSwapResult(... [$aliasesToMove, $aliasesToDelete]);
+        return new IndexSwapResult(... [$aliasesToMove, $aliasesToDelete, $aliasesToSkip]);
     }
 
     /**

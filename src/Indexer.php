@@ -139,6 +139,8 @@ final class Indexer implements IndexerInterface
     {
         $aliasesToMove = [];
         $aliasedToRemove = [];
+        $indexToSkip = [];
+
         foreach ($searchHandlers as $searchHandler) {
             // Use index+_new to determine the latest index name
             $newAlias = \sprintf('%s_new', $searchHandler->getIndexName());
@@ -150,11 +152,21 @@ final class Indexer implements IndexerInterface
                 throw new AliasNotFoundException(\sprintf('Could not find expected alias \'%s\'', $newAlias));
             }
 
+            if ($this->elasticClient->count($newAlias) === 0 &&
+                $this->elasticClient->count($searchHandler->getIndexName()) > 0) {
+                $indexToSkip[] = $latestAlias['index'];
+                $aliasedToRemove[] = $newAlias;
+
+                // Swapping should not occur. Old index contains data, new one does not support populating.
+                // Generally this is true when the SearchIndex type is not entity based
+                continue;
+            }
+
             $aliasesToMove[] = ['alias' => $searchHandler->getIndexName(), 'index' => $latestAlias['index']];
             $aliasedToRemove[] = $newAlias;
         }
 
-        $actions = new IndexSwapResult($aliasesToMove, $aliasedToRemove);
+        $actions = new IndexSwapResult($aliasesToMove, $aliasedToRemove, $indexToSkip);
 
         if (($dryRun ?? false) === true) {
             return $actions;

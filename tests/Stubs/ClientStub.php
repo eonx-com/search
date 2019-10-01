@@ -7,6 +7,8 @@ use LoyaltyCorp\Search\Interfaces\ClientInterface;
 
 /**
  * @coversNothing
+ *
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods) Well tested code for all the cases
  */
 class ClientStub implements ClientInterface
 {
@@ -14,6 +16,11 @@ class ClientStub implements ClientInterface
      * @var mixed[]
      */
     private $aliases;
+
+    /**
+     * @var int[]
+     */
+    private $count;
 
     /**
      * @var mixed[]
@@ -67,17 +74,20 @@ class ClientStub implements ClientInterface
      * @param bool|null $isIndex
      * @param mixed[]|null $indices
      * @param mixed[]|null $aliases
+     * @param int[]|null $count
      */
     public function __construct(
         ?bool $isAlias = null,
         ?bool $isIndex = null,
         ?array $indices = null,
-        ?array $aliases = null
+        ?array $aliases = null,
+        ?array $count = null
     ) {
         $this->aliases = $aliases ?? [];
         $this->indices = $indices ?? [];
         $this->isAlias = $isAlias ?? false;
         $this->isIndex = $isIndex ?? false;
+        $this->count = \array_reverse($count ?? []);
     }
 
     /**
@@ -93,6 +103,14 @@ class ClientStub implements ClientInterface
     public function bulkUpdate(string $index, array $documents): void
     {
         $this->updatedIndices[] = \compact('index', 'documents');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function count(string $index): int
+    {
+        return \array_pop($this->count) ?? 0;
     }
 
     /**
@@ -196,6 +214,16 @@ class ClientStub implements ClientInterface
     }
 
     /**
+     * Get list if indices updated.
+     *
+     * @return mixed[]
+     */
+    public function getUpdatedIndices(): array
+    {
+        return $this->updatedIndices;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function isAlias(string $name): bool
@@ -219,15 +247,5 @@ class ClientStub implements ClientInterface
         foreach ($aliases as $alias) {
             $this->swappedAliases[$alias['alias']] = $alias['index'];
         }
-    }
-
-    /**
-     * Get list if indices updated.
-     *
-     * @return mixed[]
-     */
-    public function getUpdatedIndices(): array
-    {
-        return $this->updatedIndices;
     }
 }

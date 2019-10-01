@@ -18,13 +18,27 @@ class IndexSwapResultTest extends TestCase
      */
     public function testTableFormatting(): void
     {
-        $table = new IndexSwapResult([['alias' => 'greatIndex', 'index' => 'greatIndex_20190101']], ['greatIndex_new']);
+        $table = new IndexSwapResult(
+            [
+                [
+                    'alias' => 'greatIndex',
+                    'index' => 'greatIndex_20190101'
+                ]
+            ],
+            ['greatIndex_new'],
+            ['bigIndex_20190101']
+        );
 
         $expected = [
             ['Alias', 'Index', 'Action'], // Headers
             [
                 ['greatIndex', 'greatIndex_20190101', 'Point alias to index'], // Rows of actions
-                ['greatIndex_new', '', 'Remove alias']
+                ['greatIndex_new', '', 'Remove alias'],
+                [
+                    '',
+                    'bigIndex_20190101',
+                    'Skip swapping root alias'
+                ]
             ]
         ];
 

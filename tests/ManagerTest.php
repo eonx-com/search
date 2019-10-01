@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search;
 
+use Elasticsearch\Client as BaseClient;
 use LoyaltyCorp\Search\Client;
+use LoyaltyCorp\Search\Helpers\ClientBulkResponseHelper;
 use LoyaltyCorp\Search\Manager;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\EntitySearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NotSearchableEntitySearchHandlerStub;
@@ -16,6 +18,8 @@ use Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch\ClientStub;
 
 /**
  * @covers \LoyaltyCorp\Search\Manager
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Required for thorough testing
  */
 final class ManagerTest extends TestCase
 {
@@ -27,7 +31,7 @@ final class ManagerTest extends TestCase
     public function testGetSearchMetaFunctionality(): void
     {
         $handlers = new RegisteredSearchHandlerStub([new EntitySearchHandlerStub()]);
-        $manager = new Manager($handlers, new Client(new ClientStub()));
+        $manager = new Manager($handlers, $this->createClient(new ClientStub()));
 
         // Test against a searchable object
         self::assertSame(['valid' => 'searchable'], $manager->getSearchMeta(new SearchableStub()));
@@ -48,7 +52,7 @@ final class ManagerTest extends TestCase
     {
         $stub = new ClientStub();
         $handlers = new RegisteredSearchHandlerStub([new EntitySearchHandlerStub()]);
-        $manager = new Manager($handlers, new Client($stub));
+        $manager = new Manager($handlers, $this->createClient($stub));
 
         // Test method passes through to elasticsearch
         $manager->handleDeletes(['index' => [['9']]]);
@@ -67,7 +71,7 @@ final class ManagerTest extends TestCase
     {
         $stub = new ClientStub();
         $handlers = new RegisteredSearchHandlerStub([new EntitySearchHandlerStub()]);
-        $manager = new Manager($handlers, new Client($stub));
+        $manager = new Manager($handlers, $this->createClient($stub));
 
         // Test an unsupported class doesn't do anything
         $manager->handleUpdates(NotSearchableStub::class, '_new', []);
@@ -83,11 +87,13 @@ final class ManagerTest extends TestCase
         self::assertSame(
             [
                 'body' => [
-                    ['index' => [
-                        '_index' => 'valid_new',
-                        '_type' => 'doc',
-                        '_id' => 'searchable'
-                    ]],
+                    [
+                        'index' => [
+                            '_index' => 'valid_new',
+                            '_type' => 'doc',
+                            '_id' => 'searchable'
+                        ]
+                    ],
                     ['search' => 'body']
                 ]
             ],
@@ -104,7 +110,7 @@ final class ManagerTest extends TestCase
     {
         $stub = new ClientStub();
         $handlers = new RegisteredSearchHandlerStub([new EntitySearchHandlerStub()]);
-        $manager = new Manager($handlers, new Client($stub));
+        $manager = new Manager($handlers, $this->createClient($stub));
 
         // Tests whats going to happen when handleUpdates is called with objects that result
         // in no transformations
@@ -124,7 +130,7 @@ final class ManagerTest extends TestCase
     {
         $manager = new Manager(
             new RegisteredSearchHandlerStub([new EntitySearchHandlerStub()]),
-            new Client(new ClientStub())
+            $this->createClient(new ClientStub())
         );
 
         self::assertTrue($manager->isSearchable(SearchableStub::class));
@@ -141,11 +147,23 @@ final class ManagerTest extends TestCase
         $handlers = new RegisteredSearchHandlerStub([new NotSearchableEntitySearchHandlerStub()]);
         $manager = new Manager(
             $handlers,
-            new Client(new ClientStub())
+            $this->createClient(new ClientStub())
         );
 
         $result = $manager->getSearchMeta(new NotSearchableStub());
 
         self::assertSame([], $result);
+    }
+
+    /**
+     * Instantiate an ElasticSearch client
+     *
+     * @param \Elasticsearch\Client|null $client
+     *
+     * @return \LoyaltyCorp\Search\Client
+     */
+    private function createClient(?BaseClient $client = null): Client
+    {
+        return new Client($client ?? new ClientStub(), new ClientBulkResponseHelper());
     }
 }

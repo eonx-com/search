@@ -25,9 +25,35 @@ class ClientBulkResponseHelperTest extends TestCase
 
         $bulkResponseHelper->checkBulkResponsesForErrors(
             [
-                'errors' => false,
+                'errors' => true,
                 'items' => [['update' => ['_id' => 'nice-id']], ['delete' => []]]
             ],
+            'update'
+        );
+
+        /**
+         * The method under test returns void
+         * This test just ensures success is possible when errors = false & error key is missing
+         */
+        $this->addToAssertionCount(1);
+    }
+
+    /**
+     * Ensure the checking in bulk results allows succession if there is no errors and a promise is used
+     *
+     * @return void
+     */
+    public function testCheckingResponseForErrorsCanSucceedWithPromise(): void
+    {
+        $value = new CompletedFutureValue([
+            'items' => [['update' => ['_id' => 'nice-id']], ['delete' => []]]
+        ]);
+        $array = new FutureArray($value);
+
+        $bulkResponseHelper = $this->createInstance();
+
+        $bulkResponseHelper->checkBulkResponsesForErrors(
+            $array,
             'update'
         );
 

@@ -46,6 +46,13 @@ final class ClientTest extends TestCase
             'exceptionMessage' => 'An error occured while performing bulk delete on backend'
         ];
 
+        yield 'count' => [
+            'method' => 'count',
+            'arguments' => ['strongIndex'],
+            'exception' => SearchCheckerException::class,
+            'exceptionMessage' => 'Unable to count number of documents within index'
+        ];
+
         yield 'createAlias' => [
             'method' => 'createAlias',
             'arguments' => ['index', 'alias'],
@@ -131,6 +138,22 @@ final class ClientTest extends TestCase
         $this->expectExceptionMessage('Invalid response received from bulk update');
 
         $client->bulkUpdate('index', ['1' => 'document']);
+    }
+
+    /**
+     *
+     *
+     * @return void
+     */
+    public function testCount(): void
+    {
+        $response = ['count' => 5];
+        $elasticClient = $this->createElasticClient($response, 200);
+        $client = $this->createInstance($elasticClient);
+
+        $result = $client->count('anIndex');
+
+        self::assertSame(5, $result);
     }
 
     /**

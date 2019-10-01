@@ -117,7 +117,7 @@ final class Client implements ClientInterface
     /**
      * {@inheritdoc}
      *
-     * @throws \LoyaltyCorp\Search\Exceptions\SearchUpdateException
+     * @throws \LoyaltyCorp\Search\Exceptions\SearchCheckerException
      */
     public function count(string $index): int
     {
@@ -126,7 +126,7 @@ final class Client implements ClientInterface
 
             return (int)$count['count'];
         } catch (Exception $exception) {
-            throw new SearchUpdateException('', 0, $exception);
+            throw new SearchCheckerException('Unable to count number of documents within index', 0, $exception);
         }
     }
 

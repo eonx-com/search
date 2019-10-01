@@ -5,6 +5,7 @@ namespace Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch;
 
 use Elasticsearch\Client;
 use RuntimeException;
+use Tests\LoyaltyCorp\Search\Stubs\CatStub;
 
 /**
  * This stub overloads methods within the elasticsearch client as it doesn't implement an interface so
@@ -52,6 +53,16 @@ class ClientStub extends Client
 
         // This must return an array to be compatible with base client
         return [];
+    }
+
+    /**
+     * @noinspection PhpMissingParentCallCommonInspection ReturnTypeCanBeDeclaredInspection
+     *
+     * @inheritdoc
+     */
+    public function cat()
+    {
+        return new CatStub($this->throwException);
     }
 
     /**

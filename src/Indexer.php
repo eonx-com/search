@@ -152,13 +152,19 @@ final class Indexer implements IndexerInterface
                 throw new AliasNotFoundException(\sprintf('Could not find expected alias \'%s\'', $newAlias));
             }
 
-            if ($this->elasticClient->count($newAlias) === 0 &&
+            if ($this->elasticClient->isAlias($searchHandler->getIndexName()) === true &&
+                $this->elasticClient->count($newAlias) === 0 &&
                 $this->elasticClient->count($searchHandler->getIndexName()) > 0) {
                 $indexToSkip[] = $latestAlias['index'];
                 $aliasedToRemove[] = $newAlias;
+                /**
+                 * Swapping should not occur if all the conditions are met:
+                 *     - The root alias exists
+                 *     - New index has no documents
+                 *     - Old index contains data
+                 * Generally this is true when the SearchIndex type is not entity based
+                 */
 
-                // Swapping should not occur. Old index contains data, new one does not support populating.
-                // Generally this is true when the SearchIndex type is not entity based
                 continue;
             }
 

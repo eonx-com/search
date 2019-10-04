@@ -124,7 +124,8 @@ final class Client implements ClientInterface
         try {
             $count = $this->elastic->cat()->count(['index' => $index]);
 
-            return (int)$count['count'];
+            // _cat/_count supports counting many indices, the response is an array of objects but we only need 0 index
+            return (int)$count[0]['count'];
         } catch (Exception $exception) {
             throw new SearchCheckerException('Unable to count number of documents within index', 0, $exception);
         }

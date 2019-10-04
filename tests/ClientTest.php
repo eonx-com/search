@@ -147,7 +147,7 @@ final class ClientTest extends TestCase
      */
     public function testCount(): void
     {
-        $response = ['count' => 5];
+        $response = [['count' => 5]];
         $elasticClient = $this->createElasticClient($response, 200);
         $client = $this->createInstance($elasticClient);
 

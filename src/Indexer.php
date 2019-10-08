@@ -11,6 +11,7 @@ use LoyaltyCorp\Search\Indexer\IndexSwapResult;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
+use LoyaltyCorp\Search\Interfaces\Helpers\IndexHelperInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
@@ -28,6 +29,11 @@ final class Indexer implements IndexerInterface
     private $entityManagerHelper;
 
     /**
+     * @var \LoyaltyCorp\Search\Interfaces\Helpers\IndexHelperInterface
+     */
+    private $indexHelper;
+
+    /**
      * @var \LoyaltyCorp\Search\Interfaces\ManagerInterface
      */
     private $manager;
@@ -37,15 +43,18 @@ final class Indexer implements IndexerInterface
      *
      * @param \LoyaltyCorp\Search\Interfaces\ClientInterface $elasticClient
      * @param \LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface $entityManagerHelper
+     * @param \LoyaltyCorp\Search\Interfaces\Helpers\IndexHelperInterface $indexHelper
      * @param \LoyaltyCorp\Search\Interfaces\ManagerInterface $manager
      */
     public function __construct(
         ClientInterface $elasticClient,
         EntityManagerHelperInterface $entityManagerHelper,
+        IndexHelperInterface $indexHelper,
         ManagerInterface $manager
     ) {
         $this->elasticClient = $elasticClient;
         $this->entityManagerHelper = $entityManagerHelper;
+        $this->indexHelper = $indexHelper;
         $this->manager = $manager;
     }
 
@@ -60,7 +69,7 @@ final class Indexer implements IndexerInterface
 
         /** @var \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[] $searchHandlers */
         foreach ($searchHandlers as $searchHandler) {
-            $handlerIndices[] = $searchHandler->getIndexName();
+            $handlerIndices[] = $this->indexHelper->getIndexName($searchHandler);
         }
 
         // Build array of all indices used by aliases
@@ -105,7 +114,7 @@ final class Indexer implements IndexerInterface
      */
     public function create(SearchHandlerInterface $searchHandler, ?BaseDateTime $now = null): void
     {
-        $index = $searchHandler->getIndexName();
+        $index = $this->indexHelper->getIndexName($searchHandler);
 
         $now = $now ?? new DateTime();
         $dateStamp = $now->format('Ymdhis');
@@ -142,8 +151,9 @@ final class Indexer implements IndexerInterface
         $indexToSkip = [];
 
         foreach ($searchHandlers as $searchHandler) {
+            $indexName = $this->indexHelper->getIndexName($searchHandler);
             // Use index+_new to determine the latest index name
-            $newAlias = \sprintf('%s_new', $searchHandler->getIndexName());
+            $newAlias = \sprintf('%s_new', $indexName);
 
             /** @var string[]|null $latestIndex */
             $latestAlias = $this->elasticClient->getAliases($newAlias)[0] ?? null;
@@ -152,9 +162,9 @@ final class Indexer implements IndexerInterface
                 throw new AliasNotFoundException(\sprintf('Could not find expected alias \'%s\'', $newAlias));
             }
 
-            if ($this->elasticClient->isAlias($searchHandler->getIndexName()) === true &&
+            if ($this->elasticClient->isAlias($indexName) === true &&
                 $this->elasticClient->count($newAlias) === 0 &&
-                $this->elasticClient->count($searchHandler->getIndexName()) > 0) {
+                $this->elasticClient->count($indexName) > 0) {
                 $indexToSkip[] = $latestAlias['index'];
                 $aliasedToRemove[] = $newAlias;
                 /**
@@ -168,7 +178,7 @@ final class Indexer implements IndexerInterface
                 continue;
             }
 
-            $aliasesToMove[] = ['alias' => $searchHandler->getIndexName(), 'index' => $latestAlias['index']];
+            $aliasesToMove[] = ['alias' => $indexName, 'index' => $latestAlias['index']];
             $aliasedToRemove[] = $newAlias;
         }
 
@@ -271,5 +281,22 @@ final class Indexer implements IndexerInterface
         if (\count($documents) > 0) {
             $this->handleUpdatesFromPrimaryKeys($class, $indexSuffix, $documents);
         }
+    }
+
+    /**
+     * Create index name based on provider id if provided.
+     *
+     * @param \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface $searchHandler
+     * @param string|null $providerId
+     *
+     * @return string
+     */
+    private function createIndexName(SearchHandlerInterface $searchHandler, ?string $providerId): string
+    {
+        if (\is_string($providerId) !== true) {
+            return $searchHandler->getIndexName();
+        }
+
+        return \sprintf('%s_%s', $searchHandler->getIndexName(), $providerId);
     }
 }

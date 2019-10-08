@@ -15,11 +15,13 @@ use LoyaltyCorp\Search\Client;
 use LoyaltyCorp\Search\Exceptions\BindingResolutionException;
 use LoyaltyCorp\Search\Helpers\ClientBulkResponseHelper;
 use LoyaltyCorp\Search\Helpers\EntityManagerHelper;
+use LoyaltyCorp\Search\Helpers\IndexHelper;
 use LoyaltyCorp\Search\Helpers\RegisteredSearchHandler;
 use LoyaltyCorp\Search\Indexer;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\ClientBulkResponseHelperInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
+use LoyaltyCorp\Search\Interfaces\Helpers\IndexHelperInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
@@ -66,6 +68,7 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
             );
         });
 
+        $this->app->singleton(IndexHelperInterface::class, IndexHelper::class);
         $this->app->singleton(IndexerInterface::class, Indexer::class);
 
         // Bind search manager

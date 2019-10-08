@@ -5,6 +5,7 @@ namespace Tests\LoyaltyCorp\Search;
 
 use EoneoPay\Utils\DateTime;
 use LoyaltyCorp\Search\Exceptions\AliasNotFoundException;
+use LoyaltyCorp\Search\Helpers\IndexHelper;
 use LoyaltyCorp\Search\Indexer;
 use LoyaltyCorp\Search\Indexer\IndexSwapResult;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
@@ -312,6 +313,7 @@ class IndexerTest extends TestCase
         return new Indexer(
             $client ?? new ClientStub(),
             $entityManagerHelper ?? new EntityManagerHelperStub(),
+            new IndexHelper(),
             $manager ?? new ManagerStub()
         );
     }

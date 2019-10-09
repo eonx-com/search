@@ -7,6 +7,7 @@ use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
+use LoyaltyCorp\Search\Interfaces\ProviderAwareInterface;
 
 final class Manager implements ManagerInterface
 {
@@ -53,9 +54,10 @@ final class Manager implements ManagerInterface
                 continue;
             }
 
+            $indexName = $this->getIndexName($handler, $object);
             // Elastic search works with string ids, so we're forcing
             // them to strings here
-            $ids[$handler->getIndexName()] = (string)$searchId;
+            $ids[$indexName] = (string)$searchId;
         }
 
         return $ids;
@@ -100,17 +102,12 @@ final class Manager implements ManagerInterface
                 // elasticsearch works with string ids, so we're forcing
                 // them to strings here
                 $transformed[(string)$searchId] = $document;
+
+                $indexName = $this->getIndexName($handler, $object);
+                $index = \sprintf('%s%s', $indexName, $indexSuffix);
+
+                $this->client->bulkUpdate($index, $transformed);
             }
-
-            if (\count($transformed) === 0) {
-                // there were no transformed documents created by the handler, we have
-                // nothing to update
-                continue;
-            }
-
-            $index = \sprintf('%s%s', $handler->getIndexName(), $indexSuffix);
-
-            $this->client->bulkUpdate($index, $transformed);
         }
     }
 
@@ -147,5 +144,22 @@ final class Manager implements ManagerInterface
         // If the supplied $class has any intersection of $implements, the handler
         // handles this class.
         return \count($intersect) > 0;
+    }
+
+    /**
+     * Get index name.
+     *
+     * @param \LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface $handler
+     * @param object $object
+     *
+     * @return string
+     */
+    private function getIndexName(EntitySearchHandlerInterface $handler, object $object): string
+    {
+        if (($handler instanceof ProviderAwareInterface) !== true) {
+            return $handler->getIndexName();
+        }
+
+        return \sprintf('%s_%s', $handler->getIndexName(), $handler->getProviderId($object));
     }
 }

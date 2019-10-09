@@ -16,6 +16,10 @@ use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) High coupling required for search indexer already using decoupled
+ * services.
+ */
 final class Indexer implements IndexerInterface
 {
     /**

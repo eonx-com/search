@@ -12,6 +12,23 @@ use Tests\LoyaltyCorp\Search\Stubs\Vendor\EoneoPay\Externals\ORM\Query\FilterCol
 class EntityManagerStub implements EntityManagerInterface
 {
     /**
+     * Entities.
+     *
+     * @var \EoneoPay\Externals\ORM\Interfaces\EntityInterface[]|null
+     */
+    private $entities;
+
+    /**
+     * EntityManagerStub constructor.
+     *
+     * @param mixed[]|null $entities
+     */
+    public function __construct(?array $entities = null)
+    {
+        $this->entities = $entities;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function findByIds(string $class, array $ids): array
@@ -39,7 +56,7 @@ class EntityManagerStub implements EntityManagerInterface
      */
     public function getRepository(string $class): RepositoryInterface
     {
-        return new RepositoryStub();
+        return new RepositoryStub($this->entities);
     }
 
     /**

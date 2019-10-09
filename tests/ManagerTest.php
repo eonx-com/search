@@ -9,6 +9,7 @@ use LoyaltyCorp\Search\Helpers\ClientBulkResponseHelper;
 use LoyaltyCorp\Search\Manager;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\EntitySearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NotSearchableEntitySearchHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\ProviderAwareSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NoDocumentBodyStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NoSearchIdStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NotSearchableStub;
@@ -90,6 +91,45 @@ final class ManagerTest extends TestCase
                     [
                         'index' => [
                             '_index' => 'valid_new',
+                            '_type' => 'doc',
+                            '_id' => 'searchable'
+                        ]
+                    ],
+                    ['search' => 'body']
+                ]
+            ],
+            $stub->getBulkParameters()
+        );
+    }
+
+    /**
+     * Test handleUpdates() functionality with provider aware search handler.
+     *
+     * @return void
+     */
+    public function testHandleProviderAwareUpdatesFunctionality(): void
+    {
+        $stub = new ClientStub();
+        $handlers = new RegisteredSearchHandlerStub([new ProviderAwareSearchHandlerStub()]);
+        $manager = new Manager($handlers, $this->createClient($stub));
+
+        // Test an unsupported class doesn't do anything
+        $manager->handleUpdates(NotSearchableStub::class, '_new', []);
+        self::assertNull($stub->getBulkParameters());
+
+        // Test supported class only generates body for valid classes
+        $manager->handleUpdates(SearchableStub::class, '_new', [
+            new NoDocumentBodyStub(),
+            new NoSearchIdStub(),
+            new SearchableStub()
+        ]);
+
+        self::assertSame(
+            [
+                'body' => [
+                    [
+                        'index' => [
+                            '_index' => 'provider-aware-index_providerId_new',
                             '_type' => 'doc',
                             '_id' => 'searchable'
                         ]

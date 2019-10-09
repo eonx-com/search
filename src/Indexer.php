@@ -69,7 +69,7 @@ final class Indexer implements IndexerInterface
 
         /** @var \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[] $searchHandlers */
         foreach ($searchHandlers as $searchHandler) {
-            $handlerIndices[] = $this->indexTransformer->transformIndexNames($searchHandler);
+            $handlerIndices = $this->indexTransformer->transformIndexNames($searchHandler);
         }
 
         // Build array of all indices used by aliases

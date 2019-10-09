@@ -3,11 +3,6 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Bridge\Laravel\Providers;
 
-use Doctrine\ORM\EntityManagerInterface as DoctrineEntityManagerInterface;
-use EoneoPay\Externals\Logger\Interfaces\LoggerInterface;
-use EoneoPay\Externals\Logger\Logger;
-use EoneoPay\Externals\ORM\Interfaces\EntityManagerInterface as EoneoPayEntityManagerInterface;
-use Illuminate\Contracts\Foundation\Application;
 use LoyaltyCorp\Search\Bridge\Laravel\Providers\SearchServiceProvider;
 use LoyaltyCorp\Search\Client;
 use LoyaltyCorp\Search\Exceptions\BindingResolutionException;
@@ -18,14 +13,13 @@ use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
+use LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface;
 use LoyaltyCorp\Search\Manager;
+use LoyaltyCorp\Search\Transformers\DefaultIndexTransformer;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\EntitySearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NonDoctrineHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NotSearchableStub;
-use Tests\LoyaltyCorp\Search\Stubs\Vendor\Doctrine\EntityManagerStub as DoctrineEntityManagerStub;
-use Tests\LoyaltyCorp\Search\Stubs\Vendor\Doctrine\RegistryStub;
-use Tests\LoyaltyCorp\Search\Stubs\Vendor\EoneoPay\Externals\ORM\EntityManagerStub as EoneoPayEntityManagerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Illuminate\Contracts\Foundation\ApplicationStub;
 use Tests\LoyaltyCorp\Search\TestCase;
 
@@ -57,6 +51,10 @@ final class SearchServiceProviderTest extends TestCase
         self::assertInstanceOf(
             RegisteredSearchHandler::class,
             $application->make(RegisteredSearchHandlerInterface::class)
+        );
+        self::assertInstanceOf(
+            DefaultIndexTransformer::class,
+            $application->make(IndexTransformerInterface::class)
         );
     }
 
@@ -121,34 +119,5 @@ final class SearchServiceProviderTest extends TestCase
         $registeredHandlers = $application->make(RegisteredSearchHandlerInterface::class);
 
         self::assertEquals($expected, $registeredHandlers->getAll());
-    }
-
-    /**
-     * Create configured application instance for service provider testing
-     *
-     * @return \Illuminate\Contracts\Foundation\Application
-     */
-    private function createApplication(): Application
-    {
-        $application = new ApplicationStub();
-
-        // Bind logger to container so app->make on interface works
-        $application->singleton(LoggerInterface::class, static function (): LoggerInterface {
-            return new Logger();
-        });
-
-        // Bind Doctrine EntityManager to container so app->make on interface works
-        $application->singleton(DoctrineEntityManagerInterface::class, static function (): DoctrineEntityManagerStub {
-            return new DoctrineEntityManagerStub();
-        });
-
-        // Bind eoneopay EntityManager to container so app->make on interface works
-        $application->singleton(EoneoPayEntityManagerInterface::class, static function (): EoneoPayEntityManagerStub {
-            return new EoneoPayEntityManagerStub();
-        });
-
-        $application->singleton('registry', RegistryStub::class);
-
-        return $application;
     }
 }

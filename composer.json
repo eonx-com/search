@@ -43,6 +43,7 @@
     }
   },
   "suggest": {
+    "loyaltycorp/multitenancy": "Required when using provider specific search handlers",
     "monolog/monolog": "Required when using the Laravel bridge",
     "vlucas/phpdotenv": "Required when using the Laravel bridge"
   },

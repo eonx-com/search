@@ -1,20 +1,20 @@
 <?php
 declare(strict_types=1);
 
-namespace LoyaltyCorp\Search\Transformers;
+namespace Tests\LoyaltyCorp\Search\Stubs\Transformers;
 
 use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface;
 
-final class DefaultIndexTransformer implements IndexTransformerInterface
+final class CustomIndexTransformerStub implements IndexTransformerInterface
 {
     /**
      * {@inheritdoc}
      */
     public function transformIndexName(EntitySearchHandlerInterface $handler, object $object): string
     {
-        return $handler->getIndexName();
+        return \sprintf('%s_%s', $handler->getIndexName(), 'customId');
     }
 
     /**
@@ -23,7 +23,7 @@ final class DefaultIndexTransformer implements IndexTransformerInterface
     public function transformIndexNames(SearchHandlerInterface $searchHandler): array
     {
         return [
-            $searchHandler->getIndexName()
+            \sprintf('%s_%s', $searchHandler->getIndexName(), 'customId')
         ];
     }
 }

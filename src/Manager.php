@@ -7,7 +7,7 @@ use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
-use LoyaltyCorp\Search\Interfaces\ProviderAwareInterface;
+use LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface;
 
 final class Manager implements ManagerInterface
 {
@@ -22,15 +22,25 @@ final class Manager implements ManagerInterface
     private $handlers;
 
     /**
+     * @var \LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface
+     */
+    private $indexTransformer;
+
+    /**
      * Constructor
      *
      * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface $handlers Search Handlers
      * @param \LoyaltyCorp\Search\Interfaces\ClientInterface $client Client instance to send update requests to
+     * @param \LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface $indexTransformer Index transformer
      */
-    public function __construct(RegisteredSearchHandlerInterface $handlers, ClientInterface $client)
-    {
+    public function __construct(
+        RegisteredSearchHandlerInterface $handlers,
+        ClientInterface $client,
+        IndexTransformerInterface $indexTransformer
+    ) {
         $this->handlers = $handlers;
         $this->client = $client;
+        $this->indexTransformer = $indexTransformer;
     }
 
     /**
@@ -54,7 +64,7 @@ final class Manager implements ManagerInterface
                 continue;
             }
 
-            $indexName = $this->getIndexName($handler, $object);
+            $indexName = $this->indexTransformer->transformIndexName($handler, $object);
             // Elastic search works with string ids, so we're forcing
             // them to strings here
             $ids[$indexName] = (string)$searchId;
@@ -103,7 +113,7 @@ final class Manager implements ManagerInterface
                 // them to strings here
                 $transformed[(string)$searchId] = $document;
 
-                $indexName = $this->getIndexName($handler, $object);
+                $indexName = $this->indexTransformer->transformIndexName($handler, $object);
                 $index = \sprintf('%s%s', $indexName, $indexSuffix);
 
                 $this->client->bulkUpdate($index, $transformed);
@@ -144,22 +154,5 @@ final class Manager implements ManagerInterface
         // If the supplied $class has any intersection of $implements, the handler
         // handles this class.
         return \count($intersect) > 0;
-    }
-
-    /**
-     * Get index name.
-     *
-     * @param \LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface $handler
-     * @param object $object
-     *
-     * @return string
-     */
-    private function getIndexName(EntitySearchHandlerInterface $handler, object $object): string
-    {
-        if (($handler instanceof ProviderAwareInterface) !== true) {
-            return $handler->getIndexName();
-        }
-
-        return \sprintf('%s_%s', $handler->getIndexName(), $handler->getProviderId($object));
     }
 }

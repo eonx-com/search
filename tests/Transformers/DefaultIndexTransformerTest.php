@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace Tests\LoyaltyCorp\Search\Transformers;
 
 use LoyaltyCorp\Search\Transformers\DefaultIndexTransformer;
+use Tests\LoyaltyCorp\Search\Stubs\Entities\EntityStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\EntitySearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NonDoctrineHandlerStub;
 use Tests\LoyaltyCorp\Search\TestCase;
 
@@ -12,6 +14,24 @@ use Tests\LoyaltyCorp\Search\TestCase;
  */
 class DefaultIndexTransformerTest extends TestCase
 {
+    /**
+     * Test that transforming index name will return expected index name.
+     *
+     * @return void
+     */
+    public function testTransformIndexName(): void
+    {
+        $entity = new EntityStub();
+        $handler = new EntitySearchHandlerStub();
+        $transformer = $this->getTransformer();
+
+        $expectedIndexName = 'valid';
+
+        $actualIndexName = $transformer->transformIndexName($handler, $entity);
+
+        self::assertSame($expectedIndexName, $actualIndexName);
+    }
+
     /**
      * Test that transforming index names will return expected array of index
      * names.

@@ -62,7 +62,7 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
                 ClientBuilder::create()
                     ->setLogger($app->make(LoggerInterface::class))
                     ->setHosts(\array_filter([(string)\env('ELASTICSEARCH_HOST', '')]))
-                    ->setSSLVerification((bool)\env('ELASTICSEARCH_VERIFY_SSL', false))
+                    ->setSSLVerification((bool)\env('ELASTICSEARCH_VERIFY_SSL', true))
                     ->build(),
                 $app->make(ClientBulkResponseHelperInterface::class)
             );

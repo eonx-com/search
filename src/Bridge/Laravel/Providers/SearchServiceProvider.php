@@ -24,7 +24,9 @@ use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
+use LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface;
 use LoyaltyCorp\Search\Manager;
+use LoyaltyCorp\Search\Transformers\DefaultIndexTransformer;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) High coupling required to ensure all services are bound
@@ -66,6 +68,7 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
             );
         });
 
+        $this->app->singleton(IndexTransformerInterface::class, DefaultIndexTransformer::class);
         $this->app->singleton(IndexerInterface::class, Indexer::class);
 
         // Bind search manager

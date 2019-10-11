@@ -7,6 +7,7 @@ use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
+use LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface;
 
 final class Manager implements ManagerInterface
 {
@@ -21,15 +22,25 @@ final class Manager implements ManagerInterface
     private $handlers;
 
     /**
+     * @var \LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface
+     */
+    private $indexTransformer;
+
+    /**
      * Constructor
      *
      * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface $handlers Search Handlers
      * @param \LoyaltyCorp\Search\Interfaces\ClientInterface $client Client instance to send update requests to
+     * @param \LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface $indexTransformer Index transformer
      */
-    public function __construct(RegisteredSearchHandlerInterface $handlers, ClientInterface $client)
-    {
+    public function __construct(
+        RegisteredSearchHandlerInterface $handlers,
+        ClientInterface $client,
+        IndexTransformerInterface $indexTransformer
+    ) {
         $this->handlers = $handlers;
         $this->client = $client;
+        $this->indexTransformer = $indexTransformer;
     }
 
     /**
@@ -53,9 +64,10 @@ final class Manager implements ManagerInterface
                 continue;
             }
 
+            $indexName = $this->indexTransformer->transformIndexName($handler, $object);
             // Elastic search works with string ids, so we're forcing
             // them to strings here
-            $ids[$handler->getIndexName()] = (string)$searchId;
+            $ids[$indexName] = (string)$searchId;
         }
 
         return $ids;
@@ -100,17 +112,12 @@ final class Manager implements ManagerInterface
                 // elasticsearch works with string ids, so we're forcing
                 // them to strings here
                 $transformed[(string)$searchId] = $document;
+
+                $indexName = $this->indexTransformer->transformIndexName($handler, $object);
+                $index = \sprintf('%s%s', $indexName, $indexSuffix);
+
+                $this->client->bulkUpdate($index, $transformed);
             }
-
-            if (\count($transformed) === 0) {
-                // there were no transformed documents created by the handler, we have
-                // nothing to update
-                continue;
-            }
-
-            $index = \sprintf('%s%s', $handler->getIndexName(), $indexSuffix);
-
-            $this->client->bulkUpdate($index, $transformed);
         }
     }
 

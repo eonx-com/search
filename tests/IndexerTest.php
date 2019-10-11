@@ -10,6 +10,7 @@ use LoyaltyCorp\Search\Indexer\IndexSwapResult;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
+use LoyaltyCorp\Search\Transformers\DefaultIndexTransformer;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
 use Tests\LoyaltyCorp\Search\Stubs\Entities\EntityStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\EntityHandlerStub;
@@ -312,6 +313,7 @@ class IndexerTest extends TestCase
         return new Indexer(
             $client ?? new ClientStub(),
             $entityManagerHelper ?? new EntityManagerHelperStub(),
+            new DefaultIndexTransformer(),
             $manager ?? new ManagerStub()
         );
     }

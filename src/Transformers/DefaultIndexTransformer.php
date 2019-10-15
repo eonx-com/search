@@ -14,7 +14,7 @@ final class DefaultIndexTransformer implements IndexTransformerInterface
      */
     public function transformIndexName(EntitySearchHandlerInterface $handler, object $object): string
     {
-        return $handler->getIndexName();
+        return \mb_strtolower($handler->getIndexName());
     }
 
     /**
@@ -23,7 +23,7 @@ final class DefaultIndexTransformer implements IndexTransformerInterface
     public function transformIndexNames(SearchHandlerInterface $searchHandler): array
     {
         return [
-            $searchHandler->getIndexName()
+            \mb_strtolower($searchHandler->getIndexName())
         ];
     }
 }

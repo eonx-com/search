@@ -27,6 +27,9 @@ use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface;
 use LoyaltyCorp\Search\Manager;
 use LoyaltyCorp\Search\Transformers\DefaultIndexTransformer;
+use LoyaltyCorp\Search\Workers\EntityDeleteDataWorker;
+use LoyaltyCorp\Search\Workers\EntityDeleteWorker;
+use LoyaltyCorp\Search\Workers\EntityUpdateWorker;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) High coupling required to ensure all services are bound
@@ -107,5 +110,10 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
 
             return new RegisteredSearchHandler($searchHandlers);
         });
+
+        // Bind workers
+        $this->app->singleton(EntityDeleteDataWorker::class);
+        $this->app->singleton(EntityDeleteWorker::class);
+        $this->app->singleton(EntityUpdateWorker::class);
     }
 }

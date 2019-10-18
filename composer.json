@@ -22,6 +22,7 @@
     "guzzlehttp/psr7": "^1.5",
     "illuminate/container": "^5.8|^6.0",
     "illuminate/support": "^5.8|^6.0",
+    "loyaltycorp/easy-entity-change": "^0.10.4",
     "loyaltycorp/multitenancy": "^1.0",
     "monolog/monolog": "^1.24",
     "phpmd/phpmd": "^2.6",
@@ -45,7 +46,8 @@
   "suggest": {
     "loyaltycorp/multitenancy": "Required when using provider specific search handlers",
     "monolog/monolog": "Required when using the Laravel bridge",
-    "vlucas/phpdotenv": "Required when using the Laravel bridge"
+    "vlucas/phpdotenv": "Required when using the Laravel bridge",
+    "loyaltycorp/easy-entity-change": "Required when using the Laravel events bridge"
   },
   "minimum-stability": "dev",
   "prefer-stable": true,

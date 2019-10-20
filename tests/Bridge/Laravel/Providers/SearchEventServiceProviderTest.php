@@ -1,24 +1,30 @@
 <?php
 declare(strict_types=1);
 
-namespace LoyaltyCorp\Search\Bridge\Laravel\Providers;
+namespace Tests\LoyaltyCorp\Search\Bridge\Laravel\Providers;
 
-use Laravel\Lumen\Providers\EventServiceProvider;
 use LoyaltyCorp\EasyEntityChange\Events\EntityChangeEvent;
 use LoyaltyCorp\EasyEntityChange\Events\EntityDeleteDataEvent;
 use LoyaltyCorp\Search\Bridge\Laravel\Listeners\EntityDeleteDataListener;
 use LoyaltyCorp\Search\Bridge\Laravel\Listeners\EntityDeleteListener;
 use LoyaltyCorp\Search\Bridge\Laravel\Listeners\EntityUpdateListener;
+use LoyaltyCorp\Search\Bridge\Laravel\Providers\SearchEventServiceProvider;
+use Tests\LoyaltyCorp\Search\TestCase;
 
-final class SearchEventServiceProvider extends EventServiceProvider
+final class SearchEventServiceProviderTest extends TestCase
 {
     /**
-     * {@inheritdoc}
+     * Test listens.
+     *
+     * @return void
      */
-    public function __construct($app)
+    public function testListens(): void
     {
-        // Set listeners
-        $this->listen = [
+        $application = $this->createApplication();
+
+        $serviceProvider = new SearchEventServiceProvider($application);
+
+        $listen = [
             EntityChangeEvent::class => [
                 EntityDeleteListener::class,
                 EntityUpdateListener::class
@@ -28,6 +34,6 @@ final class SearchEventServiceProvider extends EventServiceProvider
             ],
         ];
 
-        parent::__construct($app);
+        static::assertSame($listen, $serviceProvider->listens());
     }
 }

@@ -19,6 +19,13 @@ class EntityManagerStub implements EntityManagerInterface
     private $entities;
 
     /**
+     * What is returned by findByIds.
+     *
+     * @var object[][]
+     */
+    private $findByIds = [];
+
+    /**
      * EntityManagerStub constructor.
      *
      * @param \EoneoPay\Externals\ORM\Interfaces\EntityInterface[]|null $entities
@@ -29,11 +36,23 @@ class EntityManagerStub implements EntityManagerInterface
     }
 
     /**
+     * Adds a findByIds return.
+     *
+     * @param object[] $findByIds
+     *
+     * @return void
+     */
+    public function addFindByIds(array $findByIds): void
+    {
+        $this->findByIds[] = $findByIds;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function findByIds(string $class, array $ids): array
     {
-        return [];
+        return \array_shift($this->findByIds) ?? [];
     }
 
     /**

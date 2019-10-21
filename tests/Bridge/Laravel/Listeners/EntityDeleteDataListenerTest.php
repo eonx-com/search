@@ -6,6 +6,7 @@ namespace Tests\LoyaltyCorp\Search\Bridge\Laravel\Listeners;
 use LoyaltyCorp\EasyEntityChange\Events\EntityDeleteDataEvent;
 use LoyaltyCorp\Search\Bridge\Laravel\Listeners\EntityDeleteDataListener;
 use LoyaltyCorp\Search\Workers\EntityDeleteDataWorker;
+use stdClass;
 use Tests\LoyaltyCorp\Search\Stubs\ManagerStub;
 use Tests\LoyaltyCorp\Search\TestCase;
 
@@ -34,9 +35,9 @@ final class EntityDeleteDataListenerTest extends TestCase
         $searchManager->addSearchMeta(['purple' => 'id2']);
 
         $result = $listener->handle(new EntityDeleteDataEvent([
-            new \stdClass(),
-            new \stdClass(),
-            new \stdClass()
+            new stdClass(),
+            new stdClass(),
+            new stdClass()
         ]));
 
         static::assertSame([

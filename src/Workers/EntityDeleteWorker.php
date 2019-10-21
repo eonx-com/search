@@ -25,13 +25,13 @@ final class EntityDeleteWorker
     /**
      * Handles entity change event and updates ES indexes.
      *
-     * @param mixed[] $searchData
+     * @param string[] $searchData
      *
      * @return void
      */
     public function handle(array $searchData): void
     {
-        if (count($searchData) === 0) {
+        if (\count($searchData) === 0) {
             return;
         }
 

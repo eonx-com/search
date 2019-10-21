@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Tests\LoyaltyCorp\Search\Workers;
+namespace Tests\LoyaltyCorp\Search\Bridge\Laravel\Listeners;
 
 use LoyaltyCorp\EasyEntityChange\Events\EntityChangeEvent;
 use LoyaltyCorp\Search\Bridge\Laravel\Listeners\EntityUpdateListener;

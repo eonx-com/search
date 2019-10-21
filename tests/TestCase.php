@@ -14,6 +14,9 @@ use Tests\LoyaltyCorp\Search\Stubs\Vendor\Doctrine\RegistryStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\EoneoPay\Externals\ORM\EntityManagerStub as EoneoPayEntityManagerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Illuminate\Contracts\Foundation\ApplicationStub;
 
+/**
+ * @SuppressWarnings(PHPMD.NumberOfChildren) All tests extend this class
+ */
 abstract class TestCase extends BaseTestCase
 {
     /**

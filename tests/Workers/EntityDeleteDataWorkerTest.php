@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Tests\LoyaltyCorp\Search\Workers;
 
 use LoyaltyCorp\Search\Workers\EntityDeleteDataWorker;
+use stdClass;
 use Tests\LoyaltyCorp\Search\Stubs\ManagerStub;
 use Tests\LoyaltyCorp\Search\TestCase;
 
@@ -31,9 +32,9 @@ final class EntityDeleteDataWorkerTest extends TestCase
         $searchManager->addSearchMeta(['purple' => 'id2']);
 
         $result = $worker->handle([
-            new \stdClass(),
-            new \stdClass(),
-            new \stdClass()
+            new stdClass(),
+            new stdClass(),
+            new stdClass()
         ]);
 
         static::assertSame([

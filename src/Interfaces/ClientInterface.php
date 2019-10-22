@@ -36,6 +36,15 @@ interface ClientInterface
     public function bulkUpdate(string $index, array $documents): void;
 
     /**
+     * Count the number of documents within an index
+     *
+     * @param string $index
+     *
+     * @return int
+     */
+    public function count(string $index): int;
+
+    /**
      * Create a new alias for specified index
      *
      * @param string $indexName

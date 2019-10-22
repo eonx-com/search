@@ -8,6 +8,23 @@ use EoneoPay\Externals\ORM\Interfaces\RepositoryInterface;
 class RepositoryStub implements RepositoryInterface
 {
     /**
+     * Entities.
+     *
+     * @var \EoneoPay\Externals\ORM\Interfaces\EntityInterface[]|null
+     */
+    private $entities;
+
+    /**
+     * RepositoryStub constructor.
+     *
+     * @param \EoneoPay\Externals\ORM\Interfaces\EntityInterface[]|null $entities
+     */
+    public function __construct(?array $entities = null)
+    {
+        $this->entities = $entities;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function count(?array $criteria = null): int
@@ -29,6 +46,7 @@ class RepositoryStub implements RepositoryInterface
      */
     public function findAll()
     {
+        return $this->entities ?? [];
     }
 
     /**

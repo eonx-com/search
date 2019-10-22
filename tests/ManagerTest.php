@@ -3,23 +3,28 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search;
 
+use Elasticsearch\Client as BaseClient;
 use LoyaltyCorp\Search\Client;
+use LoyaltyCorp\Search\Helpers\ClientBulkResponseHelper;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Manager;
 use LoyaltyCorp\Search\Transformer;
+use LoyaltyCorp\Search\Transformers\DefaultIndexTransformer;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NotSearchableSearchHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\ProviderAwareSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NoDocumentBodyStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NoSearchIdStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NotSearchableStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\SearchableStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Transformers\CustomIndexTransformerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch\ClientStub;
 
 /**
  * @covers \LoyaltyCorp\Search\Manager
  *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects) required to test
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Required for thorough testing
  */
 final class ManagerTest extends TestCase
 {
@@ -53,11 +58,52 @@ final class ManagerTest extends TestCase
         $stub = new ClientStub();
         $handlers = new RegisteredSearchHandlerStub([new TransformableSearchHandlerStub()]);
         $manager = $this->getManager($handlers, new Client($stub));
+        $transformer = new DefaultIndexTransformer();
 
         // Test method passes through to elasticsearch
         $manager->handleDeletes(['index' => [['9']]]);
         self::assertSame(
             ['body' => [['delete' => ['_index' => 'index', '_type' => 'doc', '_id' => ['9']]]]],
+            $stub->getBulkParameters()
+        );
+    }
+
+    /**
+     * Test handleUpdates() functionality with provider aware search handler.
+     *
+     * @return void
+     */
+    public function testHandleProviderAwareUpdatesFunctionality(): void
+    {
+        $stub = new ClientStub();
+        $handlers = new RegisteredSearchHandlerStub([new ProviderAwareSearchHandlerStub()]);
+        $transformer = new CustomIndexTransformerStub();
+        $manager = new Manager($handlers, $this->createClient($stub), $transformer);
+
+        // Test an unsupported class doesn't do anything
+        $manager->handleUpdates(NotSearchableStub::class, '_new', []);
+        self::assertNull($stub->getBulkParameters());
+
+        // Test supported class only generates body for valid classes
+        $manager->handleUpdates(SearchableStub::class, '_new', [
+            new NoDocumentBodyStub(),
+            new NoSearchIdStub(),
+            new SearchableStub()
+        ]);
+
+        self::assertSame(
+            [
+                'body' => [
+                    [
+                        'index' => [
+                            '_index' => 'provider-aware-index_customId_new',
+                            '_type' => 'doc',
+                            '_id' => 'searchable'
+                        ]
+                    ],
+                    ['search' => 'body']
+                ]
+            ],
             $stub->getBulkParameters()
         );
     }
@@ -87,11 +133,13 @@ final class ManagerTest extends TestCase
         self::assertSame(
             [
                 'body' => [
-                    ['index' => [
-                        '_index' => 'valid_new',
-                        '_type' => 'doc',
-                        '_id' => 'searchable'
-                    ]],
+                    [
+                        'index' => [
+                            '_index' => 'valid_new',
+                            '_type' => 'doc',
+                            '_id' => 'searchable'
+                        ]
+                    ],
                     ['search' => 'body']
                 ]
             ],
@@ -140,7 +188,7 @@ final class ManagerTest extends TestCase
      * @param \Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub $handlers
      * @param \LoyaltyCorp\Search\Interfaces\ClientInterface|null $client
      *
-     * @return \LoyaltyCorp\Search\Manager
+     * @return \Tests\LoyaltyCorp\Search\Manager
      */
     private function getManager(
         RegisteredSearchHandlerStub $handlers,
@@ -148,8 +196,24 @@ final class ManagerTest extends TestCase
     ): Manager {
         return new Manager(
             $handlers,
-            $client ?? new Client(new ClientStub()),
-            new Transformer()
+            $client ?? $this->createClient(),
+            new DefaultIndexTransformer(),
+            new Transformer(),
+        );
+    }
+
+    /**
+     * Instantiate an ElasticSearch client
+     *
+     * @param \Elasticsearch\Client|null $client
+     *
+     * @return \LoyaltyCorp\Search\Client
+     */
+    private function createClient(?BaseClient $client = null): Client
+    {
+        return new Client(
+            $client ?? new ClientStub(),
+            new ClientBulkResponseHelper()
         );
     }
 }

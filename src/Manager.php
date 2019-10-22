@@ -8,6 +8,7 @@ use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\TransformerInterface;
+use LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface;
 
 final class Manager implements ManagerInterface
 {
@@ -27,20 +28,28 @@ final class Manager implements ManagerInterface
     private $transformer;
 
     /**
+     * @var \LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface
+     */
+    private $indexTransformer;
+
+    /**
      * Constructor
      *
      * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface $handlers Search Handlers
      * @param \LoyaltyCorp\Search\Interfaces\ClientInterface $client Client instance to send update requests to
      * @param \LoyaltyCorp\Search\Interfaces\TransformerInterface $transformer
+     * @param \LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface $indexTransformer Index transformer
      */
     public function __construct(
         RegisteredSearchHandlerInterface $handlers,
         ClientInterface $client,
+        IndexTransformerInterface $indexTransformer,
         TransformerInterface $transformer
     ) {
         $this->handlers = $handlers;
         $this->client = $client;
         $this->transformer = $transformer;
+        $this->indexTransformer = $indexTransformer;
     }
 
     /**
@@ -64,9 +73,10 @@ final class Manager implements ManagerInterface
                 continue;
             }
 
+            $indexName = $this->indexTransformer->transformIndexName($handler, $object);
             // Elastic search works with string ids, so we're forcing
             // them to strings here
-            $ids[$handler->getIndexName()] = (string)$searchId;
+            $ids[$indexName] = (string)$searchId;
         }
 
         return $ids;
@@ -136,7 +146,8 @@ final class Manager implements ManagerInterface
             return;
         }
 
-        $index = \sprintf('%s%s', $handler->getIndexName(), $indexSuffix);
+        $indexName = $this->indexTransformer->transformIndexName($handler, $object);
+        $index = \sprintf('%s%s', $indexName, $indexSuffix);
 
         $this->client->bulkUpdate($index, $transformed);
     }

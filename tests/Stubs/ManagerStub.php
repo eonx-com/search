@@ -12,9 +12,19 @@ use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 class ManagerStub implements ManagerInterface
 {
     /**
+     * @var mixed[][]
+     */
+    private $deletes = [];
+
+    /**
      * @var mixed[]
      */
     private $handlerUpdates = [];
+
+    /**
+     * @var mixed[][]
+     */
+    private $searchMeta = [];
 
     /**
      * Used to determine how many times `handleUpdates` was called
@@ -29,6 +39,26 @@ class ManagerStub implements ManagerInterface
     private $updateObjects;
 
     /**
+     * @param mixed[] $meta
+     *
+     * @return void
+     */
+    public function addSearchMeta(array $meta): void
+    {
+        $this->searchMeta[] = $meta;
+    }
+
+    /**
+     * Get deletes.
+     *
+     * @return mixed[][]
+     */
+    public function getDeletes(): array
+    {
+        return $this->deletes;
+    }
+
+    /**
      * @return mixed[]
      */
     public function getHandlerUpdates(): array
@@ -41,7 +71,7 @@ class ManagerStub implements ManagerInterface
      */
     public function getSearchMeta(object $object): array
     {
-        return [];
+        return \array_shift($this->searchMeta) ?? [];
     }
 
     /**
@@ -69,6 +99,7 @@ class ManagerStub implements ManagerInterface
      */
     public function handleDeletes(array $ids): void
     {
+        $this->deletes[] = $ids;
     }
 
     /**

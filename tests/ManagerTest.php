@@ -18,7 +18,6 @@ use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NotSearchableStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\SearchableStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub;
-use Tests\LoyaltyCorp\Search\Stubs\Transformers\CustomIndexTransformerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch\ClientStub;
 
 /**
@@ -57,8 +56,7 @@ final class ManagerTest extends TestCase
     {
         $stub = new ClientStub();
         $handlers = new RegisteredSearchHandlerStub([new TransformableSearchHandlerStub()]);
-        $manager = $this->getManager($handlers, new Client($stub));
-        $transformer = new DefaultIndexTransformer();
+        $manager = $this->getManager($handlers, $this->createClient($stub));
 
         // Test method passes through to elasticsearch
         $manager->handleDeletes(['index' => [['9']]]);
@@ -77,8 +75,7 @@ final class ManagerTest extends TestCase
     {
         $stub = new ClientStub();
         $handlers = new RegisteredSearchHandlerStub([new ProviderAwareSearchHandlerStub()]);
-        $transformer = new CustomIndexTransformerStub();
-        $manager = new Manager($handlers, $this->createClient($stub), $transformer);
+        $manager = $this->getManager($handlers, $this->createClient($stub));
 
         // Test an unsupported class doesn't do anything
         $manager->handleUpdates(NotSearchableStub::class, '_new', []);
@@ -117,7 +114,7 @@ final class ManagerTest extends TestCase
     {
         $stub = new ClientStub();
         $handlers = new RegisteredSearchHandlerStub([new TransformableSearchHandlerStub()]);
-        $manager = $this->getManager($handlers, new Client($stub));
+        $manager = $this->getManager($handlers, $this->createClient($stub));
 
         // Test an unsupported class doesn't do anything
         $manager->handleUpdates(NotSearchableStub::class, '_new', []);
@@ -156,7 +153,7 @@ final class ManagerTest extends TestCase
     {
         $stub = new ClientStub();
         $handlers = new RegisteredSearchHandlerStub([new TransformableSearchHandlerStub()]);
-        $manager = $this->getManager($handlers, new Client($stub));
+        $manager = $this->getManager($handlers, $this->createClient($stub));
 
         // Tests whats going to happen when handleUpdates is called with objects that result
         // in no transformations
@@ -183,26 +180,6 @@ final class ManagerTest extends TestCase
     }
 
     /**
-     * Gets the manager under test.
-     *
-     * @param \Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub $handlers
-     * @param \LoyaltyCorp\Search\Interfaces\ClientInterface|null $client
-     *
-     * @return \Tests\LoyaltyCorp\Search\Manager
-     */
-    private function getManager(
-        RegisteredSearchHandlerStub $handlers,
-        ?ClientInterface $client = null
-    ): Manager {
-        return new Manager(
-            $handlers,
-            $client ?? $this->createClient(),
-            new DefaultIndexTransformer(),
-            new Transformer(),
-        );
-    }
-
-    /**
      * Instantiate an ElasticSearch client
      *
      * @param \Elasticsearch\Client|null $client
@@ -214,6 +191,26 @@ final class ManagerTest extends TestCase
         return new Client(
             $client ?? new ClientStub(),
             new ClientBulkResponseHelper()
+        );
+    }
+
+    /**
+     * Gets the manager under test.
+     *
+     * @param \Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub $handlers
+     * @param \LoyaltyCorp\Search\Interfaces\ClientInterface|null $client
+     *
+     * @return \LoyaltyCorp\Search\Manager
+     */
+    private function getManager(
+        RegisteredSearchHandlerStub $handlers,
+        ?ClientInterface $client = null
+    ): Manager {
+        return new Manager(
+            $handlers,
+            $client ?? $this->createClient(),
+            new DefaultIndexTransformer(),
+            new Transformer(),
         );
     }
 }

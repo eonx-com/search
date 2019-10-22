@@ -37,8 +37,8 @@ final class Manager implements ManagerInterface
      *
      * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface $handlers Search Handlers
      * @param \LoyaltyCorp\Search\Interfaces\ClientInterface $client Client instance to send update requests to
-     * @param \LoyaltyCorp\Search\Interfaces\TransformerInterface $transformer
      * @param \LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface $indexTransformer Index transformer
+     * @param \LoyaltyCorp\Search\Interfaces\TransformerInterface $transformer
      */
     public function __construct(
         RegisteredSearchHandlerInterface $handlers,

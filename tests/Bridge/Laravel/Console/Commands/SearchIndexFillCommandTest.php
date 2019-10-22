@@ -34,18 +34,18 @@ class SearchIndexFillCommandTest extends SearchIndexCommandTestCase
         $otherHandler = new OtherTransformableSearchHandlerStub();
         $handlers = [$handlerStub, $otherHandler];
         $command = $this->createInstance($indexer, new RegisteredSearchHandlerStub($handlers));
-        $this->bootstrapCommand($command, null, null, ['batchSize']);
+        $this->bootstrapCommand($command);
 
         $expectedPopulated = [
             [
-                'searchHandler' => $handlerStub,
+                'handler' => $handlerStub,
                 'indexSuffix' => '_new',
-                'batchSize' => 20
+                'batchSize' => 200
             ],
             [
-                'searchHandler' => $otherHandler,
+                'handler' => $otherHandler,
                 'indexSuffix' => '_new',
-                'batchSize' => 20
+                'batchSize' => 200
             ]
         ];
 

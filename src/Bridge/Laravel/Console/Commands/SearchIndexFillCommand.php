@@ -28,14 +28,13 @@ final class SearchIndexFillCommand extends Command
     public function __construct(IndexerInterface $indexer, RegisteredSearchHandlerInterface $searchHandlers)
     {
         $this->description = 'Populate all search handler indices with their corresponding data';
-        $this->signature = 'search:index:fill {--batchSize=20}';
+        $this->signature = 'search:index:fill';
 
         $this->indexer = $indexer;
         $this->searchHandlers = $searchHandlers;
 
         parent::__construct();
     }
-
 
     /**
      * Populate data for all indices
@@ -44,30 +43,25 @@ final class SearchIndexFillCommand extends Command
      */
     public function handle(): void
     {
-        $allSearchHandlers = $this->searchHandlers->getAll();
+        $allSearchHandlers = $this->searchHandlers->getTransformableHandlers();
         $totalHandlers = \count($allSearchHandlers);
 
-        // Fill only handles entity search handlers.
-        foreach ($this->searchHandlers->getEntityHandlers() as $iteration => $searchHandler) {
+        $batchSize = 200;
+
+        foreach ($allSearchHandlers as $iteration => $handler) {
             $this->output->write(
                 \sprintf(
                     '[%d/%d] Populating documents for \'%s\'... ',
                     $iteration,
                     $totalHandlers,
-                    \get_class($searchHandler)
+                    \get_class($handler)
                 )
             );
 
-            $this->indexer->populate(
-                $searchHandler,
-                '_new',
-                \is_numeric($this->option('batchSize')) ? (int)$this->option('batchSize') : 20
-            );
+            $this->indexer->populate($handler, '_new', $batchSize);
 
-            /**
-             * @noinspection DisconnectedForeachInstructionInspection
-             * ✓
-             */
+            // ✓
+            /** @noinspection DisconnectedForeachInstructionInspection */
             $this->output->writeln("\xE2\x9C\x93");
         }
     }

@@ -7,13 +7,10 @@ use EoneoPay\Utils\DateTime;
 use LoyaltyCorp\Search\Exceptions\AliasNotFoundException;
 use LoyaltyCorp\Search\Indexer;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
-use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
+use LoyaltyCorp\Search\Populator;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
-use Tests\LoyaltyCorp\Search\Stubs\Entities\EntityStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
-use Tests\LoyaltyCorp\Search\Stubs\Helpers\EntityManagerHelperStub;
 use Tests\LoyaltyCorp\Search\Stubs\ManagerStub;
 
 /**
@@ -24,6 +21,92 @@ use Tests\LoyaltyCorp\Search\Stubs\ManagerStub;
  */
 class IndexerTest extends TestCase
 {
+    /**
+     * Tests that populate doesnt do anything when the handler has no batches
+     * returned by the populator.
+     *
+     * @return void
+     */
+    public function testPopulateNoBatches(): void
+    {
+        $objects = [];
+
+        $manager = new ManagerStub();
+        $indexer = $this->createInstance(null, $manager);
+        $handler = new TransformableSearchHandlerStub($objects);
+
+        $indexer->populate($handler, '_new', 200);
+
+        static::assertSame([], $manager->getHandlerUpdates());
+    }
+
+    /**
+     * Tests that populate calls a single batch to the manager.
+     *
+     * @return void
+     */
+    public function testPopulateSingleBatch(): void
+    {
+        $objects = [
+            ['thing' => 'wot']
+        ];
+
+        $manager = new ManagerStub();
+        $indexer = $this->createInstance(null, $manager);
+        $handler = new TransformableSearchHandlerStub($objects);
+
+        $expected = [
+            'handler' => $handler,
+            'indexSuffix' => '_new',
+            'objects' => [
+                ['thing' => 'wot']
+            ]
+        ];
+
+        $indexer->populate($handler, '_new', 200);
+
+        static::assertSame([$expected], $manager->getHandlerUpdates());
+    }
+
+
+    /**
+     * Tests that populate calls a single batch to the manager.
+     *
+     * @return void
+     */
+    public function testPopulateMultiBatch(): void
+    {
+        $objects = [
+            ['thing' => 'wot'],
+            ['no' => 'way']
+        ];
+
+        $manager = new ManagerStub();
+        $indexer = $this->createInstance(null, $manager);
+        $handler = new TransformableSearchHandlerStub($objects);
+
+        $expected = [
+            [
+                'handler' => $handler,
+                'indexSuffix' => '_new',
+                'objects' => [
+                    ['thing' => 'wot']
+                ]
+            ],
+            [
+                'handler' => $handler,
+                'indexSuffix' => '_new',
+                'objects' => [
+                    ['no' => 'way']
+                ]
+            ]
+        ];
+
+        $indexer->populate($handler, '_new', 1);
+
+        static::assertSame($expected, $manager->getHandlerUpdates());
+    }
+
     /**
      * Ensure the search handler index + '_new' index gets created
      *
@@ -203,58 +286,6 @@ class IndexerTest extends TestCase
     }
 
     /**
-     * Index population happens in batches, loops are involved, and then whatever is left over unpopulated, outside
-     * of these loops should be still handled
-     *
-     * @return void
-     */
-    public function testLeftoverIterationsGetUpdated(): void
-    {
-        $manager = new ManagerStub();
-
-        // 6 documents, that way there is one loop of batched 5, and one left over unhandled
-        $entityManagerHelper = new EntityManagerHelperStub(6);
-        $indexer = $this->createInstance(null, $entityManagerHelper, $manager);
-
-        $indexer->populateEntityHandler(new TransformableSearchHandlerStub(), '', 5);
-
-        // 2 calls to handleUpdate should be done, one within the batch loop, and one for the left over data
-        self::assertSame(2, $manager->getUpdateCount());
-    }
-
-    /**
-     * Ensure objects are being passed through to the manager
-     *
-     * @return void
-     */
-    public function testPopulatePassesObjectsToManager(): void
-    {
-        $manager = new ManagerStub();
-        $entityManagerHelper = new EntityManagerHelperStub(2);
-        $indexer = $this->createInstance(null, $entityManagerHelper, $manager);
-
-        $expected = [
-            [
-                'class' => EntityStub::class,
-                'indexSuffix' => '_new',
-                'objects' => [
-                    new EntityStub(),
-                    new EntityStub()
-                ]
-            ]
-        ];
-
-        /**
-         * Despite these SearchableStub objects not being passed into the populate command
-         * the manager should have received it from the indexer as objects
-         */
-
-        $indexer->populateEntityHandler(new TransformableHandlerStub(), '_new', 2);
-
-        self::assertEquals($expected, $manager->getUpdateObjects());
-    }
-
-    /**
      * Ensure the search handler index + '_new' alias is deleted so it can be re-created, when it pre-exists
      *
      * @return void
@@ -277,20 +308,18 @@ class IndexerTest extends TestCase
      * Instantiate an Indexer
      *
      * @param \LoyaltyCorp\Search\Interfaces\ClientInterface|null $client
-     * @param \LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface|null $entityManagerHelper
      * @param \LoyaltyCorp\Search\Interfaces\ManagerInterface|null $manager
      *
      * @return \LoyaltyCorp\Search\Indexer
      */
     private function createInstance(
         ?ClientInterface $client = null,
-        ?EntityManagerHelperInterface $entityManagerHelper = null,
         ?ManagerInterface $manager = null
     ): Indexer {
         return new Indexer(
             $client ?? new ClientStub(),
-            $entityManagerHelper ?? new EntityManagerHelperStub(),
-            $manager ?? new ManagerStub()
+            $manager ?? new ManagerStub(),
+            new Populator()
         );
     }
 }

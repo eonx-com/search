@@ -9,11 +9,11 @@ use LoyaltyCorp\Search\Exceptions\AliasNotFoundException;
 use LoyaltyCorp\Search\Indexer\IndexCleanResult;
 use LoyaltyCorp\Search\Indexer\IndexSwapResult;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
-use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
-use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
+use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
 use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
+use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 
 final class Indexer implements IndexerInterface
 {
@@ -23,30 +23,30 @@ final class Indexer implements IndexerInterface
     private $elasticClient;
 
     /**
-     * @var \LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface
-     */
-    private $entityManagerHelper;
-
-    /**
      * @var \LoyaltyCorp\Search\Interfaces\ManagerInterface
      */
     private $manager;
 
     /**
+     * @var \LoyaltyCorp\Search\Interfaces\PopulatorInterface
+     */
+    private $populator;
+
+    /**
      * SearchIndexCreate constructor.
      *
      * @param \LoyaltyCorp\Search\Interfaces\ClientInterface $elasticClient
-     * @param \LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface $entityManagerHelper
      * @param \LoyaltyCorp\Search\Interfaces\ManagerInterface $manager
+     * @param \LoyaltyCorp\Search\Interfaces\PopulatorInterface $populator
      */
     public function __construct(
         ClientInterface $elasticClient,
-        EntityManagerHelperInterface $entityManagerHelper,
-        ManagerInterface $manager
+        ManagerInterface $manager,
+        PopulatorInterface $populator
     ) {
         $this->elasticClient = $elasticClient;
-        $this->entityManagerHelper = $entityManagerHelper;
         $this->manager = $manager;
+        $this->populator = $populator;
     }
 
     /**
@@ -172,35 +172,13 @@ final class Indexer implements IndexerInterface
     /**
      * {@inheritdoc}
      */
-    public function populate(
-        EntitySearchHandlerInterface $searchHandler,
-        string $indexSuffix,
-        ?int $batchSize = null
-    ): void {
-        // Populate index of search handler on a per-entity basis
-        foreach ($searchHandler->getHandledClasses() as $handlerClass) {
-            $this->populateIndex(
-                $handlerClass,
-                $indexSuffix,
-                $batchSize
-            );
-        }
-    }
-
-    /**
-     * Handle document updates from an array of entity identifiers
-     *
-     * @param string $class
-     * @param string $indexSuffix
-     * @param string[]|int[] $ids Array of primary keys for the given entity $class
-     *
-     * @return void
-     */
-    private function handleUpdatesFromPrimaryKeys(string $class, string $indexSuffix, array $ids): void
+    public function populate(TransformableSearchHandlerInterface $handler, string $indexSuffix, int $batchSize): void
     {
-        $entities = $this->entityManagerHelper->findAllIds($class, $ids);
+        $iterable = $this->populator->getBatchedIterable($handler, $batchSize);
 
-        $this->manager->handleUpdates($class, $indexSuffix, $entities);
+        foreach ($iterable as $batch) {
+            $this->manager->handleUpdatesWithHandler($handler, $indexSuffix, $batch);
+        }
     }
 
     /**
@@ -220,38 +198,5 @@ final class Indexer implements IndexerInterface
         }
 
         return false;
-    }
-
-    /**
-     * Populate an index with all documents
-     *
-     * @param string $class
-     * @param string $indexSuffix
-     * @param int|null $batchSize
-     *
-     * @return void
-     */
-    private function populateIndex(string $class, string $indexSuffix, ?int $batchSize = null): void
-    {
-        $documents = [];
-        $iteration = 0;
-
-        // Iterate over all primary keys of the dedicated entity against the search handler
-        foreach ($this->entityManagerHelper->iterateAllIds($class) as $identifier) {
-            $documents[] = $identifier;
-
-            // Create documents in batches to avoid overloading memory & request size
-            if ($iteration > 0 && $iteration % ($batchSize ?? 100) === 0) {
-                $this->handleUpdatesFromPrimaryKeys($class, $indexSuffix, $documents);
-                $documents = [];
-            }
-
-            $iteration++;
-        }
-
-        // Handle creation of remaining documents that were not batched because the loop finished
-        if (\count($documents) > 0) {
-            $this->handleUpdatesFromPrimaryKeys($class, $indexSuffix, $documents);
-        }
     }
 }

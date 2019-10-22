@@ -12,6 +12,11 @@ use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 class ManagerStub implements ManagerInterface
 {
     /**
+     * @var mixed[]
+     */
+    private $handlerUpdates = [];
+
+    /**
      * Used to determine how many times `handleUpdates` was called
      *
      * @var int
@@ -22,6 +27,14 @@ class ManagerStub implements ManagerInterface
      * @var mixed[]
      */
     private $updateObjects;
+
+    /**
+     * @return mixed[]
+     */
+    public function getHandlerUpdates(): array
+    {
+        return $this->handlerUpdates;
+    }
 
     /**
      * {@inheritdoc}
@@ -75,5 +88,6 @@ class ManagerStub implements ManagerInterface
         string $indexSuffix,
         array $objects
     ): void {
+        $this->handlerUpdates[] = \compact('handler', 'indexSuffix', 'objects');
     }
 }

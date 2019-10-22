@@ -14,12 +14,19 @@ final class TransformableSearchHandlerStub implements TransformableSearchHandler
     private $objects;
 
     /**
+     * @var string
+     */
+    private $indexName;
+
+    /**
      * Constructor
      *
      * @param mixed[]|null $objects
+     * @param null|string $indexName
      */
-    public function __construct(?array $objects = null)
+    public function __construct(?array $objects = null, ?string $indexName = null)
     {
+        $this->indexName = $indexName ?? 'valid';
         $this->objects = $objects;
     }
 
@@ -71,7 +78,7 @@ final class TransformableSearchHandlerStub implements TransformableSearchHandler
      */
     public function getIndexName(): string
     {
-        return 'valid';
+        return $this->indexName;
     }
 
     /**

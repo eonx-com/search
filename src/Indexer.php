@@ -17,8 +17,7 @@ use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects) High coupling required for search indexer already using decoupled
- * services.
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Required for search indexer already using decoupled services.
  */
 final class Indexer implements IndexerInterface
 {
@@ -73,7 +72,7 @@ final class Indexer implements IndexerInterface
 
         /** @var \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[] $searchHandlers */
         foreach ($searchHandlers as $searchHandler) {
-            $handlerIndices = $this->indexTransformer->transformIndexNames($searchHandler);
+            $handlerIndices[] = $this->indexTransformer->transformIndexNames($searchHandler);
         }
 
         // Build array of all indices used by aliases
@@ -81,10 +80,13 @@ final class Indexer implements IndexerInterface
             $indicesUsedByAlias[] = $alias['index'];
         }
 
+        // Flatten a multi dimensional array of index names into a single dimension
+        $knownIndices = \array_merge(...$handlerIndices);
+
         // Build array of all indices
         foreach ($this->elasticClient->getIndices() as $index) {
             // Disregard any indices that are not to do with search handlers
-            if ($this->indexStartsWith($index['name'], $handlerIndices) === false) {
+            if ($this->indexStartsWith($index['name'], $knownIndices) === false) {
                 continue;
             }
 

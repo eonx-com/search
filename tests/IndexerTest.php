@@ -24,92 +24,6 @@ use Tests\LoyaltyCorp\Search\Stubs\ManagerStub;
 class IndexerTest extends TestCase
 {
     /**
-     * Tests that populate doesnt do anything when the handler has no batches
-     * returned by the populator.
-     *
-     * @return void
-     */
-    public function testPopulateNoBatches(): void
-    {
-        $objects = [];
-
-        $manager = new ManagerStub();
-        $indexer = $this->createInstance(null, $manager);
-        $handler = new TransformableSearchHandlerStub($objects);
-
-        $indexer->populate($handler, '_new', 200);
-
-        static::assertSame([], $manager->getHandlerUpdates());
-    }
-
-    /**
-     * Tests that populate calls a single batch to the manager.
-     *
-     * @return void
-     */
-    public function testPopulateSingleBatch(): void
-    {
-        $objects = [
-            ['thing' => 'wot']
-        ];
-
-        $manager = new ManagerStub();
-        $indexer = $this->createInstance(null, $manager);
-        $handler = new TransformableSearchHandlerStub($objects);
-
-        $expected = [
-            'handler' => $handler,
-            'indexSuffix' => '_new',
-            'objects' => [
-                ['thing' => 'wot']
-            ]
-        ];
-
-        $indexer->populate($handler, '_new', 200);
-
-        static::assertSame([$expected], $manager->getHandlerUpdates());
-    }
-
-
-    /**
-     * Tests that populate calls a single batch to the manager.
-     *
-     * @return void
-     */
-    public function testPopulateMultiBatch(): void
-    {
-        $objects = [
-            ['thing' => 'wot'],
-            ['no' => 'way']
-        ];
-
-        $manager = new ManagerStub();
-        $indexer = $this->createInstance(null, $manager);
-        $handler = new TransformableSearchHandlerStub($objects);
-
-        $expected = [
-            [
-                'handler' => $handler,
-                'indexSuffix' => '_new',
-                'objects' => [
-                    ['thing' => 'wot']
-                ]
-            ],
-            [
-                'handler' => $handler,
-                'indexSuffix' => '_new',
-                'objects' => [
-                    ['no' => 'way']
-                ]
-            ]
-        ];
-
-        $indexer->populate($handler, '_new', 1);
-
-        static::assertSame($expected, $manager->getHandlerUpdates());
-    }
-
-    /**
      * Ensure the search handler index + '_new' index gets created
      *
      * @return void
@@ -151,6 +65,34 @@ class IndexerTest extends TestCase
      *
      * @return void
      */
+    public function testCleaningHandlesMultipleHandlers(): void
+    {
+        $client = new ClientStub(
+            null,
+            null,
+            [
+                ['name' => 'valid-123'],
+                ['name' => 'other-index-with-suffix']
+            ]
+        );
+
+        $expected = ['valid-123', 'other-index-with-suffix'];
+
+        $indexer = $this->createInstance($client);
+
+        $indexer->clean([
+            new TransformableSearchHandlerStub(),
+            new TransformableSearchHandlerStub(null, 'other-index')
+        ]);
+
+        self::assertSame($expected, $client->getDeletedIndices());
+    }
+
+    /**
+     * Ensure the cleaning process only disregards indices unrelated to search handlers
+     *
+     * @return void
+     */
     public function testCleaningIndicesDoesNotRemoveUnrelatedIndices(): void
     {
         $client = new ClientStub(
@@ -161,27 +103,6 @@ class IndexerTest extends TestCase
         );
         $indexer = $this->createInstance($client);
         $expected = ['valid-123'];
-
-        $indexer->clean([new TransformableSearchHandlerStub()]);
-
-        self::assertSame($expected, $client->getDeletedIndices());
-    }
-
-    /**
-     * Ensure the cleaning process only cares about indices that are related to search handlers
-     *
-     * @return void
-     */
-    public function testCleaningIndicesRepectsIndicesFromAliases(): void
-    {
-        $client = new ClientStub(
-            null,
-            null,
-            [['name' => 'unrelated-index'], ['name' => 'valid-unused']],
-            [['index' => 'valid', 'name' => 'anything']]
-        );
-        $indexer = $this->createInstance($client);
-        $expected = ['valid-unused'];
 
         $indexer->clean([new TransformableSearchHandlerStub()]);
 
@@ -208,6 +129,27 @@ class IndexerTest extends TestCase
     }
 
     /**
+     * Ensure the cleaning process only cares about indices that are related to search handlers
+     *
+     * @return void
+     */
+    public function testCleaningIndicesRespectsIndicesFromAliases(): void
+    {
+        $client = new ClientStub(
+            null,
+            null,
+            [['name' => 'unrelated-index'], ['name' => 'valid-unused']],
+            [['index' => 'valid', 'name' => 'anything']]
+        );
+        $indexer = $this->createInstance($client);
+        $expected = ['valid-unused'];
+
+        $indexer->clean([new TransformableSearchHandlerStub()]);
+
+        self::assertSame($expected, $client->getDeletedIndices());
+    }
+
+    /**
      * Ensure that skipping an index to be swapped happens when appropriate
      *
      * @return void
@@ -223,7 +165,10 @@ class IndexerTest extends TestCase
         );
         $indexer = $this->createInstance($elasticClient);
 
-        $result = $indexer->indexSwap([new EntitySearchHandlerStub()], true);
+        $result = $indexer->indexSwap(
+            [new TransformableSearchHandlerStub()],
+            true
+        );
 
         self::assertEquals(new IndexSwapResult([], ['valid_new'], ['valid_201900502']), $result);
     }
@@ -306,6 +251,91 @@ class IndexerTest extends TestCase
         $indexer = $this->createInstance($elasticClient);
 
         $indexer->indexSwap([new TransformableSearchHandlerStub()]);
+    }
+
+    /**
+     * Tests that populate calls a single batch to the manager.
+     *
+     * @return void
+     */
+    public function testPopulateMultiBatch(): void
+    {
+        $objects = [
+            ['thing' => 'wot'],
+            ['no' => 'way']
+        ];
+
+        $manager = new ManagerStub();
+        $indexer = $this->createInstance(null, $manager);
+        $handler = new TransformableSearchHandlerStub($objects);
+
+        $expected = [
+            [
+                'handler' => $handler,
+                'indexSuffix' => '_new',
+                'objects' => [
+                    ['thing' => 'wot']
+                ]
+            ],
+            [
+                'handler' => $handler,
+                'indexSuffix' => '_new',
+                'objects' => [
+                    ['no' => 'way']
+                ]
+            ]
+        ];
+
+        $indexer->populate($handler, '_new', 1);
+
+        static::assertSame($expected, $manager->getHandlerUpdates());
+    }
+
+    /**
+     * Tests that populate doesnt do anything when the handler has no batches
+     * returned by the populator.
+     *
+     * @return void
+     */
+    public function testPopulateNoBatches(): void
+    {
+        $objects = [];
+
+        $manager = new ManagerStub();
+        $indexer = $this->createInstance(null, $manager);
+        $handler = new TransformableSearchHandlerStub($objects);
+
+        $indexer->populate($handler, '_new', 200);
+
+        static::assertSame([], $manager->getHandlerUpdates());
+    }
+
+    /**
+     * Tests that populate calls a single batch to the manager.
+     *
+     * @return void
+     */
+    public function testPopulateSingleBatch(): void
+    {
+        $objects = [
+            ['thing' => 'wot']
+        ];
+
+        $manager = new ManagerStub();
+        $indexer = $this->createInstance(null, $manager);
+        $handler = new TransformableSearchHandlerStub($objects);
+
+        $expected = [
+            'handler' => $handler,
+            'indexSuffix' => '_new',
+            'objects' => [
+                ['thing' => 'wot']
+            ]
+        ];
+
+        $indexer->populate($handler, '_new', 200);
+
+        static::assertSame([$expected], $manager->getHandlerUpdates());
     }
 
     /**

@@ -14,6 +14,7 @@ use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\ManagerStub;
+use Tests\LoyaltyCorp\Search\Stubs\PopulatorStub;
 
 /**
  * @covers \LoyaltyCorp\Search\Indexer
@@ -254,91 +255,6 @@ class IndexerTest extends TestCase
     }
 
     /**
-     * Tests that populate calls a single batch to the manager.
-     *
-     * @return void
-     */
-    public function testPopulateMultiBatch(): void
-    {
-        $objects = [
-            ['thing' => 'wot'],
-            ['no' => 'way']
-        ];
-
-        $manager = new ManagerStub();
-        $indexer = $this->createInstance(null, $manager);
-        $handler = new TransformableSearchHandlerStub($objects);
-
-        $expected = [
-            [
-                'handler' => $handler,
-                'indexSuffix' => '_new',
-                'objects' => [
-                    ['thing' => 'wot']
-                ]
-            ],
-            [
-                'handler' => $handler,
-                'indexSuffix' => '_new',
-                'objects' => [
-                    ['no' => 'way']
-                ]
-            ]
-        ];
-
-        $indexer->populate($handler, '_new', 1);
-
-        static::assertSame($expected, $manager->getHandlerUpdates());
-    }
-
-    /**
-     * Tests that populate doesnt do anything when the handler has no batches
-     * returned by the populator.
-     *
-     * @return void
-     */
-    public function testPopulateNoBatches(): void
-    {
-        $objects = [];
-
-        $manager = new ManagerStub();
-        $indexer = $this->createInstance(null, $manager);
-        $handler = new TransformableSearchHandlerStub($objects);
-
-        $indexer->populate($handler, '_new', 200);
-
-        static::assertSame([], $manager->getHandlerUpdates());
-    }
-
-    /**
-     * Tests that populate calls a single batch to the manager.
-     *
-     * @return void
-     */
-    public function testPopulateSingleBatch(): void
-    {
-        $objects = [
-            ['thing' => 'wot']
-        ];
-
-        $manager = new ManagerStub();
-        $indexer = $this->createInstance(null, $manager);
-        $handler = new TransformableSearchHandlerStub($objects);
-
-        $expected = [
-            'handler' => $handler,
-            'indexSuffix' => '_new',
-            'objects' => [
-                ['thing' => 'wot']
-            ]
-        ];
-
-        $indexer->populate($handler, '_new', 200);
-
-        static::assertSame([$expected], $manager->getHandlerUpdates());
-    }
-
-    /**
      * Ensure the search handler index + '_new' alias is deleted so it can be re-created, when it pre-exists
      *
      * @return void
@@ -371,9 +287,7 @@ class IndexerTest extends TestCase
     ): Indexer {
         return new Indexer(
             $client ?? new ClientStub(),
-            new DefaultIndexNameTransformer(),
-            $manager ?? new ManagerStub(),
-            new Populator()
+            new DefaultIndexNameTransformer()
         );
     }
 }

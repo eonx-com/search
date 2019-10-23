@@ -5,6 +5,8 @@ namespace Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch;
 
 /**
  * This stub returns a null/invalid response when calling bulk()
+ *
+ * @coversNothing
  */
 class NullResponseClientStub extends ClientStub
 {

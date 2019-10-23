@@ -10,10 +10,7 @@ use LoyaltyCorp\Search\Indexer\IndexCleanResult;
 use LoyaltyCorp\Search\Indexer\IndexSwapResult;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
-use LoyaltyCorp\Search\Interfaces\ManagerInterface;
-use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
 use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
-use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 
 /**
@@ -29,36 +26,20 @@ final class Indexer implements IndexerInterface
     /**
      * @var \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface
      */
-    private $indexTransformer;
-
-    /**
-     * @var \LoyaltyCorp\Search\Interfaces\ManagerInterface
-     */
-    private $manager;
-
-    /**
-     * @var \LoyaltyCorp\Search\Interfaces\PopulatorInterface
-     */
-    private $populator;
+    private $nameTransformer;
 
     /**
      * Constructor
      *
      * @param \LoyaltyCorp\Search\Interfaces\ClientInterface $elasticClient
-     * @param \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface $indexTransformer
-     * @param \LoyaltyCorp\Search\Interfaces\ManagerInterface $manager
-     * @param \LoyaltyCorp\Search\Interfaces\PopulatorInterface $populator
+     * @param \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface $nameTransformer
      */
     public function __construct(
         ClientInterface $elasticClient,
-        IndexNameTransformerInterface $indexTransformer,
-        ManagerInterface $manager,
-        PopulatorInterface $populator
+        IndexNameTransformerInterface $nameTransformer
     ) {
         $this->elasticClient = $elasticClient;
-        $this->indexTransformer = $indexTransformer;
-        $this->manager = $manager;
-        $this->populator = $populator;
+        $this->nameTransformer = $nameTransformer;
     }
 
     /**
@@ -72,7 +53,7 @@ final class Indexer implements IndexerInterface
 
         /** @var \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[] $searchHandlers */
         foreach ($searchHandlers as $searchHandler) {
-            $handlerIndices[] = $this->indexTransformer->transformIndexNames($searchHandler);
+            $handlerIndices[] = $this->nameTransformer->transformIndexNames($searchHandler);
         }
 
         // Build array of all indices used by aliases
@@ -120,7 +101,7 @@ final class Indexer implements IndexerInterface
      */
     public function create(SearchHandlerInterface $searchHandler, ?BaseDateTime $now = null): void
     {
-        $indexNames = $this->indexTransformer->transformIndexNames($searchHandler);
+        $indexNames = $this->nameTransformer->transformIndexNames($searchHandler);
 
         $now = $now ?? new DateTime();
         $dateStamp = $now->format('Ymdhis');
@@ -159,7 +140,7 @@ final class Indexer implements IndexerInterface
         $indexToSkip = [];
 
         foreach ($searchHandlers as $searchHandler) {
-            $indexNames = $this->indexTransformer->transformIndexNames($searchHandler);
+            $indexNames = $this->nameTransformer->transformIndexNames($searchHandler);
 
             foreach ($indexNames as $indexName) {
                 // Use index+_new to determine the latest index name
@@ -206,18 +187,6 @@ final class Indexer implements IndexerInterface
         $this->elasticClient->deleteAlias($aliasedToRemove);
 
         return $actions;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function populate(TransformableSearchHandlerInterface $handler, string $indexSuffix, int $batchSize): void
-    {
-        $iterable = $this->populator->getBatchedIterable($handler, $batchSize);
-
-        foreach ($iterable as $batch) {
-            $this->manager->handleUpdatesWithHandler($handler, $indexSuffix, $batch);
-        }
     }
 
     /**

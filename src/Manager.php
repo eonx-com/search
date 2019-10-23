@@ -6,8 +6,8 @@ namespace LoyaltyCorp\Search;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
+use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
 use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
-use LoyaltyCorp\Search\Interfaces\ObjectTransformerInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 
 final class Manager implements ManagerInterface
@@ -23,33 +23,33 @@ final class Manager implements ManagerInterface
     private $handlers;
 
     /**
-     * @var \LoyaltyCorp\Search\Interfaces\ObjectTransformerInterface
-     */
-    private $transformer;
-
-    /**
      * @var \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface
      */
-    private $indexTransformer;
+    private $nameTransformer;
+
+    /**
+     * @var \LoyaltyCorp\Search\Interfaces\PopulatorInterface
+     */
+    private $populator;
 
     /**
      * Constructor
      *
-     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface $handlers Search Handlers
-     * @param \LoyaltyCorp\Search\Interfaces\ClientInterface $client Client instance to send update requests to
-     * @param \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface $indexTransformer Index transformer
-     * @param \LoyaltyCorp\Search\Interfaces\ObjectTransformerInterface $transformer
+     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface $handlers
+     * @param \LoyaltyCorp\Search\Interfaces\ClientInterface $client
+     * @param \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface $nameTransformer
+     * @param \LoyaltyCorp\Search\Interfaces\PopulatorInterface $populator
      */
     public function __construct(
         RegisteredSearchHandlerInterface $handlers,
         ClientInterface $client,
-        IndexNameTransformerInterface $indexTransformer,
-        ObjectTransformerInterface $transformer
+        IndexNameTransformerInterface $nameTransformer,
+        PopulatorInterface $populator
     ) {
         $this->handlers = $handlers;
         $this->client = $client;
-        $this->transformer = $transformer;
-        $this->indexTransformer = $indexTransformer;
+        $this->nameTransformer = $nameTransformer;
+        $this->populator = $populator;
     }
 
     /**
@@ -73,13 +73,35 @@ final class Manager implements ManagerInterface
                 continue;
             }
 
-            $indexName = $this->indexTransformer->transformIndexName($handler, $object);
+            $indexName = $this->nameTransformer->transformIndexName($handler, $object);
             // Elastic search works with string ids, so we're forcing
             // them to strings here
             $ids[$indexName] = (string)$searchId;
         }
 
         return $ids;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function handleDeletes(array $ids): void
+    {
+        $this->client->bulkDelete($ids);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function handleUpdates(string $class, string $indexSuffix, array $objects): void
+    {
+        foreach ($this->handlers->getTransformableHandlers() as $handler) {
+            if ($this->isHandled($handler, $class) === false) {
+                continue;
+            }
+
+            $this->populator->populateWith($handler, $indexSuffix, $objects);
+        }
     }
 
     /**
@@ -101,54 +123,5 @@ final class Manager implements ManagerInterface
         // If the supplied $class has any intersection of $implements, the handler
         // handles this class.
         return \count($intersect) > 0;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function handleDeletes(array $ids): void
-    {
-        $this->client->bulkDelete($ids);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function handleUpdates(string $class, string $indexSuffix, array $objects): void
-    {
-        foreach ($this->handlers->getTransformableHandlers() as $handler) {
-            if ($this->isHandled($handler, $class) === false) {
-                continue;
-            }
-
-            $this->handleUpdatesWithHandler($handler, $indexSuffix, $objects);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function handleUpdatesWithHandler(
-        TransformableSearchHandlerInterface $handler,
-        string $indexSuffix,
-        array $objects
-    ): void {
-        /**
-         * Required because iterator_to_array clobbers the type returned by the transformer.
-         *
-         * @var mixed[][] $transformed
-         */
-        $transformed = \iterator_to_array($this->transformer->bulkTransform($handler, $objects));
-
-        if (\count($transformed) === 0) {
-            // there were no transformed documents created by the handler, we have
-            // nothing to update
-            return;
-        }
-
-        $indexName = $this->indexTransformer->transformIndexName($handler, $objects);
-        $index = \sprintf('%s%s', $indexName, $indexSuffix);
-
-        $this->client->bulkUpdate($index, $transformed);
     }
 }

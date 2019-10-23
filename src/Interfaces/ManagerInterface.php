@@ -51,19 +51,4 @@ interface ManagerInterface
      * @return void
      */
     public function handleUpdates(string $class, string $indexSuffix, array $objects): void;
-
-    /**
-     * Handles an array of objects against a specific handler.
-     *
-     * @param \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface $handler
-     * @param string $indexSuffix
-     * @param mixed[] $objects
-     *
-     * @return void
-     */
-    public function handleUpdatesWithHandler(
-        TransformableSearchHandlerInterface $handler,
-        string $indexSuffix,
-        array $objects
-    ): void;
 }

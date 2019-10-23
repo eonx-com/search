@@ -16,6 +16,8 @@ use Tests\LoyaltyCorp\Search\Stubs\Vendor\Illuminate\Contracts\Foundation\Applic
 
 /**
  * @SuppressWarnings(PHPMD.NumberOfChildren) All tests extend this class
+ *
+ * @coversNothing
  */
 abstract class TestCase extends BaseTestCase
 {

@@ -5,6 +5,9 @@ namespace Tests\LoyaltyCorp\Search\Stubs\Vendor\EoneoPay\Externals\ORM;
 
 use EoneoPay\Externals\ORM\Interfaces\RepositoryInterface;
 
+/**
+ * @coversNothing
+ */
 class RepositoryStub implements RepositoryInterface
 {
     /**

@@ -3,20 +3,35 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Interfaces;
 
-use Traversable;
-
 interface PopulatorInterface
 {
     /**
-     * Returns a batch iterable result used for population of a search index.
+     * Populates a handler's index with an array of objects.
      *
      * @param \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface $handler
+     * @param string $indexSuffix
      * @param int $batchSize
      *
-     * @return \Traversable
+     * @return void
      */
-    public function getBatchedIterable(
+    public function populate(
         TransformableSearchHandlerInterface $handler,
+        string $indexSuffix,
         int $batchSize
-    ): Traversable;
+    ): void;
+
+    /**
+     * Populates a handler's index with an array of objects.
+     *
+     * @param \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface $handler
+     * @param string $indexSuffix
+     * @param object[] $objects
+     *
+     * @return void
+     */
+    public function populateWith(
+        TransformableSearchHandlerInterface $handler,
+        string $indexSuffix,
+        iterable $objects
+    ): void;
 }

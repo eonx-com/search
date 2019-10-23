@@ -13,9 +13,11 @@ use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
+use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\ObjectTransformerInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 use LoyaltyCorp\Search\Manager;
+use LoyaltyCorp\Search\Populator;
 use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NonDoctrineHandlerStub;
@@ -49,6 +51,7 @@ final class SearchServiceProviderTest extends TestCase
         self::assertInstanceOf(Client::class, $application->make(ClientInterface::class));
         self::assertInstanceOf(Manager::class, $application->make(ManagerInterface::class));
         self::assertInstanceOf(EntityManagerHelper::class, $application->make(EntityManagerHelperInterface::class));
+        self::assertInstanceOf(Populator::class, $application->make(PopulatorInterface::class));
         self::assertInstanceOf(
             RegisteredSearchHandler::class,
             $application->make(RegisteredSearchHandlerInterface::class)
@@ -70,8 +73,8 @@ final class SearchServiceProviderTest extends TestCase
             ClientInterface::class,
             IndexerInterface::class,
             ManagerInterface::class,
-            RegisteredSearchHandlerInterface::class,
-            ObjectTransformerInterface::class
+            PopulatorInterface::class,
+            RegisteredSearchHandlerInterface::class
         ], (new SearchServiceProvider(new ApplicationStub()))->provides());
     }
 

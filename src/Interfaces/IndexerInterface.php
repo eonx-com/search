@@ -38,15 +38,4 @@ interface IndexerInterface
      * @return \LoyaltyCorp\Search\Indexer\IndexSwapResult
      */
     public function indexSwap(array $searchHandlers, ?bool $dryRun = null): IndexSwapResult;
-
-    /**
-     * Populates a search handler.
-     *
-     * @param \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface $handler
-     * @param string $indexSuffix
-     * @param int $batchSize
-     *
-     * @return void
-     */
-    public function populate(TransformableSearchHandlerInterface $handler, string $indexSuffix, int $batchSize): void;
 }

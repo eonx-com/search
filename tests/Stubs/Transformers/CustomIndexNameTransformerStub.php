@@ -6,6 +6,9 @@ namespace Tests\LoyaltyCorp\Search\Stubs\Transformers;
 use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 
+/**
+ * @coversNothing
+ */
 final class CustomIndexNameTransformerStub implements IndexNameTransformerInterface
 {
     /**

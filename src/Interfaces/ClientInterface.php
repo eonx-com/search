@@ -28,12 +28,11 @@ interface ClientInterface
     /**
      * Upserts all documents provided into the index.
      *
-     * @param string $index
-     * @param mixed[][] $documents
+     * @param \LoyaltyCorp\Search\DataTransferObjects\DocumentUpdate[] $updates
      *
      * @return void
      */
-    public function bulkUpdate(string $index, array $documents): void;
+    public function bulkUpdate(array $updates): void;
 
     /**
      * Count the number of documents within an index

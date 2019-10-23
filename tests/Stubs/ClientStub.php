@@ -100,9 +100,9 @@ class ClientStub implements ClientInterface
     /**
      * {@inheritdoc}
      */
-    public function bulkUpdate(string $index, array $documents): void
+    public function bulkUpdate(array $updates): void
     {
-        $this->updatedIndices[] = \compact('index', 'documents');
+        $this->updatedIndices[] = $updates;
     }
 
     /**

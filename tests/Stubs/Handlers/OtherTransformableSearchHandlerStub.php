@@ -6,6 +6,9 @@ namespace Tests\LoyaltyCorp\Search\Stubs\Handlers;
 use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\SearchableStub;
 
+/**
+ * @coversNothing
+ */
 final class OtherTransformableSearchHandlerStub implements TransformableSearchHandlerInterface
 {
     /**

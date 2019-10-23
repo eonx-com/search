@@ -5,11 +5,11 @@ namespace Tests\LoyaltyCorp\Search\Bridge\Laravel\Console\Commands;
 
 use LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexFillCommand;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
-use LoyaltyCorp\Search\Interfaces\IndexerInterface;
+use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\OtherTransformableSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub;
-use Tests\LoyaltyCorp\Search\Stubs\IndexerStub;
+use Tests\LoyaltyCorp\Search\Stubs\PopulatorStub;
 use Tests\LoyaltyCorp\Search\TestCases\SearchIndexCommandTestCase;
 
 /**
@@ -28,46 +28,48 @@ class SearchIndexFillCommandTest extends SearchIndexCommandTestCase
      */
     public function testIndexerPopulateCalled(): void
     {
-        $indexer = new IndexerStub();
+        $populator = new PopulatorStub();
 
         $handlerStub = new TransformableSearchHandlerStub();
         $otherHandler = new OtherTransformableSearchHandlerStub();
         $handlers = [$handlerStub, $otherHandler];
-        $command = $this->createInstance($indexer, new RegisteredSearchHandlerStub($handlers));
+        $command = $this->createInstance($populator, new RegisteredSearchHandlerStub($handlers));
         $this->bootstrapCommand($command);
 
-        $expectedPopulated = [
-            [
-                'handler' => $handlerStub,
-                'indexSuffix' => '_new',
-                'batchSize' => 200
-            ],
-            [
-                'handler' => $otherHandler,
-                'indexSuffix' => '_new',
-                'batchSize' => 200
+        $expectedCalls  = [
+            'Tests\LoyaltyCorp\Search\Stubs\PopulatorStub::populate' => [
+                [
+                    'handler' => $handlerStub,
+                    'indexSuffix' => '_new',
+                    'batchSize' => 200
+                ],
+                [
+                    'handler' => $otherHandler,
+                    'indexSuffix' => '_new',
+                    'batchSize' => 200
+                ]
             ]
         ];
 
         $command->handle();
 
-        self::assertSame($expectedPopulated, $indexer->getPopulatedHandlers());
+        self::assertSame($expectedCalls, $populator->getCalls());
     }
 
     /**
      * Instantiate a command class
      *
-     * @param \LoyaltyCorp\Search\Interfaces\IndexerInterface|null $indexer
+     * @param \LoyaltyCorp\Search\Interfaces\PopulatorInterface|null $populator
      * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface|null $registeredHandlers
      *
      * @return \LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexFillCommand
      */
     private function createInstance(
-        ?IndexerInterface $indexer = null,
+        ?PopulatorInterface $populator = null,
         ?RegisteredSearchHandlerInterface $registeredHandlers = null
     ): SearchIndexFillCommand {
         return new SearchIndexFillCommand(
-            $indexer ?? new IndexerStub(),
+            $populator ?? new PopulatorStub(),
             $registeredHandlers ?? new RegisteredSearchHandlerStub()
         );
     }

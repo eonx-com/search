@@ -12,6 +12,8 @@ use Tests\LoyaltyCorp\Search\Stubs\CatStub;
  * can't be stubbed properly, this stub will not pass anything to the actual elasticsearch client
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods) Well tested code for all the cases
+ *
+ * @coversNothing
  */
 class ClientStub extends Client
 {

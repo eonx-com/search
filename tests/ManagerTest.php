@@ -7,17 +7,17 @@ use Elasticsearch\Client as BaseClient;
 use LoyaltyCorp\Search\Client;
 use LoyaltyCorp\Search\Helpers\ClientBulkResponseHelper;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
+use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
 use LoyaltyCorp\Search\Manager;
-use LoyaltyCorp\Search\Transformers\ObjectTransformer;
 use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NotSearchableSearchHandlerStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\ProviderAwareSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NoDocumentBodyStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NoSearchIdStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NotSearchableStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\SearchableStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\PopulatorStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch\ClientStub;
 
 /**
@@ -67,42 +67,37 @@ final class ManagerTest extends TestCase
     }
 
     /**
-     * Test handleUpdates() functionality with provider aware search handler.
+     * Test handleUpdates() functionality
      *
      * @return void
      */
-    public function testHandleProviderAwareUpdatesFunctionality(): void
+    public function testHandleUpdates(): void
     {
-        $stub = new ClientStub();
-        $handlers = new RegisteredSearchHandlerStub([new ProviderAwareSearchHandlerStub()]);
-        $manager = $this->getManager($handlers, $this->createClient($stub));
+        $populator = new PopulatorStub();
 
-        // Test an unsupported class doesn't do anything
-        $manager->handleUpdates(NotSearchableStub::class, '_new', []);
-        self::assertNull($stub->getBulkParameters());
+        $handler = new TransformableSearchHandlerStub();
+        $handlers = new RegisteredSearchHandlerStub([$handler]);
+        $manager = $this->getManager($handlers, null, $populator);
 
-        // Test supported class only generates body for valid classes
-        $manager->handleUpdates(SearchableStub::class, '_new', [
+        $objects = [
             new NoDocumentBodyStub(),
             new NoSearchIdStub(),
             new SearchableStub()
-        ]);
+        ];
 
-        self::assertSame(
-            [
-                'body' => [
-                    [
-                        'index' => [
-                            '_index' => 'provider-aware-index_customId_new',
-                            '_type' => 'doc',
-                            '_id' => 'searchable'
-                        ]
-                    ],
-                    ['search' => 'body']
+        $manager->handleUpdates(SearchableStub::class, '_new', $objects);
+
+        $expectedCalls = [
+            'Tests\LoyaltyCorp\Search\Stubs\PopulatorStub::populateWith' => [
+                [
+                    'handler' => $handler,
+                    'indexSuffix' => '_new',
+                    'objects' => $objects
                 ]
-            ],
-            $stub->getBulkParameters()
-        );
+            ]
+        ];
+
+        self::assertSame($expectedCalls, $populator->getCalls());
     }
 
     /**
@@ -110,38 +105,16 @@ final class ManagerTest extends TestCase
      *
      * @return void
      */
-    public function testHandleUpdatesFunctionality(): void
+    public function testHandleUpdatesNotSearchable(): void
     {
-        $stub = new ClientStub();
+        $populator = new PopulatorStub();
+
         $handlers = new RegisteredSearchHandlerStub([new TransformableSearchHandlerStub()]);
-        $manager = $this->getManager($handlers, $this->createClient($stub));
+        $manager = $this->getManager($handlers, null, $populator);
 
         // Test an unsupported class doesn't do anything
         $manager->handleUpdates(NotSearchableStub::class, '_new', []);
-        self::assertNull($stub->getBulkParameters());
-
-        // Test supported class only generates body for valid classes
-        $manager->handleUpdates(SearchableStub::class, '_new', [
-            new NoDocumentBodyStub(),
-            new NoSearchIdStub(),
-            new SearchableStub()
-        ]);
-
-        self::assertSame(
-            [
-                'body' => [
-                    [
-                        'index' => [
-                            '_index' => 'valid_new',
-                            '_type' => 'doc',
-                            '_id' => 'searchable'
-                        ]
-                    ],
-                    ['search' => 'body']
-                ]
-            ],
-            $stub->getBulkParameters()
-        );
+        self::assertEmpty($populator->getCalls());
     }
 
     /**
@@ -199,18 +172,20 @@ final class ManagerTest extends TestCase
      *
      * @param \Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub $handlers
      * @param \LoyaltyCorp\Search\Interfaces\ClientInterface|null $client
+     * @param \LoyaltyCorp\Search\Interfaces\PopulatorInterface|null $populator
      *
      * @return \LoyaltyCorp\Search\Manager
      */
     private function getManager(
         RegisteredSearchHandlerStub $handlers,
-        ?ClientInterface $client = null
+        ?ClientInterface $client = null,
+        ?PopulatorInterface $populator = null
     ): Manager {
         return new Manager(
             $handlers,
             $client ?? $this->createClient(),
             new DefaultIndexNameTransformer(),
-            new ObjectTransformer(),
+            $populator ?? new PopulatorStub(),
         );
     }
 }

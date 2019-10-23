@@ -23,10 +23,12 @@ use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
+use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
 use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\ObjectTransformerInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 use LoyaltyCorp\Search\Manager;
+use LoyaltyCorp\Search\Populator;
 use LoyaltyCorp\Search\Transformers\ObjectTransformer;
 use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use LoyaltyCorp\Search\Workers\EntityDeleteDataWorker;
@@ -49,8 +51,8 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
             ClientInterface::class,
             IndexerInterface::class,
             ManagerInterface::class,
-            RegisteredSearchHandlerInterface::class,
-            ObjectTransformerInterface::class
+            PopulatorInterface::class,
+            RegisteredSearchHandlerInterface::class
         ];
     }
 
@@ -99,6 +101,8 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
             throw new BindingResolutionException('Could not resolve Entity Manager from application container');
         });
 
+        $this->app->singleton(PopulatorInterface::class, Populator::class);
+
         $this->app->singleton(RegisteredSearchHandlerInterface::class, static function (Container $app) {
             $searchHandlers = [];
             foreach ($app->tagged('search_handler') as $searchHandler) {
@@ -112,8 +116,6 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
 
             return new RegisteredSearchHandler($searchHandlers);
         });
-
-        $this->app->singleton(ObjectTransformerInterface::class, ObjectTransformer::class);
 
         // Bind workers
         $this->app->singleton(EntityDeleteDataWorker::class);

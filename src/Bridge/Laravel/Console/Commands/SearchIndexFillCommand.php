@@ -5,14 +5,14 @@ namespace LoyaltyCorp\Search\Bridge\Laravel\Console\Commands;
 
 use Illuminate\Console\Command;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
-use LoyaltyCorp\Search\Interfaces\IndexerInterface;
+use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
 
 final class SearchIndexFillCommand extends Command
 {
     /**
-     * @var \LoyaltyCorp\Search\Interfaces\IndexerInterface
+     * @var \LoyaltyCorp\Search\Interfaces\PopulatorInterface
      */
-    private $indexer;
+    private $populator;
 
     /**
      * @var \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface
@@ -22,15 +22,15 @@ final class SearchIndexFillCommand extends Command
     /**
      * SearchIndexFill constructor.
      *
-     * @param \LoyaltyCorp\Search\Interfaces\IndexerInterface $indexer
+     * @param \LoyaltyCorp\Search\Interfaces\PopulatorInterface $populator
      * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface $searchHandlers
      */
-    public function __construct(IndexerInterface $indexer, RegisteredSearchHandlerInterface $searchHandlers)
+    public function __construct(PopulatorInterface $populator, RegisteredSearchHandlerInterface $searchHandlers)
     {
         $this->description = 'Populate all search handler indices with their corresponding data';
         $this->signature = 'search:index:fill';
 
-        $this->indexer = $indexer;
+        $this->populator = $populator;
         $this->searchHandlers = $searchHandlers;
 
         parent::__construct();
@@ -58,7 +58,7 @@ final class SearchIndexFillCommand extends Command
                 )
             );
 
-            $this->indexer->populate($handler, '_new', $batchSize);
+            $this->populator->populate($handler, '_new', $batchSize);
 
             // ✓
             /** @noinspection DisconnectedForeachInstructionInspection */

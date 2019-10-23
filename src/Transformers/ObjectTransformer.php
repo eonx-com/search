@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace LoyaltyCorp\Search;
+namespace LoyaltyCorp\Search\Transformers;
 
 use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
-use LoyaltyCorp\Search\Interfaces\TransformerInterface;
+use LoyaltyCorp\Search\Interfaces\Transformers\ObjectTransformerInterface;
 use Traversable;
 
-class Transformer implements TransformerInterface
+class ObjectTransformer implements ObjectTransformerInterface
 {
     /**
      * {@inheritdoc}

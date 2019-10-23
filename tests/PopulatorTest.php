@@ -6,6 +6,9 @@ namespace Tests\LoyaltyCorp\Search;
 use LoyaltyCorp\Search\Populator;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
 
+/**
+ * @covers \LoyaltyCorp\Search\Populator
+ */
 class PopulatorTest extends TestCase
 {
     /**

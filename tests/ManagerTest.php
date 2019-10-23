@@ -8,8 +8,8 @@ use LoyaltyCorp\Search\Client;
 use LoyaltyCorp\Search\Helpers\ClientBulkResponseHelper;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Manager;
-use LoyaltyCorp\Search\Transformer;
-use LoyaltyCorp\Search\Transformers\DefaultIndexTransformer;
+use LoyaltyCorp\Search\Transformers\ObjectTransformer;
+use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NotSearchableSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\ProviderAwareSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NoDocumentBodyStub;
@@ -209,8 +209,8 @@ final class ManagerTest extends TestCase
         return new Manager(
             $handlers,
             $client ?? $this->createClient(),
-            new DefaultIndexTransformer(),
-            new Transformer(),
+            new DefaultIndexNameTransformer(),
+            new ObjectTransformer(),
         );
     }
 }

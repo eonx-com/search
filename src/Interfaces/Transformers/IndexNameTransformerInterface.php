@@ -5,7 +5,7 @@ namespace LoyaltyCorp\Search\Interfaces\Transformers;
 
 use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 
-interface IndexTransformerInterface
+interface IndexNameTransformerInterface
 {
     /**
      * Transform index name.

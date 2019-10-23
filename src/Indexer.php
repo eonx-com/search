@@ -14,7 +14,7 @@ use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
 use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
-use LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface;
+use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Required for search indexer already using decoupled services.
@@ -27,7 +27,7 @@ final class Indexer implements IndexerInterface
     private $elasticClient;
 
     /**
-     * @var \LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface
+     * @var \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface
      */
     private $indexTransformer;
 
@@ -45,13 +45,13 @@ final class Indexer implements IndexerInterface
      * Constructor
      *
      * @param \LoyaltyCorp\Search\Interfaces\ClientInterface $elasticClient
-     * @param \LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface $indexTransformer
+     * @param \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface $indexTransformer
      * @param \LoyaltyCorp\Search\Interfaces\ManagerInterface $manager
      * @param \LoyaltyCorp\Search\Interfaces\PopulatorInterface $populator
      */
     public function __construct(
         ClientInterface $elasticClient,
-        IndexTransformerInterface $indexTransformer,
+        IndexNameTransformerInterface $indexTransformer,
         ManagerInterface $manager,
         PopulatorInterface $populator
     ) {

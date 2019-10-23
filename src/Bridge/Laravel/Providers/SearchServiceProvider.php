@@ -24,11 +24,11 @@ use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
-use LoyaltyCorp\Search\Interfaces\TransformerInterface;
-use LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface;
+use LoyaltyCorp\Search\Interfaces\Transformers\ObjectTransformerInterface;
+use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 use LoyaltyCorp\Search\Manager;
-use LoyaltyCorp\Search\Transformer;
-use LoyaltyCorp\Search\Transformers\DefaultIndexTransformer;
+use LoyaltyCorp\Search\Transformers\ObjectTransformer;
+use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use LoyaltyCorp\Search\Workers\EntityDeleteDataWorker;
 use LoyaltyCorp\Search\Workers\EntityDeleteWorker;
 use LoyaltyCorp\Search\Workers\EntityUpdateWorker;
@@ -50,7 +50,7 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
             IndexerInterface::class,
             ManagerInterface::class,
             RegisteredSearchHandlerInterface::class,
-            TransformerInterface::class
+            ObjectTransformerInterface::class
         ];
     }
 
@@ -73,7 +73,7 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
             );
         });
 
-        $this->app->singleton(IndexTransformerInterface::class, DefaultIndexTransformer::class);
+        $this->app->singleton(IndexNameTransformerInterface::class, DefaultIndexNameTransformer::class);
         $this->app->singleton(IndexerInterface::class, Indexer::class);
 
         // Bind search manager
@@ -113,7 +113,7 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
             return new RegisteredSearchHandler($searchHandlers);
         });
 
-        $this->app->singleton(TransformerInterface::class, Transformer::class);
+        $this->app->singleton(ObjectTransformerInterface::class, ObjectTransformer::class);
 
         // Bind workers
         $this->app->singleton(EntityDeleteDataWorker::class);

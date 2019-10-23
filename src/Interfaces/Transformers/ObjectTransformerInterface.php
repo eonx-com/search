@@ -1,11 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace LoyaltyCorp\Search\Interfaces;
+namespace LoyaltyCorp\Search\Interfaces\Transformers;
 
+use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 use Traversable;
 
-interface TransformerInterface
+interface ObjectTransformerInterface
 {
     /**
      * Returns an array of transformed documents to be indexed into the search indexes.

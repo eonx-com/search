@@ -7,8 +7,8 @@ use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
-use LoyaltyCorp\Search\Interfaces\TransformerInterface;
-use LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface;
+use LoyaltyCorp\Search\Interfaces\ObjectTransformerInterface;
+use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 
 final class Manager implements ManagerInterface
 {
@@ -23,12 +23,12 @@ final class Manager implements ManagerInterface
     private $handlers;
 
     /**
-     * @var \LoyaltyCorp\Search\Interfaces\TransformerInterface
+     * @var \LoyaltyCorp\Search\Interfaces\ObjectTransformerInterface
      */
     private $transformer;
 
     /**
-     * @var \LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface
+     * @var \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface
      */
     private $indexTransformer;
 
@@ -37,14 +37,14 @@ final class Manager implements ManagerInterface
      *
      * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface $handlers Search Handlers
      * @param \LoyaltyCorp\Search\Interfaces\ClientInterface $client Client instance to send update requests to
-     * @param \LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface $indexTransformer Index transformer
-     * @param \LoyaltyCorp\Search\Interfaces\TransformerInterface $transformer
+     * @param \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface $indexTransformer Index transformer
+     * @param \LoyaltyCorp\Search\Interfaces\ObjectTransformerInterface $transformer
      */
     public function __construct(
         RegisteredSearchHandlerInterface $handlers,
         ClientInterface $client,
-        IndexTransformerInterface $indexTransformer,
-        TransformerInterface $transformer
+        IndexNameTransformerInterface $indexTransformer,
+        ObjectTransformerInterface $transformer
     ) {
         $this->handlers = $handlers;
         $this->client = $client;
@@ -146,7 +146,7 @@ final class Manager implements ManagerInterface
             return;
         }
 
-        $indexName = $this->indexTransformer->transformIndexName($handler, $object);
+        $indexName = $this->indexTransformer->transformIndexName($handler, $objects);
         $index = \sprintf('%s%s', $indexName, $indexSuffix);
 
         $this->client->bulkUpdate($index, $transformed);

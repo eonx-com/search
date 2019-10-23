@@ -10,7 +10,7 @@ use LoyaltyCorp\Search\Indexer\IndexSwapResult;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Populator;
-use LoyaltyCorp\Search\Transformers\DefaultIndexTransformer;
+use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\ManagerStub;
@@ -371,7 +371,7 @@ class IndexerTest extends TestCase
     ): Indexer {
         return new Indexer(
             $client ?? new ClientStub(),
-            new DefaultIndexTransformer(),
+            new DefaultIndexNameTransformer(),
             $manager ?? new ManagerStub(),
             new Populator()
         );

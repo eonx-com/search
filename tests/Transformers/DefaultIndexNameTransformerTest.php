@@ -3,16 +3,16 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Transformers;
 
-use LoyaltyCorp\Search\Transformers\DefaultIndexTransformer;
+use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use Tests\LoyaltyCorp\Search\Stubs\Entities\EntityStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NonDoctrineHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\TestCase;
 
 /**
- * @covers \LoyaltyCorp\Search\Transformers\DefaultIndexTransformer
+ * @covers \LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer
  */
-class DefaultIndexTransformerTest extends TestCase
+class DefaultIndexNameTransformerTest extends TestCase
 {
     /**
      * Test that transforming index name will return expected index name.
@@ -55,10 +55,10 @@ class DefaultIndexTransformerTest extends TestCase
     /**
      * Get default index transformer.
      *
-     * @return \LoyaltyCorp\Search\Transformers\DefaultIndexTransformer
+     * @return \LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer
      */
-    private function getTransformer(): DefaultIndexTransformer
+    private function getTransformer(): DefaultIndexNameTransformer
     {
-        return new DefaultIndexTransformer();
+        return new DefaultIndexNameTransformer();
     }
 }

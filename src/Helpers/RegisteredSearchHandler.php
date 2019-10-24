@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Helpers;
 
-use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
+use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 
 class RegisteredSearchHandler implements RegisteredSearchHandlerInterface
 {
@@ -34,12 +34,12 @@ class RegisteredSearchHandler implements RegisteredSearchHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function getEntityHandlers(): array
+    public function getTransformableHandlers(): array
     {
         $entityHandlers = [];
 
         foreach ($this->searchHandlers as $handler) {
-            if ($handler instanceof EntitySearchHandlerInterface === true) {
+            if ($handler instanceof TransformableSearchHandlerInterface === true) {
                 $entityHandlers[] = $handler;
             }
         }

@@ -10,6 +10,8 @@ use Doctrine\ORM\EntityManagerInterface;
  * This file emulates a class Laravel Doctrine providers via the 'registry' alias in Laravel application container
  *
  * @SuppressWarnings(PHPMD.LongVariable) Doctrine defines these variables
+ *
+ * @coversNothing
  */
 class RegistryStub implements ManagerRegistry
 {

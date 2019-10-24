@@ -83,16 +83,16 @@ final class Client implements ClientInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      *
      * @throws \LoyaltyCorp\Search\Exceptions\BulkFailureException If there is at least one record with an error
      * @throws \LoyaltyCorp\Search\Exceptions\SearchUpdateException If backend client throws an exception via bulk()
      */
-    public function bulkUpdate(string $index, array $documents): void
+    public function bulkUpdate(array $updates): void
     {
         $bulk = [];
 
-        foreach ($documents as $documentId => $document) {
+        foreach ($updates as $update) {
             // The _type parameter is being deprecated, and in Elasticsearch 6.0+ means
             // nothing, but still must be provided. As a standard, anything using this
             // library will need to define the type as "doc" in any schema mappings until
@@ -100,8 +100,14 @@ final class Client implements ClientInterface
             //
             // See: https://www.elastic.co/guide/en/elasticsearch/reference/current/removal-of-types.html
 
-            $bulk[] = ['index' => ['_index' => $index, '_type' => 'doc', '_id' => $documentId]];
-            $bulk[] = $document;
+            $bulk[] = [
+                'index' => [
+                    '_index' => $update->getIndex(),
+                    '_type' => 'doc',
+                    '_id' => $update->getDocumentId()
+                ]
+            ];
+            $bulk[] = $update->getDocument();
         }
 
         try {

@@ -6,7 +6,6 @@ namespace Tests\LoyaltyCorp\Search\Stubs;
 use DateTime;
 use LoyaltyCorp\Search\Indexer\IndexCleanResult;
 use LoyaltyCorp\Search\Indexer\IndexSwapResult;
-use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 
@@ -113,16 +112,5 @@ class IndexerStub implements IndexerInterface
         }
 
         return new IndexSwapResult(... [$aliasesToMove, $aliasesToDelete, $aliasesToSkip]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function populate(
-        EntitySearchHandlerInterface $searchHandler,
-        string $indexSuffix,
-        ?int $batchSize = null
-    ): void {
-        $this->populatedHandlers[] = \compact('searchHandler', 'indexSuffix', 'batchSize');
     }
 }

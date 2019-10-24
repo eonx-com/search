@@ -7,6 +7,7 @@ use Elasticsearch\Client as BaseClient;
 use Elasticsearch\ClientBuilder;
 use GuzzleHttp\Ring\Client\MockHandler;
 use LoyaltyCorp\Search\Client;
+use LoyaltyCorp\Search\DataTransferObjects\DocumentUpdate;
 use LoyaltyCorp\Search\Exceptions\BulkFailureException;
 use LoyaltyCorp\Search\Exceptions\SearchCheckerException;
 use LoyaltyCorp\Search\Exceptions\SearchDeleteException;
@@ -34,7 +35,7 @@ final class ClientTest extends TestCase
     {
         yield 'bulkUpdate' => [
             'method' => 'bulkUpdate',
-            'arguments' => ['index', ['1' => 'document']],
+            'arguments' => [[new DocumentUpdate('index', '1', 'document')]],
             'exception' => SearchUpdateException::class,
             'exceptionMessage' => 'An error occured while performing bulk update on backend'
         ];
@@ -99,7 +100,7 @@ final class ClientTest extends TestCase
         $stub = new CallableResponseClientStub();
         $client = $this->createInstance($stub);
 
-        $client->bulkUpdate('index', ['1' => 'document']);
+        $client->bulkUpdate([new DocumentUpdate('index', '1', 'document')]);
 
         // If call was successful there should be no return/exception
         $this->addToAssertionCount(1);
@@ -115,12 +116,11 @@ final class ClientTest extends TestCase
         $stub = new ClientStub();
         $client = $this->createInstance($stub);
 
+        $expected = ['body' => [['delete' => ['_index' => 'index', '_type' => 'doc', '_id' => ['1']]]]];
+
         $client->bulkDelete(['index' => [['1']]]);
 
-        self::assertSame(
-            ['body' => [['delete' => ['_index' => 'index', '_type' => 'doc', '_id' => ['1']]]]],
-            $stub->getBulkParameters()
-        );
+        self::assertSame($expected, $stub->getBulkParameters());
     }
 
     /**
@@ -137,7 +137,7 @@ final class ClientTest extends TestCase
         $this->expectException(BulkFailureException::class);
         $this->expectExceptionMessage('Invalid response received from bulk update');
 
-        $client->bulkUpdate('index', ['1' => 'document']);
+        $client->bulkUpdate([new DocumentUpdate('index', '1', 'document')]);
     }
 
     /**
@@ -260,7 +260,7 @@ final class ClientTest extends TestCase
         $this->expectException(BulkFailureException::class);
         $this->expectExceptionMessage('At least one record returned an error during bulk update');
 
-        $client->bulkUpdate('index', ['1' => 'document']);
+        $client->bulkUpdate([new DocumentUpdate('index', '1', 'document')]);
     }
 
     /**
@@ -291,7 +291,7 @@ final class ClientTest extends TestCase
         ]);
         $client = $this->createInstance($stub);
 
-        $client->bulkUpdate('index', ['1' => 'document']);
+        $client->bulkUpdate([new DocumentUpdate('index', '1', 'document')]);
 
         // No exception should be thrown since the error is on create and we've called update
         $this->addToAssertionCount(1);

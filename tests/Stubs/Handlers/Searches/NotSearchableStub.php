@@ -5,6 +5,8 @@ namespace Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches;
 
 /**
  * @noinspection EmptyClassInspection Class is intentionally empty
+ *
+ * @coversNothing
  */
 final class NotSearchableStub
 {

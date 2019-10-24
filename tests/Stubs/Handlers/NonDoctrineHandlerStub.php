@@ -11,21 +11,6 @@ use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 class NonDoctrineHandlerStub implements SearchHandlerInterface
 {
     /**
-     * @var mixed[]
-     */
-    private $transformed;
-
-    /**
-     * NonDoctrineHandlerStub constructor.
-     *
-     * @param mixed[] $transformed
-     */
-    public function __construct(?array $transformed = null)
-    {
-        $this->transformed = $transformed ?? [];
-    }
-
-    /**
      * {@inheritdoc}
      */
     public static function getMappings(): array

@@ -4,10 +4,11 @@ declare(strict_types=1);
 namespace LoyaltyCorp\Search;
 
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
-use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
-use LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface;
+use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
+use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
+use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 
 final class Manager implements ManagerInterface
 {
@@ -22,25 +23,33 @@ final class Manager implements ManagerInterface
     private $handlers;
 
     /**
-     * @var \LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface
+     * @var \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface
      */
-    private $indexTransformer;
+    private $nameTransformer;
+
+    /**
+     * @var \LoyaltyCorp\Search\Interfaces\PopulatorInterface
+     */
+    private $populator;
 
     /**
      * Constructor
      *
-     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface $handlers Search Handlers
-     * @param \LoyaltyCorp\Search\Interfaces\ClientInterface $client Client instance to send update requests to
-     * @param \LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface $indexTransformer Index transformer
+     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface $handlers
+     * @param \LoyaltyCorp\Search\Interfaces\ClientInterface $client
+     * @param \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface $nameTransformer
+     * @param \LoyaltyCorp\Search\Interfaces\PopulatorInterface $populator
      */
     public function __construct(
         RegisteredSearchHandlerInterface $handlers,
         ClientInterface $client,
-        IndexTransformerInterface $indexTransformer
+        IndexNameTransformerInterface $nameTransformer,
+        PopulatorInterface $populator
     ) {
         $this->handlers = $handlers;
         $this->client = $client;
-        $this->indexTransformer = $indexTransformer;
+        $this->nameTransformer = $nameTransformer;
+        $this->populator = $populator;
     }
 
     /**
@@ -52,7 +61,7 @@ final class Manager implements ManagerInterface
 
         $ids = [];
 
-        foreach ($this->handlers->getEntityHandlers() as $handler) {
+        foreach ($this->handlers->getTransformableHandlers() as $handler) {
             if ($this->isHandled($handler, $class) === false) {
                 continue;
             }
@@ -64,7 +73,7 @@ final class Manager implements ManagerInterface
                 continue;
             }
 
-            $indexName = $this->indexTransformer->transformIndexName($handler, $object);
+            $indexName = $this->nameTransformer->transformIndexName($handler, $object);
             // Elastic search works with string ids, so we're forcing
             // them to strings here
             $ids[$indexName] = (string)$searchId;
@@ -86,64 +95,24 @@ final class Manager implements ManagerInterface
      */
     public function handleUpdates(string $class, string $indexSuffix, array $objects): void
     {
-        foreach ($this->handlers->getEntityHandlers() as $handler) {
+        foreach ($this->handlers->getTransformableHandlers() as $handler) {
             if ($this->isHandled($handler, $class) === false) {
                 continue;
             }
 
-            $transformed = [];
-
-            foreach ($objects as $object) {
-                $searchId = $handler->getSearchId($object);
-
-                if ($searchId === null) {
-                    // the handler didnt generate a search id
-                    continue;
-                }
-
-                $document = $handler->transform($object);
-
-                if ($document === null) {
-                    // no search document was generated
-
-                    continue;
-                }
-
-                // elasticsearch works with string ids, so we're forcing
-                // them to strings here
-                $transformed[(string)$searchId] = $document;
-
-                $indexName = $this->indexTransformer->transformIndexName($handler, $object);
-                $index = \sprintf('%s%s', $indexName, $indexSuffix);
-
-                $this->client->bulkUpdate($index, $transformed);
-            }
+            $this->populator->populateWith($handler, $indexSuffix, $objects);
         }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function isSearchable(string $class): bool
-    {
-        foreach ($this->handlers->getEntityHandlers() as $handler) {
-            if ($this->isHandled($handler, $class) === true) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**
      * Determine if object is supported (handled) by the given search handler
      *
-     * @param \LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface $handler
+     * @param \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface $handler
      * @param string $class
      *
      * @return bool
      */
-    private function isHandled(EntitySearchHandlerInterface $handler, string $class): bool
+    private function isHandled(TransformableSearchHandlerInterface $handler, string $class): bool
     {
         $implements = \class_implements($class);
         $implements[] = $class;

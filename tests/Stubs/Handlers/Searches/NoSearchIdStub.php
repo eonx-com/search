@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches;
 
+/**
+ * @coversNothing
+ */
 final class NoSearchIdStub
 {
     /**

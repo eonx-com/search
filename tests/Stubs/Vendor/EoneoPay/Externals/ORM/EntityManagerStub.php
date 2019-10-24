@@ -9,6 +9,9 @@ use EoneoPay\Externals\ORM\Interfaces\Query\FilterCollectionInterface;
 use EoneoPay\Externals\ORM\Interfaces\RepositoryInterface;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\EoneoPay\Externals\ORM\Query\FilterCollectionStub;
 
+/**
+ * @coversNothing
+ */
 class EntityManagerStub implements EntityManagerInterface
 {
     /**

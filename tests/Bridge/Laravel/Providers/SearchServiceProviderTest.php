@@ -13,13 +13,15 @@ use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
-use LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface;
+use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
+use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 use LoyaltyCorp\Search\Manager;
-use LoyaltyCorp\Search\Transformers\DefaultIndexTransformer;
+use LoyaltyCorp\Search\Populator;
+use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\EntitySearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NonDoctrineHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NotSearchableStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Illuminate\Contracts\Foundation\ApplicationStub;
 use Tests\LoyaltyCorp\Search\TestCase;
 
@@ -48,13 +50,14 @@ final class SearchServiceProviderTest extends TestCase
         self::assertInstanceOf(Client::class, $application->make(ClientInterface::class));
         self::assertInstanceOf(Manager::class, $application->make(ManagerInterface::class));
         self::assertInstanceOf(EntityManagerHelper::class, $application->make(EntityManagerHelperInterface::class));
+        self::assertInstanceOf(Populator::class, $application->make(PopulatorInterface::class));
         self::assertInstanceOf(
             RegisteredSearchHandler::class,
             $application->make(RegisteredSearchHandlerInterface::class)
         );
         self::assertInstanceOf(
-            DefaultIndexTransformer::class,
-            $application->make(IndexTransformerInterface::class)
+            DefaultIndexNameTransformer::class,
+            $application->make(IndexNameTransformerInterface::class)
         );
     }
 
@@ -67,9 +70,9 @@ final class SearchServiceProviderTest extends TestCase
     {
         self::assertSame([
             ClientInterface::class,
-            EntityManagerHelperInterface::class,
             IndexerInterface::class,
             ManagerInterface::class,
+            PopulatorInterface::class,
             RegisteredSearchHandlerInterface::class
         ], (new SearchServiceProvider(new ApplicationStub()))->provides());
     }
@@ -107,11 +110,11 @@ final class SearchServiceProviderTest extends TestCase
 
         // Tag handler for service provider
         $application->tag(
-            [EntitySearchHandlerStub::class, NotSearchableStub::class, NonDoctrineHandlerStub::class],
+            [TransformableSearchHandlerStub::class, NotSearchableStub::class, NonDoctrineHandlerStub::class],
             ['search_handler']
         );
         // The only available handler is when using get should beHandlerStub
-        $expected = [new EntitySearchHandlerStub(), new NonDoctrineHandlerStub()];
+        $expected = [new TransformableSearchHandlerStub(), new NonDoctrineHandlerStub()];
 
         $serviceProvider = new SearchServiceProvider($application);
         $serviceProvider->register();

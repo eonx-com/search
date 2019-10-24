@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Stubs\Handlers;
 
-use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NotSearchableStub;
+use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
+use Tests\LoyaltyCorp\Search\Stubs\Entities\EntityStub;
 
 /**
  * @coversNothing
  */
-final class NotSearchableEntitySearchHandlerStub implements EntitySearchHandlerInterface
+class TransformableHandlerStub implements TransformableSearchHandlerInterface
 {
     /**
      * {@inheritdoc}
@@ -28,34 +28,42 @@ final class NotSearchableEntitySearchHandlerStub implements EntitySearchHandlerI
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     */
+    public function getFillIterable(): iterable
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getHandledClasses(): array
     {
-        return [NotSearchableStub::class];
+        return [EntityStub::class];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getIndexName(): string
     {
-        return 'valid';
+        return 'entity_stub';
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getSearchId(object $object)
     {
-        return null;
+        return \method_exists($object, 'getSearchId') ? $object->getSearchId() : null;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function transform($object = null): ?array
     {
-        return \method_exists($object, 'toArray') ? $object->toArray() : null;
+        return [];
     }
 }

@@ -16,6 +16,11 @@ class ManagerStub implements ManagerInterface
     private $deletes = [];
 
     /**
+     * @var mixed[]
+     */
+    private $handlerUpdates = [];
+
+    /**
      * @var mixed[][]
      */
     private $searchMeta = [];
@@ -50,6 +55,14 @@ class ManagerStub implements ManagerInterface
     public function getDeletes(): array
     {
         return $this->deletes;
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public function getHandlerUpdates(): array
+    {
+        return $this->handlerUpdates;
     }
 
     /**
@@ -95,13 +108,5 @@ class ManagerStub implements ManagerInterface
     {
         $this->updateCount++;
         $this->updateObjects[] = \compact('class', 'indexSuffix', 'objects');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isSearchable(string $class): bool
-    {
-        return true;
     }
 }

@@ -3,16 +3,15 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Transformers;
 
-use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
-use LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface;
+use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 
-final class DefaultIndexTransformer implements IndexTransformerInterface
+final class DefaultIndexNameTransformer implements IndexNameTransformerInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function transformIndexName(EntitySearchHandlerInterface $handler, object $object): string
+    public function transformIndexName(SearchHandlerInterface $handler, object $object): string
     {
         return \mb_strtolower($handler->getIndexName());
     }

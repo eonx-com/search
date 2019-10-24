@@ -9,16 +9,12 @@ use LoyaltyCorp\Search\Exceptions\AliasNotFoundException;
 use LoyaltyCorp\Search\Indexer\IndexCleanResult;
 use LoyaltyCorp\Search\Indexer\IndexSwapResult;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
-use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
-use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
-use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
-use LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface;
+use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects) High coupling required for search indexer already using decoupled
- * services.
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Required for search indexer already using decoupled services.
  */
 final class Indexer implements IndexerInterface
 {
@@ -28,38 +24,22 @@ final class Indexer implements IndexerInterface
     private $elasticClient;
 
     /**
-     * @var \LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface
+     * @var \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface
      */
-    private $entityManagerHelper;
+    private $nameTransformer;
 
     /**
-     * @var \LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface
-     */
-    private $indexTransformer;
-
-    /**
-     * @var \LoyaltyCorp\Search\Interfaces\ManagerInterface
-     */
-    private $manager;
-
-    /**
-     * SearchIndexCreate constructor.
+     * Constructor
      *
      * @param \LoyaltyCorp\Search\Interfaces\ClientInterface $elasticClient
-     * @param \LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface $entityManagerHelper
-     * @param \LoyaltyCorp\Search\Interfaces\Transformers\IndexTransformerInterface $indexTransformer
-     * @param \LoyaltyCorp\Search\Interfaces\ManagerInterface $manager
+     * @param \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface $nameTransformer
      */
     public function __construct(
         ClientInterface $elasticClient,
-        EntityManagerHelperInterface $entityManagerHelper,
-        IndexTransformerInterface $indexTransformer,
-        ManagerInterface $manager
+        IndexNameTransformerInterface $nameTransformer
     ) {
         $this->elasticClient = $elasticClient;
-        $this->entityManagerHelper = $entityManagerHelper;
-        $this->indexTransformer = $indexTransformer;
-        $this->manager = $manager;
+        $this->nameTransformer = $nameTransformer;
     }
 
     /**
@@ -73,7 +53,7 @@ final class Indexer implements IndexerInterface
 
         /** @var \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[] $searchHandlers */
         foreach ($searchHandlers as $searchHandler) {
-            $handlerIndices = $this->indexTransformer->transformIndexNames($searchHandler);
+            $handlerIndices[] = $this->nameTransformer->transformIndexNames($searchHandler);
         }
 
         // Build array of all indices used by aliases
@@ -81,10 +61,13 @@ final class Indexer implements IndexerInterface
             $indicesUsedByAlias[] = $alias['index'];
         }
 
+        // Flatten a multi dimensional array of index names into a single dimension
+        $knownIndices = \array_merge(...$handlerIndices);
+
         // Build array of all indices
         foreach ($this->elasticClient->getIndices() as $index) {
             // Disregard any indices that are not to do with search handlers
-            if ($this->indexStartsWith($index['name'], $handlerIndices) === false) {
+            if ($this->indexStartsWith($index['name'], $knownIndices) === false) {
                 continue;
             }
 
@@ -118,7 +101,7 @@ final class Indexer implements IndexerInterface
      */
     public function create(SearchHandlerInterface $searchHandler, ?BaseDateTime $now = null): void
     {
-        $indexNames = $this->indexTransformer->transformIndexNames($searchHandler);
+        $indexNames = $this->nameTransformer->transformIndexNames($searchHandler);
 
         $now = $now ?? new DateTime();
         $dateStamp = $now->format('Ymdhis');
@@ -157,7 +140,7 @@ final class Indexer implements IndexerInterface
         $indexToSkip = [];
 
         foreach ($searchHandlers as $searchHandler) {
-            $indexNames = $this->indexTransformer->transformIndexNames($searchHandler);
+            $indexNames = $this->nameTransformer->transformIndexNames($searchHandler);
 
             foreach ($indexNames as $indexName) {
                 // Use index+_new to determine the latest index name
@@ -207,40 +190,6 @@ final class Indexer implements IndexerInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function populate(
-        EntitySearchHandlerInterface $searchHandler,
-        string $indexSuffix,
-        ?int $batchSize = null
-    ): void {
-        // Populate index of search handler on a per-entity basis
-        foreach ($searchHandler->getHandledClasses() as $handlerClass) {
-            $this->populateIndex(
-                $handlerClass,
-                $indexSuffix,
-                $batchSize
-            );
-        }
-    }
-
-    /**
-     * Handle document updates from an array of entity identifiers
-     *
-     * @param string $class
-     * @param string $indexSuffix
-     * @param string[]|int[] $ids Array of primary keys for the given entity $class
-     *
-     * @return void
-     */
-    private function handleUpdatesFromPrimaryKeys(string $class, string $indexSuffix, array $ids): void
-    {
-        $entities = $this->entityManagerHelper->findAllIds($class, $ids);
-
-        $this->manager->handleUpdates($class, $indexSuffix, $entities);
-    }
-
-    /**
      * Determine if provided index name starts with any of the specified values
      *
      * @param string $index
@@ -257,38 +206,5 @@ final class Indexer implements IndexerInterface
         }
 
         return false;
-    }
-
-    /**
-     * Populate an index with all documents
-     *
-     * @param string $class
-     * @param string $indexSuffix
-     * @param int|null $batchSize
-     *
-     * @return void
-     */
-    private function populateIndex(string $class, string $indexSuffix, ?int $batchSize = null): void
-    {
-        $documents = [];
-        $iteration = 0;
-
-        // Iterate over all primary keys of the dedicated entity against the search handler
-        foreach ($this->entityManagerHelper->iterateAllIds($class) as $identifier) {
-            $documents[] = $identifier;
-
-            // Create documents in batches to avoid overloading memory & request size
-            if ($iteration > 0 && $iteration % ($batchSize ?? 100) === 0) {
-                $this->handleUpdatesFromPrimaryKeys($class, $indexSuffix, $documents);
-                $documents = [];
-            }
-
-            $iteration++;
-        }
-
-        // Handle creation of remaining documents that were not batched because the loop finished
-        if (\count($documents) > 0) {
-            $this->handleUpdatesFromPrimaryKeys($class, $indexSuffix, $documents);
-        }
     }
 }

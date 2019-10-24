@@ -3,14 +3,14 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Stubs\Handlers;
 
-use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\ProviderAwareInterface;
+use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\SearchableStub;
 
 /**
  * @coversNothing
  */
-final class ProviderAwareSearchHandlerStub implements EntitySearchHandlerInterface, ProviderAwareInterface
+final class ProviderAwareSearchHandlerStub implements TransformableSearchHandlerInterface, ProviderAwareInterface
 {
     /**
      * Index name.
@@ -57,6 +57,14 @@ final class ProviderAwareSearchHandlerStub implements EntitySearchHandlerInterfa
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getFillIterable(): iterable
+    {
+        return [];
+    }
+
+    /**
      * @inheritdoc
      */
     public function getHandledClasses(): array
@@ -73,6 +81,14 @@ final class ProviderAwareSearchHandlerStub implements EntitySearchHandlerInterfa
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getProviderId(object $object): string
+    {
+        return $this->providerId ?? 'providerId';
+    }
+
+    /**
      * @inheritdoc
      */
     public function getSearchId(object $object)
@@ -86,13 +102,5 @@ final class ProviderAwareSearchHandlerStub implements EntitySearchHandlerInterfa
     public function transform($object = null): ?array
     {
         return \method_exists($object, 'toArray') ? $object->toArray() : null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getProviderId(object $object): string
-    {
-        return $this->providerId ?? 'providerId';
     }
 }

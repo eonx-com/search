@@ -11,6 +11,9 @@ use LoyaltyCorp\Search\Bridge\Laravel\Listeners\EntityUpdateListener;
 use LoyaltyCorp\Search\Bridge\Laravel\Providers\SearchEventServiceProvider;
 use Tests\LoyaltyCorp\Search\TestCase;
 
+/**
+ * @covers \LoyaltyCorp\Search\Bridge\Laravel\Providers\SearchEventServiceProvider
+ */
 final class SearchEventServiceProviderTest extends TestCase
 {
     /**

@@ -11,6 +11,8 @@ use RuntimeException;
  * can't be stubbed properly, this stub will not pass anything to the actual elasticsearch client
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods) Well tested code for all the cases
+ *
+ * @coversNothing
  */
 class CatStub extends CatNamespace
 {

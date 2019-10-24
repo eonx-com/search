@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Tests\LoyaltyCorp\Search\Helpers;
 
 use LoyaltyCorp\Search\Helpers\RegisteredSearchHandler;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\EntityHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NonDoctrineHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableHandlerStub;
 use Tests\LoyaltyCorp\Search\TestCase;
 
 /**
@@ -20,7 +20,7 @@ class RegisteredSearchHandlerTest extends TestCase
      */
     public function testGettingAllHandlersMatchesSuppliedHandlers(): void
     {
-        $entitySearchHandler = new EntityHandlerStub();
+        $entitySearchHandler = new TransformableHandlerStub();
         $otherSearchHandler = new NonDoctrineHandlerStub();
 
         $expected = [
@@ -45,7 +45,7 @@ class RegisteredSearchHandlerTest extends TestCase
      */
     public function testGettingEntitySearchHandlersOnly(): void
     {
-        $entitySearchHandler = new EntityHandlerStub();
+        $entitySearchHandler = new TransformableHandlerStub();
         $otherSearchHandler = new NonDoctrineHandlerStub();
 
         $expected = [
@@ -57,7 +57,7 @@ class RegisteredSearchHandlerTest extends TestCase
             $otherSearchHandler
         ]);
 
-        $result = $registeredHandlers->getEntityHandlers();
+        $result = $registeredHandlers->getTransformableHandlers();
 
         self::assertSame($expected, $result);
     }

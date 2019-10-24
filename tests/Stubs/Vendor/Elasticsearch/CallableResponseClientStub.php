@@ -8,6 +8,8 @@ use React\Promise\Deferred;
 
 /**
  * This stub returns a callable response which will eventually resolve to an array when calling bulk()
+ *
+ * @coversNothing
  */
 class CallableResponseClientStub extends ClientStub
 {

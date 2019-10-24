@@ -3,8 +3,16 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Interfaces;
 
-interface EntitySearchHandlerInterface extends SearchHandlerInterface
+interface TransformableSearchHandlerInterface extends SearchHandlerInterface
 {
+    /**
+     * Returns an iterable that will be used to fill the index when doing a full
+     * index fill.
+     *
+     * @return mixed[]|iterable
+     */
+    public function getFillIterable(): iterable;
+
     /**
      * Get the class this search handler will support
      *
@@ -13,7 +21,7 @@ interface EntitySearchHandlerInterface extends SearchHandlerInterface
     public function getHandledClasses(): array;
 
     /**
-     * Returns the identifier used externally for the object.
+     * Returns the identifier used externally for the transformed object.
      *
      * @param object $object
      *

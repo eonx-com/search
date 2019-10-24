@@ -8,7 +8,6 @@ use LoyaltyCorp\Search\Exceptions\AliasNotFoundException;
 use LoyaltyCorp\Search\Indexer;
 use LoyaltyCorp\Search\Indexer\IndexSwapResult;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
-use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
@@ -274,13 +273,11 @@ class IndexerTest extends TestCase
      * Instantiate an Indexer
      *
      * @param \LoyaltyCorp\Search\Interfaces\ClientInterface|null $client
-     * @param \LoyaltyCorp\Search\Interfaces\ManagerInterface|null $manager
      *
      * @return \LoyaltyCorp\Search\Indexer
      */
     private function createInstance(
-        ?ClientInterface $client = null,
-        ?ManagerInterface $manager = null
+        ?ClientInterface $client = null
     ): Indexer {
         return new Indexer(
             $client ?? new ClientStub(),

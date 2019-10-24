@@ -8,7 +8,6 @@ use LoyaltyCorp\Search\Indexer\IndexCleanResult;
 use LoyaltyCorp\Search\Indexer\IndexSwapResult;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
-use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 
 /**
  * @coversNothing
@@ -113,16 +112,5 @@ class IndexerStub implements IndexerInterface
         }
 
         return new IndexSwapResult(... [$aliasesToMove, $aliasesToDelete, $aliasesToSkip]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function populate(
-        TransformableSearchHandlerInterface $handler,
-        string $indexSuffix,
-        int $batchSize
-    ): void {
-        $this->populatedHandlers[] = \compact('handler', 'indexSuffix', 'batchSize');
     }
 }

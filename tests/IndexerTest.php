@@ -9,12 +9,9 @@ use LoyaltyCorp\Search\Indexer;
 use LoyaltyCorp\Search\Indexer\IndexSwapResult;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
-use LoyaltyCorp\Search\Populator;
 use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
-use Tests\LoyaltyCorp\Search\Stubs\ManagerStub;
-use Tests\LoyaltyCorp\Search\Stubs\PopulatorStub;
 
 /**
  * @covers \LoyaltyCorp\Search\Indexer

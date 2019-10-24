@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Tests\LoyaltyCorp\Search\Stubs;
 
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
-use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 
 /**
  * @coversNothing
@@ -109,16 +108,5 @@ class ManagerStub implements ManagerInterface
     {
         $this->updateCount++;
         $this->updateObjects[] = \compact('class', 'indexSuffix', 'objects');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function handleUpdatesWithHandler(
-        TransformableSearchHandlerInterface $handler,
-        string $indexSuffix,
-        array $objects
-    ): void {
-        $this->handlerUpdates[] = \compact('handler', 'indexSuffix', 'objects');
     }
 }

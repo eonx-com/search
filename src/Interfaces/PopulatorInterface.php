@@ -6,7 +6,7 @@ namespace LoyaltyCorp\Search\Interfaces;
 interface PopulatorInterface
 {
     /**
-     * Populates a handler's index with an array of objects.
+     * Populates a handler's index with the handlers fill iterable.
      *
      * @param \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface $handler
      * @param string $indexSuffix

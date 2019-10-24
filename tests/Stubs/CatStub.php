@@ -8,13 +8,13 @@ use RuntimeException;
 
 /**
  * This stub overloads methods within the elasticsearch client as it doesn't implement an interface so
- * can't be stubbed properly, this stub will not pass anything to the actual elasticsearch client
+ * can't be stubbed properly, this stub will not pass anything to the actual elasticsearch client.
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods) Well tested code for all the cases
  *
  * @coversNothing
  */
-class CatStub extends CatNamespace
+final class CatStub extends CatNamespace
 {
     /**
      * @var bool

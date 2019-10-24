@@ -37,7 +37,7 @@ final class SearchIndexFillCommand extends Command
     }
 
     /**
-     * Populate data for all indices
+     * Populate data for all indices.
      *
      * @return void
      */

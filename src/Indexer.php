@@ -29,7 +29,7 @@ final class Indexer implements IndexerInterface
     private $nameTransformer;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \LoyaltyCorp\Search\Interfaces\ClientInterface $elasticClient
      * @param \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface $nameTransformer
@@ -163,7 +163,7 @@ final class Indexer implements IndexerInterface
                      *     - The root alias exists
                      *     - New index has no documents
                      *     - Old index contains data
-                     * Generally this is true when the SearchIndex type is not entity based
+                     * Generally this is true when the SearchIndex type is not entity based.
                      */
 
                     continue;
@@ -190,7 +190,7 @@ final class Indexer implements IndexerInterface
     }
 
     /**
-     * Determine if provided index name starts with any of the specified values
+     * Determine if provided index name starts with any of the specified values.
      *
      * @param string $index
      * @param string[] $indexPrefixes
@@ -200,7 +200,7 @@ final class Indexer implements IndexerInterface
     private function indexStartsWith(string $index, array $indexPrefixes): bool
     {
         foreach ($indexPrefixes as $indexPrefix) {
-            if (\strpos($index, $indexPrefix) === 0) {
+            if (\mb_strpos($index, $indexPrefix) === 0) {
                 return true;
             }
         }

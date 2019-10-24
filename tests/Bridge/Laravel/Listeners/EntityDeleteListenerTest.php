@@ -28,11 +28,11 @@ final class EntityDeleteListenerTest extends TestCase
         $listener->handle(new EntityChangeEvent(['search' => ['id1']], []));
 
         $result = $searchManager->getDeletes();
-        static::assertSame([['id1']], $result);
+        self::assertSame([['id1']], $result);
 
         $listener->handle(new EntityChangeEvent([], []));
 
         $secondResult = $searchManager->getDeletes();
-        static::assertSame($result, $secondResult);
+        self::assertSame($result, $secondResult);
     }
 }

@@ -9,10 +9,10 @@ use Tests\LoyaltyCorp\Search\TestCase;
 /**
  * @covers \LoyaltyCorp\Search\Indexer\IndexSwapResult
  */
-class IndexSwapResultTest extends TestCase
+final class IndexSwapResultTest extends TestCase
 {
     /**
-     * Ensure array structure is generated with nested actions for table output
+     * Ensure array structure is generated with nested actions for table output.
      *
      * @return void
      */
@@ -22,8 +22,8 @@ class IndexSwapResultTest extends TestCase
             [
                 [
                     'alias' => 'greatIndex',
-                    'index' => 'greatIndex_20190101'
-                ]
+                    'index' => 'greatIndex_20190101',
+                ],
             ],
             ['greatIndex_new'],
             ['bigIndex_20190101']
@@ -37,9 +37,9 @@ class IndexSwapResultTest extends TestCase
                 [
                     '',
                     'bigIndex_20190101',
-                    'Skip swapping root alias'
-                ]
-            ]
+                    'Skip swapping root alias',
+                ],
+            ],
         ];
 
         self::assertSame($expected, $table->getTableData());

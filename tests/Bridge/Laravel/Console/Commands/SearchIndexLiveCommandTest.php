@@ -20,10 +20,10 @@ use Tests\LoyaltyCorp\Search\TestCases\SearchIndexCommandTestCase;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Required for thorough testing
  */
-class SearchIndexLiveCommandTest extends SearchIndexCommandTestCase
+final class SearchIndexLiveCommandTest extends SearchIndexCommandTestCase
 {
     /**
-     * Ensure the command dryly running is only done when specified
+     * Ensure the command dryly running is only done when specified.
      *
      * @return void
      *
@@ -43,7 +43,7 @@ class SearchIndexLiveCommandTest extends SearchIndexCommandTestCase
     }
 
     /**
-     * Ensure the command dryly running is verbose to the output
+     * Ensure the command dryly running is verbose to the output.
      *
      * @return void
      *
@@ -70,7 +70,7 @@ class SearchIndexLiveCommandTest extends SearchIndexCommandTestCase
     }
 
     /**
-     * Ensure search handlers are indeed passed to the indexSwap method
+     * Ensure search handlers are indeed passed to the indexSwap method.
      *
      * @return void
      *
@@ -89,7 +89,7 @@ class SearchIndexLiveCommandTest extends SearchIndexCommandTestCase
     }
 
     /**
-     * Create command instance
+     * Create command instance.
      *
      * @param \LoyaltyCorp\Search\Interfaces\IndexerInterface $indexer
      * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface $registeredHandlers

@@ -10,7 +10,7 @@ use LoyaltyCorp\Search\Interfaces\ClientInterface;
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods) Well tested code for all the cases
  */
-class ClientStub implements ClientInterface
+final class ClientStub implements ClientInterface
 {
     /**
      * @var mixed[]
@@ -156,7 +156,7 @@ class ClientStub implements ClientInterface
     }
 
     /**
-     * Spy on created aliases
+     * Spy on created aliases.
      *
      * @return mixed[]
      */
@@ -166,7 +166,7 @@ class ClientStub implements ClientInterface
     }
 
     /**
-     * Spy on created indices
+     * Spy on created indices.
      *
      * @return mixed[]
      */
@@ -176,7 +176,7 @@ class ClientStub implements ClientInterface
     }
 
     /**
-     * Spy on deleted aliases
+     * Spy on deleted aliases.
      *
      * @return string[]
      */
@@ -186,7 +186,7 @@ class ClientStub implements ClientInterface
     }
 
     /**
-     * Spy on deleted indices
+     * Spy on deleted indices.
      *
      * @return string[]
      */
@@ -204,7 +204,7 @@ class ClientStub implements ClientInterface
     }
 
     /**
-     * Spy on alias that had its index swapped
+     * Spy on alias that had its index swapped.
      *
      * @return string[] Alias => Index
      */

@@ -12,7 +12,7 @@ use Tests\LoyaltyCorp\Search\TestCase;
 /**
  * @covers \LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer
  */
-class DefaultIndexNameTransformerTest extends TestCase
+final class DefaultIndexNameTransformerTest extends TestCase
 {
     /**
      * Test that transforming index name will return expected index name.
@@ -44,7 +44,7 @@ class DefaultIndexNameTransformerTest extends TestCase
         $transformer = $this->getTransformer();
 
         $expectedIndexNames = [
-            'non-doctrine-index'
+            'non-doctrine-index',
         ];
 
         $actualIndexNames = $transformer->transformIndexNames($handler);

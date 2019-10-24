@@ -11,10 +11,10 @@ use Tests\LoyaltyCorp\Search\TestCase;
 /**
  * @covers \LoyaltyCorp\Search\Helpers\RegisteredSearchHandler
  */
-class RegisteredSearchHandlerTest extends TestCase
+final class RegisteredSearchHandlerTest extends TestCase
 {
     /**
-     * Ensure the supplied search handlers matches the returned handlers from the same class
+     * Ensure the supplied search handlers matches the returned handlers from the same class.
      *
      * @return void
      */
@@ -25,12 +25,12 @@ class RegisteredSearchHandlerTest extends TestCase
 
         $expected = [
             $entitySearchHandler,
-            $otherSearchHandler
+            $otherSearchHandler,
         ];
 
         $registeredHandlers = $this->createInstance([
             $entitySearchHandler,
-            $otherSearchHandler
+            $otherSearchHandler,
         ]);
 
         $result = $registeredHandlers->getAll();
@@ -49,12 +49,12 @@ class RegisteredSearchHandlerTest extends TestCase
         $otherSearchHandler = new NonDoctrineHandlerStub();
 
         $expected = [
-            $entitySearchHandler
+            $entitySearchHandler,
         ];
 
         $registeredHandlers = $this->createInstance([
             $entitySearchHandler,
-            $otherSearchHandler
+            $otherSearchHandler,
         ]);
 
         $result = $registeredHandlers->getTransformableHandlers();
@@ -63,7 +63,7 @@ class RegisteredSearchHandlerTest extends TestCase
     }
 
     /**
-     * Create an instance of RegisteredSearchHandler
+     * Create an instance of RegisteredSearchHandler.
      *
      * @param \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[]|null $searchHandlers
      *

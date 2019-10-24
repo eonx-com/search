@@ -22,10 +22,10 @@ final class TransformableSearchHandlerStub implements TransformableSearchHandler
     private $indexName;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param mixed[]|null $objects
-     * @param null|string $indexName
+     * @param string|null $indexName
      */
     public function __construct(?array $objects = null, ?string $indexName = null)
     {
@@ -42,10 +42,10 @@ final class TransformableSearchHandlerStub implements TransformableSearchHandler
             'doc' => [
                 'properties' => [
                     'createdAt' => [
-                        'type' => 'date'
-                    ]
-                ]
-            ]
+                        'type' => 'date',
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -56,7 +56,7 @@ final class TransformableSearchHandlerStub implements TransformableSearchHandler
     {
         return [
             'number_of_replicas' => 1,
-            'number_of_shards' => 1
+            'number_of_shards' => 1,
         ];
     }
 

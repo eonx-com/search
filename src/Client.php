@@ -28,7 +28,7 @@ final class Client implements ClientInterface
     private $elastic;
 
     /**
-     * Create elastic search instance
+     * Create elastic search instance.
      *
      * @param \Elasticsearch\Client $elastic
      * @param \LoyaltyCorp\Search\Interfaces\Helpers\ClientBulkResponseHelperInterface $bulkResponseHelper
@@ -104,8 +104,8 @@ final class Client implements ClientInterface
                 'index' => [
                     '_index' => $update->getIndex(),
                     '_type' => 'doc',
-                    '_id' => $update->getDocumentId()
-                ]
+                    '_id' => $update->getDocumentId(),
+                ],
             ];
             $bulk[] = $update->getDocument();
         }
@@ -162,7 +162,7 @@ final class Client implements ClientInterface
         try {
             $this->elastic->indices()->create([
                 'index' => $name,
-                'body' => \array_filter(\compact('settings', 'mappings'))
+                'body' => \array_filter(\compact('settings', 'mappings')),
             ]);
         } catch (Exception $exception) {
             throw new SearchUpdateException('Unable to create new index', 0, $exception);
@@ -195,7 +195,7 @@ final class Client implements ClientInterface
     {
         try {
             $this->elastic->indices()->delete([
-                'index' => $name
+                'index' => $name,
             ]);
         } catch (Exception $exception) {
             throw new SearchDeleteException('Unable to delete index', 0, $exception);
@@ -213,7 +213,7 @@ final class Client implements ClientInterface
             foreach ($this->elastic->cat()->aliases(\array_filter(['name' => $name])) as $alias) {
                 $aliases[$alias['alias']] = [
                     'name' => $alias['alias'],
-                    'index' => $alias['index']
+                    'index' => $alias['index'],
                 ];
             }
 
@@ -234,7 +234,7 @@ final class Client implements ClientInterface
             foreach ($this->elastic->cat()->indices(\array_filter(['index' => $name])) as $index) {
                 // Key as index name just for local ease of mapping
                 $indices[$index['index']] = [
-                    'name' => $index['index']
+                    'name' => $index['index'],
                 ];
             }
 
@@ -285,8 +285,8 @@ final class Client implements ClientInterface
             $this->elastic->indices()->updateAliases(
                 [
                     'body' => [
-                        'actions' => $actions
-                    ]
+                        'actions' => $actions,
+                    ],
                 ]
             );
         } catch (Exception $exception) {

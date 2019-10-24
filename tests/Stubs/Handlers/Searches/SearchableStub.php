@@ -14,7 +14,7 @@ final class SearchableStub
     private $searchId;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param string|null $searchId
      */
@@ -24,7 +24,7 @@ final class SearchableStub
     }
 
     /**
-     * Get search id for this stub
+     * Get search id for this stub.
      *
      * @return string|null
      */
@@ -34,7 +34,7 @@ final class SearchableStub
     }
 
     /**
-     * Convert object to an array
+     * Convert object to an array.
      *
      * @return string[]|null
      */

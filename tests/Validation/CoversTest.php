@@ -11,7 +11,7 @@ use Tests\LoyaltyCorp\Search\TestCase;
 /**
  * @coversNothing
  */
-class CoversTest extends TestCase
+final class CoversTest extends TestCase
 {
     /**
      * Test all tests contains a covers* annotation.

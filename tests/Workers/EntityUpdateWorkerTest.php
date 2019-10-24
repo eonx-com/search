@@ -28,17 +28,17 @@ final class EntityUpdateWorkerTest extends TestCase
 
         $entityManager->addFindByIds([
             $entity1 = new EntityStub(),
-            $entity2 = new EntityStub()
+            $entity2 = new EntityStub(),
         ]);
 
         $worker->handle([
             EntityStub::class => ['id1', 'id2'],
             \stdClass::class => [],
-            self::class => ['id1']
+            self::class => ['id1'],
         ]);
 
         $updates = $searchManager->getUpdateObjects();
-        static::assertCount(1, $updates);
-        static::assertSame([$entity1, $entity2], $updates[0]['objects']);
+        self::assertCount(1, $updates);
+        self::assertSame([$entity1, $entity2], $updates[0]['objects']);
     }
 }

@@ -17,10 +17,10 @@ use Tests\LoyaltyCorp\Search\TestCases\SearchIndexCommandTestCase;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Required for thorough testing
  */
-class SearchIndexCreateCommandTest extends SearchIndexCommandTestCase
+final class SearchIndexCreateCommandTest extends SearchIndexCommandTestCase
 {
     /**
-     * Ensure the number of indices created matches the number of registered search handlers via container tagging
+     * Ensure the number of indices created matches the number of registered search handlers via container tagging.
      *
      * @return void
      *
@@ -40,7 +40,7 @@ class SearchIndexCreateCommandTest extends SearchIndexCommandTestCase
     }
 
     /**
-     * Create command instance
+     * Create command instance.
      *
      * @param \LoyaltyCorp\Search\Interfaces\IndexerInterface $indexer
      * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface $registeredHandlers

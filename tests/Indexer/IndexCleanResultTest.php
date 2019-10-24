@@ -9,10 +9,10 @@ use Tests\LoyaltyCorp\Search\TestCase;
 /**
  * @covers \LoyaltyCorp\Search\Indexer\IndexCleanResult
  */
-class IndexCleanResultTest extends TestCase
+final class IndexCleanResultTest extends TestCase
 {
     /**
-     * Ensure supplied indices match the getter method return
+     * Ensure supplied indices match the getter method return.
      *
      * @return void
      */

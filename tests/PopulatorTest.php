@@ -18,7 +18,7 @@ use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
 /**
  * @covers \LoyaltyCorp\Search\Populator
  */
-class PopulatorTest extends TestCase
+final class PopulatorTest extends TestCase
 {
     /**
      * Tests the populator when there is more than one batch.
@@ -29,16 +29,16 @@ class PopulatorTest extends TestCase
     {
         $objects = [
             new SearchableStub('search1'),
-            new SearchableStub('search2')
+            new SearchableStub('search2'),
         ];
 
         $expected = [
             [
-                new DocumentUpdate('valid_suffix', 'search1', ['search' => 'body'])
+                new DocumentUpdate('valid_suffix', 'search1', ['search' => 'body']),
             ],
             [
-                new DocumentUpdate('valid_suffix', 'search2', ['search' => 'body'])
-            ]
+                new DocumentUpdate('valid_suffix', 'search2', ['search' => 'body']),
+            ],
         ];
 
         $handler = new TransformableSearchHandlerStub($objects);
@@ -48,7 +48,7 @@ class PopulatorTest extends TestCase
 
         $populator->populate($handler, '_suffix', 1);
 
-        static::assertEquals($expected, $client->getUpdatedIndices());
+        self::assertEquals($expected, $client->getUpdatedIndices());
     }
 
     /**
@@ -69,7 +69,7 @@ class PopulatorTest extends TestCase
 
         $populator->populate($handler, '_suffix', 1);
 
-        static::assertEquals($expected, $client->getUpdatedIndices());
+        self::assertEquals($expected, $client->getUpdatedIndices());
     }
 
     /**
@@ -81,14 +81,14 @@ class PopulatorTest extends TestCase
     {
         $objects = [
             new SearchableStub('search1'),
-            new SearchableStub('search2')
+            new SearchableStub('search2'),
         ];
 
         $expected = [
             [
                 new DocumentUpdate('valid_suffix', 'search1', ['search' => 'body']),
-                new DocumentUpdate('valid_suffix', 'search2', ['search' => 'body'])
-            ]
+                new DocumentUpdate('valid_suffix', 'search2', ['search' => 'body']),
+            ],
         ];
 
         $handler = new TransformableSearchHandlerStub($objects);
@@ -98,7 +98,7 @@ class PopulatorTest extends TestCase
 
         $populator->populate($handler, '_suffix', 2);
 
-        static::assertEquals($expected, $client->getUpdatedIndices());
+        self::assertEquals($expected, $client->getUpdatedIndices());
     }
 
     /**
@@ -111,7 +111,7 @@ class PopulatorTest extends TestCase
         $objects = [
             new NotSearchableStub(),
             new NoDocumentBodyStub(),
-            new NoSearchIdStub()
+            new NoSearchIdStub(),
         ];
 
         $expected = [];
@@ -123,7 +123,7 @@ class PopulatorTest extends TestCase
 
         $populator->populate($handler, '_suffix', 2);
 
-        static::assertEquals($expected, $client->getUpdatedIndices());
+        self::assertEquals($expected, $client->getUpdatedIndices());
     }
 
     /**
@@ -136,17 +136,17 @@ class PopulatorTest extends TestCase
         $objects = [
             new SearchableStub('search1'),
             new SearchableStub('search2'),
-            new SearchableStub('search3')
+            new SearchableStub('search3'),
         ];
 
         $expected = [
             [
                 new DocumentUpdate('valid_suffix', 'search1', ['search' => 'body']),
-                new DocumentUpdate('valid_suffix', 'search2', ['search' => 'body'])
+                new DocumentUpdate('valid_suffix', 'search2', ['search' => 'body']),
             ],
             [
-                new DocumentUpdate('valid_suffix', 'search3', ['search' => 'body'])
-            ]
+                new DocumentUpdate('valid_suffix', 'search3', ['search' => 'body']),
+            ],
         ];
 
         $handler = new TransformableSearchHandlerStub($objects);
@@ -156,7 +156,7 @@ class PopulatorTest extends TestCase
 
         $populator->populate($handler, '_suffix', 2);
 
-        static::assertEquals($expected, $client->getUpdatedIndices());
+        self::assertEquals($expected, $client->getUpdatedIndices());
     }
 
     /**
@@ -167,13 +167,13 @@ class PopulatorTest extends TestCase
     public function testSmallBatch(): void
     {
         $objects = [
-            new SearchableStub('search1')
+            new SearchableStub('search1'),
         ];
 
         $expected = [
             [
-                new DocumentUpdate('valid_suffix', 'search1', ['search' => 'body'])
-            ]
+                new DocumentUpdate('valid_suffix', 'search1', ['search' => 'body']),
+            ],
         ];
 
         $handler = new TransformableSearchHandlerStub($objects);
@@ -183,7 +183,7 @@ class PopulatorTest extends TestCase
 
         $populator->populate($handler, '_suffix', 2);
 
-        static::assertEquals($expected, $client->getUpdatedIndices());
+        self::assertEquals($expected, $client->getUpdatedIndices());
     }
 
     /**

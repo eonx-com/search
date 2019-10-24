@@ -8,7 +8,7 @@ use EoneoPay\Externals\ORM\Interfaces\Query\FilterCollectionInterface;
 /**
  * @coversNothing
  */
-class FilterCollectionStub implements FilterCollectionInterface
+final class FilterCollectionStub implements FilterCollectionInterface
 {
     /**
      * {@inheritdoc}

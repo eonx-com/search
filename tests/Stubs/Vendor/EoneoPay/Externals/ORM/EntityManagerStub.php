@@ -12,7 +12,7 @@ use Tests\LoyaltyCorp\Search\Stubs\Vendor\EoneoPay\Externals\ORM\Query\FilterCol
 /**
  * @coversNothing
  */
-class EntityManagerStub implements EntityManagerInterface
+final class EntityManagerStub implements EntityManagerInterface
 {
     /**
      * Entities.

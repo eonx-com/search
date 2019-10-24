@@ -8,7 +8,7 @@ use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 /**
  * @coversNothing
  */
-class ManagerStub implements ManagerInterface
+final class ManagerStub implements ManagerInterface
 {
     /**
      * @var mixed[][]
@@ -26,7 +26,7 @@ class ManagerStub implements ManagerInterface
     private $searchMeta = [];
 
     /**
-     * Used to determine how many times `handleUpdates` was called
+     * Used to determine how many times `handleUpdates` was called.
      *
      * @var int
      */
@@ -74,7 +74,7 @@ class ManagerStub implements ManagerInterface
     }
 
     /**
-     * Get the amount of times `handleUpdates` has been called
+     * Get the amount of times `handleUpdates` has been called.
      *
      * @return int
      */
@@ -84,7 +84,7 @@ class ManagerStub implements ManagerInterface
     }
 
     /**
-     * Getter for spying on the values passed into handleUpdates
+     * Getter for spying on the values passed into handleUpdates.
      *
      * @return mixed[]
      */

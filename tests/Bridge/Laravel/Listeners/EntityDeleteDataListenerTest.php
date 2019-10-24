@@ -28,7 +28,7 @@ final class EntityDeleteDataListenerTest extends TestCase
 
         $result = $listener->handle(new EntityDeleteDataEvent([]));
 
-        static::assertSame(['search' => []], $result);
+        self::assertSame(['search' => []], $result);
 
         $searchManager->addSearchMeta(['index' => 'id']);
         $searchManager->addSearchMeta(['purple' => 'id', 'green' => 'id2']);
@@ -37,15 +37,15 @@ final class EntityDeleteDataListenerTest extends TestCase
         $result = $listener->handle(new EntityDeleteDataEvent([
             new stdClass(),
             new stdClass(),
-            new stdClass()
+            new stdClass(),
         ]));
 
-        static::assertSame([
+        self::assertSame([
             'search' => [
                 'index' => ['id'],
                 'purple' => ['id', 'id2'],
-                'green' => ['id2']
-            ]
+                'green' => ['id2'],
+            ],
         ], $result);
     }
 }

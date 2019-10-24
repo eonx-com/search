@@ -22,7 +22,7 @@ final class DefaultIndexNameTransformer implements IndexNameTransformerInterface
     public function transformIndexNames(SearchHandlerInterface $searchHandler): array
     {
         return [
-            \mb_strtolower($searchHandler->getIndexName())
+            \mb_strtolower($searchHandler->getIndexName()),
         ];
     }
 }

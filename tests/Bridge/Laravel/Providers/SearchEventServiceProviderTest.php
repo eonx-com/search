@@ -30,13 +30,13 @@ final class SearchEventServiceProviderTest extends TestCase
         $listen = [
             EntityChangeEvent::class => [
                 EntityDeleteListener::class,
-                EntityUpdateListener::class
+                EntityUpdateListener::class,
             ],
             EntityDeleteDataEvent::class => [
-                EntityDeleteDataListener::class
+                EntityDeleteDataListener::class,
             ],
         ];
 
-        static::assertSame($listen, $serviceProvider->listens());
+        self::assertSame($listen, $serviceProvider->listens());
     }
 }

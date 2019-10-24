@@ -8,7 +8,7 @@ use EoneoPay\Externals\ORM\Interfaces\RepositoryInterface;
 /**
  * @coversNothing
  */
-class RepositoryStub implements RepositoryInterface
+final class RepositoryStub implements RepositoryInterface
 {
     /**
      * Entities.

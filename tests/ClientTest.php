@@ -27,7 +27,7 @@ use Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch\NullResponseClientStub;
 final class ClientTest extends TestCase
 {
     /**
-     * Inputs to cause Exceptions
+     * Inputs to cause Exceptions.
      *
      * @return iterable|mixed[]
      */
@@ -37,61 +37,61 @@ final class ClientTest extends TestCase
             'method' => 'bulkUpdate',
             'arguments' => [[new DocumentUpdate('index', '1', 'document')]],
             'exception' => SearchUpdateException::class,
-            'exceptionMessage' => 'An error occured while performing bulk update on backend'
+            'exceptionMessage' => 'An error occured while performing bulk update on backend',
         ];
 
         yield 'bulkDelete' => [
             'method' => 'bulkDelete',
             'arguments' => [['index' => [['1']]]],
             'exception' => SearchDeleteException::class,
-            'exceptionMessage' => 'An error occured while performing bulk delete on backend'
+            'exceptionMessage' => 'An error occured while performing bulk delete on backend',
         ];
 
         yield 'count' => [
             'method' => 'count',
             'arguments' => ['strongIndex'],
             'exception' => SearchCheckerException::class,
-            'exceptionMessage' => 'Unable to count number of documents within index'
+            'exceptionMessage' => 'Unable to count number of documents within index',
         ];
 
         yield 'createAlias' => [
             'method' => 'createAlias',
             'arguments' => ['index', 'alias'],
             'exception' => SearchUpdateException::class,
-            'exceptionMessage' => 'Unable to add alias'
+            'exceptionMessage' => 'Unable to add alias',
         ];
 
         yield 'createIndex' => [
             'method' => 'createIndex',
             'arguments' => ['index'],
             'exception' => SearchUpdateException::class,
-            'exceptionMessage' => 'Unable to create new index'
+            'exceptionMessage' => 'Unable to create new index',
         ];
 
         yield 'deleteAlias' => [
             'method' => 'deleteAlias',
             'arguments' => [['alias']],
             'exception' => SearchDeleteException::class,
-            'exceptionMessage' => 'Unable to delete alias'
+            'exceptionMessage' => 'Unable to delete alias',
         ];
 
         yield 'deleteIndex' => [
             'method' => 'deleteIndex',
             'arguments' => ['index'],
             'exception' => SearchDeleteException::class,
-            'exceptionMessage' => 'Unable to delete index'
+            'exceptionMessage' => 'Unable to delete index',
         ];
 
         yield 'moveAlias' => [
             'method' => 'moveAlias',
             'arguments' => [[['index' => 'index_new', 'alias' => 'index']]],
             'exception' => SearchUpdateException::class,
-            'exceptionMessage' => 'Unable to atomically swap alias'
+            'exceptionMessage' => 'Unable to atomically swap alias',
         ];
     }
 
     /**
-     * Test bulk() resolves callables
+     * Test bulk() resolves callables.
      *
      * @return void
      */
@@ -107,7 +107,7 @@ final class ClientTest extends TestCase
     }
 
     /**
-     * Test bulk() is passed through to elastic search client
+     * Test bulk() is passed through to elastic search client.
      *
      * @return void
      */
@@ -124,7 +124,7 @@ final class ClientTest extends TestCase
     }
 
     /**
-     * Test bulk() checks returned data for invalid values
+     * Test bulk() checks returned data for invalid values.
      *
      * @return void
      */
@@ -141,7 +141,7 @@ final class ClientTest extends TestCase
     }
 
     /**
-     * Test elastic client returning count data
+     * Test elastic client returning count data.
      *
      * @return void
      */
@@ -158,7 +158,8 @@ final class ClientTest extends TestCase
 
     /**
      * Test creating an alias
-     * ElasticSearch client is not interfaced, we don't handle any return type with this method, thus testcase is simple
+     * ElasticSearch client is not interfaced, we don't handle any return type with this
+     * method, thus testcase is simple.
      *
      * @return void
      */
@@ -175,7 +176,8 @@ final class ClientTest extends TestCase
 
     /**
      * Ensure creating a new index will pass through correctly formatted mappings and settings if provided
-     * ElasticSearch client is not interfaced, we don't handle any return type with this method, thus testcase is simple
+     * ElasticSearch client is not interfaced, we don't handle any return type with this
+     * method, thus testcase is simple.
      *
      * @return void
      */
@@ -192,7 +194,8 @@ final class ClientTest extends TestCase
 
     /**
      * Test deleting an alias does not result in an Exception
-     * ElasticSearch client is not interfaced, we don't handle any return type with this method, thus testcase is simple
+     * ElasticSearch client is not interfaced, we don't handle any return type with this
+     * method, thus testcase is simple.
      *
      * @return void
      */
@@ -208,7 +211,7 @@ final class ClientTest extends TestCase
     }
 
     /**
-     * Test deleting an index
+     * Test deleting an index.
      *
      * @return void
      */
@@ -226,7 +229,7 @@ final class ClientTest extends TestCase
     }
 
     /**
-     * Test bulk() resolves errors from responses
+     * Test bulk() resolves errors from responses.
      *
      * @return void
      */
@@ -236,7 +239,7 @@ final class ClientTest extends TestCase
             'errors' => true,
             'items' => [
                 [
-                    'create' => []
+                    'create' => [],
                 ],
                 [
                     'update' => [
@@ -245,14 +248,14 @@ final class ClientTest extends TestCase
                             'index_uuid' => 'maU4iW15SmyoZadsmRiNWw',
                             'reason' => '[my_index][1]: version conflict, document already exists',
                             'shard' => 3,
-                            'type' => 'version_conflict_engine_exception'
-                        ]
-                    ]
+                            'type' => 'version_conflict_engine_exception',
+                        ],
+                    ],
                 ],
                 [
-                    'update' => []
-                ]
-            ]
+                    'update' => [],
+                ],
+            ],
         ]);
         $client = $this->createInstance($stub);
 
@@ -264,7 +267,7 @@ final class ClientTest extends TestCase
     }
 
     /**
-     * Test bulk() ignores error context if no errors for type were found
+     * Test bulk() ignores error context if no errors for type were found.
      *
      * @return void
      */
@@ -280,14 +283,14 @@ final class ClientTest extends TestCase
                             'index_uuid' => 'maU4iW15SmyoZadsmRiNWw',
                             'reason' => '[my_index][1]: version conflict, document already exists',
                             'shard' => 3,
-                            'type' => 'version_conflict_engine_exception'
-                        ]
-                    ]
+                            'type' => 'version_conflict_engine_exception',
+                        ],
+                    ],
                 ],
                 [
-                    'update' => []
-                ]
-            ]
+                    'update' => [],
+                ],
+            ],
         ]);
         $client = $this->createInstance($stub);
 
@@ -298,7 +301,7 @@ final class ClientTest extends TestCase
     }
 
     /**
-     * Test exception thrown by all public functions
+     * Test exception thrown by all public functions.
      *
      * @param string $method
      * @param mixed[] $arguments
@@ -321,7 +324,7 @@ final class ClientTest extends TestCase
     }
 
     /**
-     * Ensure the isAlias method respects HTTP status code
+     * Ensure the isAlias method respects HTTP status code.
      *
      * @return void
      */
@@ -337,7 +340,7 @@ final class ClientTest extends TestCase
     }
 
     /**
-     * Ensure exceptions are decorated on isAlias method
+     * Ensure exceptions are decorated on isAlias method.
      *
      * @return void
      */
@@ -353,7 +356,7 @@ final class ClientTest extends TestCase
     }
 
     /**
-     * Test ensuring the IsAlias commands works appropiately
+     * Test ensuring the IsAlias commands works appropiately.
      *
      * @return void
      */
@@ -369,7 +372,7 @@ final class ClientTest extends TestCase
     }
 
     /**
-     * Ensure exceptions are decorated on isIndex method
+     * Ensure exceptions are decorated on isIndex method.
      *
      * @return void
      */
@@ -385,7 +388,7 @@ final class ClientTest extends TestCase
     }
 
     /**
-     * Ensure the isAlias method respects HTTP status code
+     * Ensure the isAlias method respects HTTP status code.
      *
      * @return void
      */
@@ -401,7 +404,7 @@ final class ClientTest extends TestCase
     }
 
     /**
-     * Test ensuring the IsAlias respects the HTTP status code
+     * Test ensuring the IsAlias respects the HTTP status code.
      *
      * @return void
      */
@@ -417,7 +420,7 @@ final class ClientTest extends TestCase
     }
 
     /**
-     * Ensure listing all aliases formats the expected response from elasticsearch client
+     * Ensure listing all aliases formats the expected response from elasticsearch client.
      *
      * @return void
      */
@@ -434,7 +437,7 @@ final class ClientTest extends TestCase
     }
 
     /**
-     * Ensure listing all aliases will throw an Exception if a non-200 HTTP status is received
+     * Ensure listing all aliases will throw an Exception if a non-200 HTTP status is received.
      *
      * @return void
      */
@@ -451,7 +454,7 @@ final class ClientTest extends TestCase
     }
 
     /**
-     * Test the listing of existing indices
+     * Test the listing of existing indices.
      *
      * @return void
      */
@@ -468,7 +471,7 @@ final class ClientTest extends TestCase
     }
 
     /**
-     * Test the listing of existing indices
+     * Test the listing of existing indices.
      *
      * @return void
      */
@@ -485,7 +488,7 @@ final class ClientTest extends TestCase
     }
 
     /**
-     * Ensure moveAlias invoking updateAliases to ES client does not result in an Exception
+     * Ensure moveAlias invoking updateAliases to ES client does not result in an Exception.
      *
      * @return void
      */
@@ -501,7 +504,7 @@ final class ClientTest extends TestCase
     }
 
     /**
-     * Test non-iterable items in delete are skipped before handling to bulk()
+     * Test non-iterable items in delete are skipped before handling to bulk().
      *
      * @return void
      */
@@ -519,7 +522,7 @@ final class ClientTest extends TestCase
     }
 
     /**
-     * Create an elastic search client with mocked transport handler
+     * Create an elastic search client with mocked transport handler.
      *
      * @param mixed[] $response
      * @param int|null $statusCode Defaults 200
@@ -544,9 +547,9 @@ final class ClientTest extends TestCase
         $mockResponse = [
             'status' => $statusCode ?? 200,
             'transfer_stats' => [
-                'total_time' => 100
+                'total_time' => 100,
             ],
-            'body' => $stream
+            'body' => $stream,
         ];
 
         return (new ClientBuilder())
@@ -557,7 +560,7 @@ final class ClientTest extends TestCase
     }
 
     /**
-     * Instantaite a client class
+     * Instantaite a client class.
      *
      * @param \Elasticsearch\Client $client
      *

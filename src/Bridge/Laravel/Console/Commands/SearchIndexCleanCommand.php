@@ -37,7 +37,7 @@ final class SearchIndexCleanCommand extends Command
     }
 
     /**
-     * Remove all indices relating to search handlers that are no longer used by any aliases
+     * Remove all indices relating to search handlers that are no longer used by any aliases.
      *
      * @return void
      */

@@ -6,7 +6,7 @@ namespace LoyaltyCorp\Search\Helpers;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 
-class RegisteredSearchHandler implements RegisteredSearchHandlerInterface
+final class RegisteredSearchHandler implements RegisteredSearchHandlerInterface
 {
     /**
      * @var \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[]

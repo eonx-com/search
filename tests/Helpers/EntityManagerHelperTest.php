@@ -17,10 +17,10 @@ use Tests\LoyaltyCorp\Search\Stubs\Vendor\EoneoPay\Externals\ORM\EntityManagerSt
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Required for thorough testing
  */
-class EntityManagerHelperTest extends DoctrineTestCase
+final class EntityManagerHelperTest extends DoctrineTestCase
 {
     /**
-     * Ensure the iteration method catches Doctrine exceptions and decorates them
+     * Ensure the iteration method catches Doctrine exceptions and decorates them.
      *
      * @return void
      *
@@ -36,7 +36,7 @@ class EntityManagerHelperTest extends DoctrineTestCase
         $entityManager = $this->getDoctrineEntityManager();
         $entityManagerHelper = $this->getInstance($entityManager);
         /**
-         * PhpStan & PhpStorm do not see generators as iterables
+         * PhpStan & PhpStorm do not see generators as iterables.
          *
          * @link https://github.com/phpstan/phpstan/issues/1246
          *
@@ -49,7 +49,7 @@ class EntityManagerHelperTest extends DoctrineTestCase
     }
 
     /**
-     * Ensure that finding by many Ids respects the existing entity manager
+     * Ensure that finding by many Ids respects the existing entity manager.
      *
      * @return void
      */
@@ -67,7 +67,7 @@ class EntityManagerHelperTest extends DoctrineTestCase
     }
 
     /**
-     * Test integration of Doctrine's Entity Manager with yielding only primary keys
+     * Test integration of Doctrine's Entity Manager with yielding only primary keys.
      *
      * @return void
      *
@@ -88,7 +88,7 @@ class EntityManagerHelperTest extends DoctrineTestCase
         $entityManagerHelper = $this->getInstance($entityManager);
 
         /**
-         * PhpStan & PhpStorm do not see generators as iterables
+         * PhpStan & PhpStorm do not see generators as iterables.
          *
          * @link https://github.com/phpstan/phpstan/issues/1246
          *
@@ -101,7 +101,7 @@ class EntityManagerHelperTest extends DoctrineTestCase
     }
 
     /**
-     * Get instantiated entity manager helper
+     * Get instantiated entity manager helper.
      *
      * @param \Doctrine\ORM\EntityManagerInterface $doctrineManager
      * @param \EoneoPay\Externals\ORM\Interfaces\EntityManagerInterface|null $eoneoPayManager

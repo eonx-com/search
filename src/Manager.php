@@ -33,7 +33,7 @@ final class Manager implements ManagerInterface
     private $populator;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface $handlers
      * @param \LoyaltyCorp\Search\Interfaces\ClientInterface $client
@@ -105,7 +105,7 @@ final class Manager implements ManagerInterface
     }
 
     /**
-     * Determine if object is supported (handled) by the given search handler
+     * Determine if object is supported (handled) by the given search handler.
      *
      * @param \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface $handler
      * @param string $class

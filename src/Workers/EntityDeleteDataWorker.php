@@ -23,7 +23,7 @@ final class EntityDeleteDataWorker
     }
 
     /**
-     * TODO Define this title
+     * TODO Define this title.
      *
      * @param object[] $deletes
      *
@@ -46,7 +46,7 @@ final class EntityDeleteDataWorker
         }
 
         return [
-            'search' => $ids
+            'search' => $ids,
         ];
     }
 }

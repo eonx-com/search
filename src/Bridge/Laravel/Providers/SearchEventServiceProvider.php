@@ -21,10 +21,10 @@ final class SearchEventServiceProvider extends EventServiceProvider
         $this->listen = [
             EntityChangeEvent::class => [
                 EntityDeleteListener::class,
-                EntityUpdateListener::class
+                EntityUpdateListener::class,
             ],
             EntityDeleteDataEvent::class => [
-                EntityDeleteDataListener::class
+                EntityDeleteDataListener::class,
             ],
         ];
 

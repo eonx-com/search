@@ -16,10 +16,10 @@ use Tests\LoyaltyCorp\Search\TestCase;
 /**
  * @coversNothing
  */
-class SearchIndexCommandTestCase extends TestCase
+abstract class SearchIndexCommandTestCase extends TestCase
 {
     /**
-     * Bootstrap I/O for a command instance so it is able to be executed & tested
+     * Bootstrap I/O for a command instance so it is able to be executed & tested.
      *
      * @param \Illuminate\Console\Command $instance
      * @param \Symfony\Component\Console\Input\InputInterface|null $input

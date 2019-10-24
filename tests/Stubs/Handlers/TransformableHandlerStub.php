@@ -9,7 +9,7 @@ use Tests\LoyaltyCorp\Search\Stubs\Entities\EntityStub;
 /**
  * @coversNothing
  */
-class TransformableHandlerStub implements TransformableSearchHandlerInterface
+final class TransformableHandlerStub implements TransformableSearchHandlerInterface
 {
     /**
      * {@inheritdoc}

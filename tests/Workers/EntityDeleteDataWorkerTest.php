@@ -25,7 +25,7 @@ final class EntityDeleteDataWorkerTest extends TestCase
         $worker = new EntityDeleteDataWorker($searchManager);
 
         $result = $worker->handle([]);
-        static::assertSame(['search' => []], $result);
+        self::assertSame(['search' => []], $result);
 
         $searchManager->addSearchMeta(['index' => 'id']);
         $searchManager->addSearchMeta(['purple' => 'id', 'green' => 'id2']);
@@ -34,15 +34,15 @@ final class EntityDeleteDataWorkerTest extends TestCase
         $result = $worker->handle([
             new stdClass(),
             new stdClass(),
-            new stdClass()
+            new stdClass(),
         ]);
 
-        static::assertSame([
+        self::assertSame([
             'search' => [
                 'index' => ['id'],
                 'purple' => ['id', 'id2'],
-                'green' => ['id2']
-            ]
+                'green' => ['id2'],
+            ],
         ], $result);
     }
 }

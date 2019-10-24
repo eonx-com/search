@@ -10,7 +10,7 @@ use EoneoPay\Externals\ORM\Interfaces\EntityManagerInterface as EoneoPayEntityMa
 use LoyaltyCorp\Search\Exceptions\DoctrineException;
 use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 
-class EntityManagerHelper implements EntityManagerHelperInterface
+final class EntityManagerHelper implements EntityManagerHelperInterface
 {
     /**
      * @var \Doctrine\ORM\EntityManagerInterface

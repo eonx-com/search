@@ -9,7 +9,7 @@ use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 /**
  * @coversNothing
  */
-class PopulatorStub implements PopulatorInterface
+final class PopulatorStub implements PopulatorInterface
 {
     /**
      * Calls to the stub.

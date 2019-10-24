@@ -17,10 +17,10 @@ use Tests\LoyaltyCorp\Search\TestCases\SearchIndexCommandTestCase;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Required for thorough testing
  */
-class SearchIndexFillCommandTest extends SearchIndexCommandTestCase
+final class SearchIndexFillCommandTest extends SearchIndexCommandTestCase
 {
     /**
-     * Ensure the registered search handlers are passed through to the populate method on indexer
+     * Ensure the registered search handlers are passed through to the populate method on indexer.
      *
      * @return void
      *
@@ -41,14 +41,14 @@ class SearchIndexFillCommandTest extends SearchIndexCommandTestCase
                 [
                     'handler' => $handlerStub,
                     'indexSuffix' => '_new',
-                    'batchSize' => 200
+                    'batchSize' => 200,
                 ],
                 [
                     'handler' => $otherHandler,
                     'indexSuffix' => '_new',
-                    'batchSize' => 200
-                ]
-            ]
+                    'batchSize' => 200,
+                ],
+            ],
         ];
 
         $command->handle();
@@ -57,7 +57,7 @@ class SearchIndexFillCommandTest extends SearchIndexCommandTestCase
     }
 
     /**
-     * Instantiate a command class
+     * Instantiate a command class.
      *
      * @param \LoyaltyCorp\Search\Interfaces\PopulatorInterface|null $populator
      * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface|null $registeredHandlers
@@ -70,7 +70,7 @@ class SearchIndexFillCommandTest extends SearchIndexCommandTestCase
     ): SearchIndexFillCommand {
         return new SearchIndexFillCommand(
             $populator ?? new PopulatorStub(),
-            $registeredHandlers ?? new RegisteredSearchHandlerStub()
+            $registeredHandlers ?? new RegisteredSearchHandlerStub([])
         );
     }
 }

@@ -12,7 +12,7 @@ use Doctrine\ORM\Query\ResultSetMapping;
  *
  * @coversNothing
  */
-class EntityManagerStub implements EntityManagerInterface
+final class EntityManagerStub implements EntityManagerInterface
 {
     /**
      * @inheritdoc

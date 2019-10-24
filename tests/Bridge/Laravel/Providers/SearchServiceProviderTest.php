@@ -33,7 +33,7 @@ use Tests\LoyaltyCorp\Search\TestCase;
 final class SearchServiceProviderTest extends TestCase
 {
     /**
-     * Test register binds manager into container
+     * Test register binds manager into container.
      *
      * @return void
      *
@@ -62,7 +62,7 @@ final class SearchServiceProviderTest extends TestCase
     }
 
     /**
-     * Test service provider returns manager as a deferred service
+     * Test service provider returns manager as a deferred service.
      *
      * @return void
      */
@@ -73,12 +73,12 @@ final class SearchServiceProviderTest extends TestCase
             IndexerInterface::class,
             ManagerInterface::class,
             PopulatorInterface::class,
-            RegisteredSearchHandlerInterface::class
+            RegisteredSearchHandlerInterface::class,
         ], (new SearchServiceProvider(new ApplicationStub()))->provides());
     }
 
     /**
-     * Ensure the Doctrine EntityManager resolution will throw our Exception if it cannot resolve
+     * Ensure the Doctrine EntityManager resolution will throw our Exception if it cannot resolve.
      *
      * @return void
      *
@@ -98,7 +98,7 @@ final class SearchServiceProviderTest extends TestCase
     }
 
     /**
-     * Test handlers are correctly filtered by service provider
+     * Test handlers are correctly filtered by service provider.
      *
      * @return void
      *

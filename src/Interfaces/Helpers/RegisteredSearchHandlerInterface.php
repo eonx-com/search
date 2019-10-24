@@ -6,7 +6,7 @@ namespace LoyaltyCorp\Search\Interfaces\Helpers;
 interface RegisteredSearchHandlerInterface
 {
     /**
-     * Get all search handlers that have been registered in the container
+     * Get all search handlers that have been registered in the container.
      *
      * @return \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[]
      */

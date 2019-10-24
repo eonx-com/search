@@ -50,7 +50,7 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
             IndexerInterface::class,
             ManagerInterface::class,
             PopulatorInterface::class,
-            RegisteredSearchHandlerInterface::class
+            RegisteredSearchHandlerInterface::class,
         ];
     }
 

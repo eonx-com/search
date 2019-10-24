@@ -26,11 +26,11 @@ final class EntityDeleteWorkerTest extends TestCase
         $worker->handle(['id1']);
 
         $result = $searchManager->getDeletes();
-        static::assertSame([['id1']], $result);
+        self::assertSame([['id1']], $result);
 
         $worker->handle([]);
 
         $secondResult = $searchManager->getDeletes();
-        static::assertSame($result, $secondResult);
+        self::assertSame($result, $secondResult);
     }
 }

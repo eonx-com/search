@@ -27,7 +27,7 @@ final class DocumentUpdate
     private $index;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param string $index
      * @param string $documentId

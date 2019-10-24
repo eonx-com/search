@@ -22,7 +22,7 @@ use Tests\LoyaltyCorp\Search\Stubs\Vendor\Illuminate\Contracts\Foundation\Applic
 abstract class TestCase extends BaseTestCase
 {
     /**
-     * Create configured application instance for service provider testing
+     * Create configured application instance for service provider testing.
      *
      * @return \Illuminate\Contracts\Foundation\Application
      */

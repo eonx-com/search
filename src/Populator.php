@@ -9,7 +9,7 @@ use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
 use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 
-class Populator implements PopulatorInterface
+final class Populator implements PopulatorInterface
 {
     /**
      * @var \LoyaltyCorp\Search\Interfaces\ClientInterface
@@ -22,7 +22,7 @@ class Populator implements PopulatorInterface
     private $nameTransformer;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \LoyaltyCorp\Search\Interfaces\ClientInterface $client
      * @param \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface $nameTransformer
@@ -75,7 +75,7 @@ class Populator implements PopulatorInterface
 
             $index = $this->nameTransformer->transformIndexName($handler, $object);
             $updates[] = new DocumentUpdate(
-                $index.$indexSuffix,
+                $index . $indexSuffix,
                 (string)$searchId,
                 $transformed
             );

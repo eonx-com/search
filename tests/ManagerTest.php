@@ -28,7 +28,7 @@ use Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch\ClientStub;
 final class ManagerTest extends TestCase
 {
     /**
-     * Test getSearchMeta() functionality
+     * Test getSearchMeta() functionality.
      *
      * @return void
      */
@@ -48,7 +48,7 @@ final class ManagerTest extends TestCase
     }
 
     /**
-     * Test handleDeletes() functionality
+     * Test handleDeletes() functionality.
      *
      * @return void
      */
@@ -67,7 +67,7 @@ final class ManagerTest extends TestCase
     }
 
     /**
-     * Test handleUpdates() functionality
+     * Test handleUpdates() functionality.
      *
      * @return void
      */
@@ -82,7 +82,7 @@ final class ManagerTest extends TestCase
         $objects = [
             new NoDocumentBodyStub(),
             new NoSearchIdStub(),
-            new SearchableStub()
+            new SearchableStub(),
         ];
 
         $manager->handleUpdates(SearchableStub::class, '_new', $objects);
@@ -92,16 +92,16 @@ final class ManagerTest extends TestCase
                 [
                     'handler' => $handler,
                     'indexSuffix' => '_new',
-                    'objects' => $objects
-                ]
-            ]
+                    'objects' => $objects,
+                ],
+            ],
         ];
 
         self::assertSame($expectedCalls, $populator->getCalls());
     }
 
     /**
-     * Test handleUpdates() functionality
+     * Test handleUpdates() functionality.
      *
      * @return void
      */
@@ -118,7 +118,7 @@ final class ManagerTest extends TestCase
     }
 
     /**
-     * Test handleUpdates() functionality when no transformations occur
+     * Test handleUpdates() functionality when no transformations occur.
      *
      * @return void
      */
@@ -131,14 +131,14 @@ final class ManagerTest extends TestCase
         // Tests whats going to happen when handleUpdates is called with objects that result
         // in no transformations
         $manager->handleUpdates(SearchableStub::class, '', [
-            new NoDocumentBodyStub()
+            new NoDocumentBodyStub(),
         ]);
 
         self::assertNull($stub->getBulkParameters());
     }
 
     /**
-     * Ensure no results are returned when a handler is passed an object that has no searchId
+     * Ensure no results are returned when a handler is passed an object that has no searchId.
      *
      * @return void
      */
@@ -153,7 +153,7 @@ final class ManagerTest extends TestCase
     }
 
     /**
-     * Instantiate an ElasticSearch client
+     * Instantiate an ElasticSearch client.
      *
      * @param \Elasticsearch\Client|null $client
      *

@@ -12,7 +12,7 @@ use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 /**
  * @coversNothing
  */
-class IndexerStub implements IndexerInterface
+final class IndexerStub implements IndexerInterface
 {
     /**
      * @var \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[]
@@ -53,7 +53,7 @@ class IndexerStub implements IndexerInterface
     }
 
     /**
-     * Spy method to look at cleaned handlers
+     * Spy method to look at cleaned handlers.
      *
      * @return \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[]
      */
@@ -63,7 +63,7 @@ class IndexerStub implements IndexerInterface
     }
 
     /**
-     * Get search handlers that have been passed for creation
+     * Get search handlers that have been passed for creation.
      *
      * @return \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[]
      */
@@ -73,7 +73,7 @@ class IndexerStub implements IndexerInterface
     }
 
     /**
-     * Spy for the number of time indexSwap was called
+     * Spy for the number of time indexSwap was called.
      *
      * @return int
      */
@@ -83,7 +83,7 @@ class IndexerStub implements IndexerInterface
     }
 
     /**
-     * Determine if indexed has called populate
+     * Determine if indexed has called populate.
      *
      * @return mixed[]
      */
@@ -111,6 +111,6 @@ class IndexerStub implements IndexerInterface
             $aliasesToSkip[] = $rootIndex;
         }
 
-        return new IndexSwapResult(... [$aliasesToMove, $aliasesToDelete, $aliasesToSkip]);
+        return new IndexSwapResult(...[$aliasesToMove, $aliasesToDelete, $aliasesToSkip]);
     }
 }

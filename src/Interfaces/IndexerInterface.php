@@ -10,7 +10,7 @@ use LoyaltyCorp\Search\Indexer\IndexSwapResult;
 interface IndexerInterface
 {
     /**
-     * Remove any indices unused by a root alias that are/were applicable to search handlers
+     * Remove any indices unused by a root alias that are/were applicable to search handlers.
      *
      * @param \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[] $searchHandlers
      * @param bool|null $dryRun Do not execute if true
@@ -20,7 +20,7 @@ interface IndexerInterface
     public function clean(array $searchHandlers, ?bool $dryRun = null): IndexCleanResult;
 
     /**
-     * Create a new index for the search handler
+     * Create a new index for the search handler.
      *
      * @param \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface $searchHandler
      * @param \DateTime|null $now
@@ -30,7 +30,7 @@ interface IndexerInterface
     public function create(SearchHandlerInterface $searchHandler, ?DateTime $now = null): void;
 
     /**
-     * Atomically swap the root alias for a search handler, with the latest index created
+     * Atomically swap the root alias for a search handler, with the latest index created.
      *
      * @param \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[] $searchHandlers
      * @param bool|null $dryRun Do not execute if true

@@ -7,7 +7,7 @@ interface ClientInterface
 {
     /**
      * Does a bulk delete action for all ids provided. Expects
-     * the format to be :
+     * the format to be :.
      *
      * [
      *   'index_name' => [
@@ -35,7 +35,7 @@ interface ClientInterface
     public function bulkUpdate(array $updates): void;
 
     /**
-     * Count the number of documents within an index
+     * Count the number of documents within an index.
      *
      * @param string $index
      *
@@ -44,7 +44,7 @@ interface ClientInterface
     public function count(string $index): int;
 
     /**
-     * Create a new alias for specified index
+     * Create a new alias for specified index.
      *
      * @param string $indexName
      * @param string $aliasName
@@ -54,7 +54,7 @@ interface ClientInterface
     public function createAlias(string $indexName, string $aliasName): void;
 
     /**
-     * Create a new index
+     * Create a new index.
      *
      * @param string $name
      * @param mixed[]|null $mappings
@@ -69,7 +69,7 @@ interface ClientInterface
     ): void;
 
     /**
-     * Delete an existing alias across all indices
+     * Delete an existing alias across all indices.
      *
      * @param string[] $aliases Array of alias names to be deleted
      *
@@ -78,7 +78,7 @@ interface ClientInterface
     public function deleteAlias(array $aliases): void;
 
     /**
-     * Delete an existing index
+     * Delete an existing index.
      *
      * @param string $name
      *
@@ -87,7 +87,7 @@ interface ClientInterface
     public function deleteIndex(string $name): void;
 
     /**
-     * List all existing aliases
+     * List all existing aliases.
      *
      * @param string|null $name
      *
@@ -96,7 +96,7 @@ interface ClientInterface
     public function getAliases(?string $name = null): array;
 
     /**
-     * List all existing indexes
+     * List all existing indexes.
      *
      * @param string|null $name
      *
@@ -105,7 +105,7 @@ interface ClientInterface
     public function getIndices(?string $name = null): array;
 
     /**
-     * Determine if alias exists
+     * Determine if alias exists.
      *
      * @param string $name
      *
@@ -114,7 +114,7 @@ interface ClientInterface
     public function isAlias(string $name): bool;
 
     /**
-     * Determine if index exists
+     * Determine if index exists.
      *
      * @param string $name
      *
@@ -123,7 +123,7 @@ interface ClientInterface
     public function isIndex(string $name): bool;
 
     /**
-     * Atomically remove/add alias
+     * Atomically remove/add alias.
      *
      * @param string[][] $aliases Array containing alias and index to be swapped
      *

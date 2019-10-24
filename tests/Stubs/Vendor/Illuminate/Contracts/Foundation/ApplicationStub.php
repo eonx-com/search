@@ -16,17 +16,17 @@ use Illuminate\Contracts\Foundation\Application;
  *
  * @coversNothing
  */
-class ApplicationStub implements Application, ArrayAccess
+final class ApplicationStub implements Application, ArrayAccess
 {
     /**
-     * Container bindings
+     * Container bindings.
      *
      * @var \Illuminate\Container\Container
      */
     private $container;
 
     /**
-     * Create container
+     * Create container.
      */
     public function __construct()
     {
@@ -475,7 +475,7 @@ class ApplicationStub implements Application, ArrayAccess
     }
 
     /**
-     * Call a container method
+     * Call a container method.
      *
      * @param string $method The method to call
      * @param mixed[]|null $parameters Parameters to pass to the method

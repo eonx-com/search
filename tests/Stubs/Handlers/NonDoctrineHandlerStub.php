@@ -8,7 +8,7 @@ use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 /**
  * @coversNothing
  */
-class NonDoctrineHandlerStub implements SearchHandlerInterface
+final class NonDoctrineHandlerStub implements SearchHandlerInterface
 {
     /**
      * {@inheritdoc}

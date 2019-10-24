@@ -18,10 +18,10 @@ use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Required for thorough testing
  * @SuppressWarnings(PHPMD.TooManyPublicMethods) Well tested code for all the cases.
  */
-class IndexerTest extends TestCase
+final class IndexerTest extends TestCase
 {
     /**
-     * Ensure the search handler index + '_new' index gets created
+     * Ensure the search handler index + '_new' index gets created.
      *
      * @return void
      *
@@ -39,15 +39,15 @@ class IndexerTest extends TestCase
                 'doc' => [
                     'properties' => [
                         'createdAt' => [
-                            'type' => 'date'
-                        ]
-                    ]
-                ]
+                            'type' => 'date',
+                        ],
+                    ],
+                ],
             ],
             'settings' => [
                 'number_of_replicas' => 1,
-                'number_of_shards' => 1
-            ]
+                'number_of_shards' => 1,
+            ],
         ];
 
         $now = new DateTime('2019-01-02T03:04:05');
@@ -58,7 +58,7 @@ class IndexerTest extends TestCase
     }
 
     /**
-     * Ensure the cleaning process only disregards indices unrelated to search handlers
+     * Ensure the cleaning process only disregards indices unrelated to search handlers.
      *
      * @return void
      */
@@ -69,7 +69,7 @@ class IndexerTest extends TestCase
             null,
             [
                 ['name' => 'valid-123'],
-                ['name' => 'other-index-with-suffix']
+                ['name' => 'other-index-with-suffix'],
             ]
         );
 
@@ -79,14 +79,14 @@ class IndexerTest extends TestCase
 
         $indexer->clean([
             new TransformableSearchHandlerStub(),
-            new TransformableSearchHandlerStub(null, 'other-index')
+            new TransformableSearchHandlerStub(null, 'other-index'),
         ]);
 
         self::assertSame($expected, $client->getDeletedIndices());
     }
 
     /**
-     * Ensure the cleaning process only disregards indices unrelated to search handlers
+     * Ensure the cleaning process only disregards indices unrelated to search handlers.
      *
      * @return void
      */
@@ -107,7 +107,7 @@ class IndexerTest extends TestCase
     }
 
     /**
-     * Ensure the cleaning process does not execute if dry run is true
+     * Ensure the cleaning process does not execute if dry run is true.
      *
      * @return void
      */
@@ -126,7 +126,7 @@ class IndexerTest extends TestCase
     }
 
     /**
-     * Ensure the cleaning process only cares about indices that are related to search handlers
+     * Ensure the cleaning process only cares about indices that are related to search handlers.
      *
      * @return void
      */
@@ -147,7 +147,7 @@ class IndexerTest extends TestCase
     }
 
     /**
-     * Ensure that skipping an index to be swapped happens when appropriate
+     * Ensure that skipping an index to be swapped happens when appropriate.
      *
      * @return void
      */
@@ -171,7 +171,7 @@ class IndexerTest extends TestCase
     }
 
     /**
-     * Ensure dry running the index swap method does not call anything from elastic client
+     * Ensure dry running the index swap method does not call anything from elastic client.
      *
      * @return void
      */
@@ -192,7 +192,7 @@ class IndexerTest extends TestCase
     }
 
     /**
-     * Ensure the swap method removes the _new alias
+     * Ensure the swap method removes the _new alias.
      *
      * @return void
      */
@@ -213,7 +213,7 @@ class IndexerTest extends TestCase
     }
 
     /**
-     * Ensure the index<->alias swap does indeed happen
+     * Ensure the index<->alias swap does indeed happen.
      *
      * @return void
      */
@@ -235,7 +235,7 @@ class IndexerTest extends TestCase
     }
 
     /**
-     * Ensure the index swap method throws an Exception if no *_new alias can be found
+     * Ensure the index swap method throws an Exception if no *_new alias can be found.
      *
      * @return void
      */
@@ -251,7 +251,7 @@ class IndexerTest extends TestCase
     }
 
     /**
-     * Ensure the search handler index + '_new' alias is deleted so it can be re-created, when it pre-exists
+     * Ensure the search handler index + '_new' alias is deleted so it can be re-created, when it pre-exists.
      *
      * @return void
      *
@@ -270,7 +270,7 @@ class IndexerTest extends TestCase
     }
 
     /**
-     * Instantiate an Indexer
+     * Instantiate an Indexer.
      *
      * @param \LoyaltyCorp\Search\Interfaces\ClientInterface|null $client
      *

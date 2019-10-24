@@ -25,7 +25,7 @@ final class CustomIndexNameTransformerStub implements IndexNameTransformerInterf
     public function transformIndexNames(SearchHandlerInterface $searchHandler): array
     {
         return [
-            \sprintf('%s_%s', $searchHandler->getIndexName(), 'customId')
+            \sprintf('%s_%s', $searchHandler->getIndexName(), 'customId'),
         ];
     }
 }

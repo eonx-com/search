@@ -37,7 +37,7 @@ final class SearchIndexCreateCommand extends Command
     }
 
     /**
-     * Create fresh indices for all search handlers
+     * Create fresh indices for all search handlers.
      *
      * @return void
      */

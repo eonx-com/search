@@ -7,7 +7,7 @@ use GuzzleHttp\Ring\Future\FutureArrayInterface;
 use LoyaltyCorp\Search\Exceptions\BulkFailureException;
 use LoyaltyCorp\Search\Interfaces\Helpers\ClientBulkResponseHelperInterface;
 
-class ClientBulkResponseHelper implements ClientBulkResponseHelperInterface
+final class ClientBulkResponseHelper implements ClientBulkResponseHelperInterface
 {
     /**
      * {@inheritdoc}
@@ -63,7 +63,7 @@ class ClientBulkResponseHelper implements ClientBulkResponseHelperInterface
     }
 
     /**
-     * Extract items from bulk response
+     * Extract items from bulk response.
      *
      * @param mixed $response The response from the bulk action
      * @param string $type The bulk action that was performed

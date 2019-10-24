@@ -8,17 +8,17 @@ final class IndexSwapResult
     /**
      * @var string[][]
      */
-    protected $movingAliases = [];
+    private $movingAliases = [];
 
     /**
      * @var string[]
      */
-    protected $removingAliases = [];
+    private $removingAliases = [];
 
     /**
      * @var string[]
      */
-    protected $skipIndices = [];
+    private $skipIndices = [];
 
     /**
      * IndexSwapResult constructor.
@@ -35,7 +35,7 @@ final class IndexSwapResult
     }
 
     /**
-     * Render an array of table structure results of actions that will be taken
+     * Render an array of table structure results of actions that will be taken.
      *
      * @return mixed[]
      */
@@ -58,7 +58,7 @@ final class IndexSwapResult
 
         return [
             $header,
-            $rows
+            $rows,
         ];
     }
 }

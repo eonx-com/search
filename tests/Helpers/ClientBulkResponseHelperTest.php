@@ -12,10 +12,10 @@ use Tests\LoyaltyCorp\Search\TestCase;
 /**
  * @covers \LoyaltyCorp\Search\Helpers\ClientBulkResponseHelper
  */
-class ClientBulkResponseHelperTest extends TestCase
+final class ClientBulkResponseHelperTest extends TestCase
 {
     /**
-     * Ensure the checking in bulk results allows succession if there is no errors
+     * Ensure the checking in bulk results allows succession if there is no errors.
      *
      * @return void
      */
@@ -26,27 +26,27 @@ class ClientBulkResponseHelperTest extends TestCase
         $bulkResponseHelper->checkBulkResponsesForErrors(
             [
                 'errors' => true,
-                'items' => [['update' => ['_id' => 'nice-id']], ['delete' => []]]
+                'items' => [['update' => ['_id' => 'nice-id']], ['delete' => []]],
             ],
             'update'
         );
 
         /**
          * The method under test returns void
-         * This test just ensures success is possible when errors = false & error key is missing
+         * This test just ensures success is possible when errors = false & error key is missing.
          */
         $this->addToAssertionCount(1);
     }
 
     /**
-     * Ensure the checking in bulk results allows succession if there is no errors and a promise is used
+     * Ensure the checking in bulk results allows succession if there is no errors and a promise is used.
      *
      * @return void
      */
     public function testCheckingResponseForErrorsCanSucceedWithPromise(): void
     {
         $value = new CompletedFutureValue([
-            'items' => [['update' => ['_id' => 'nice-id']], ['delete' => []]]
+            'items' => [['update' => ['_id' => 'nice-id']], ['delete' => []]],
         ]);
         $array = new FutureArray($value);
 
@@ -59,13 +59,13 @@ class ClientBulkResponseHelperTest extends TestCase
 
         /**
          * The method under test returns void
-         * This test just ensures success is possible when errors = false & error key is missing
+         * This test just ensures success is possible when errors = false & error key is missing.
          */
         $this->addToAssertionCount(1);
     }
 
     /**
-     * Ensure the checking in bulk results throws an exception if there is an error
+     * Ensure the checking in bulk results throws an exception if there is an error.
      *
      * @return void
      */
@@ -78,14 +78,14 @@ class ClientBulkResponseHelperTest extends TestCase
         $bulkResponseHelper->checkBulkResponsesForErrors(
             [
                 'errors' => true,
-                'items' => [['update' => ['error' => 'big error']]]
+                'items' => [['update' => ['error' => 'big error']]],
             ],
             'update'
         );
     }
 
     /**
-     * Ensure when the response payload is not an array, an exception is thrown
+     * Ensure when the response payload is not an array, an exception is thrown.
      *
      * @return void
      */
@@ -102,7 +102,7 @@ class ClientBulkResponseHelperTest extends TestCase
     }
 
     /**
-     * Ensure the async promise unwrapper delivers the expected result
+     * Ensure the async promise unwrapper delivers the expected result.
      *
      * @return void
      */
@@ -118,7 +118,7 @@ class ClientBulkResponseHelperTest extends TestCase
     }
 
     /**
-     * Instantiate an instance
+     * Instantiate an instance.
      *
      * @return \LoyaltyCorp\Search\Helpers\ClientBulkResponseHelper
      */

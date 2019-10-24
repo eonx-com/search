@@ -9,12 +9,12 @@ interface TransformableSearchHandlerInterface extends SearchHandlerInterface
      * Returns an iterable that will be used to fill the index when doing a full
      * index fill.
      *
-     * @return mixed[]|iterable
+     * @return iterable|mixed[]
      */
     public function getFillIterable(): iterable;
 
     /**
-     * Get the class this search handler will support
+     * Get the class this search handler will support.
      *
      * @return string[] Fully Qualified Class Names that implement the Search Handler interface
      */

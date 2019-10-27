@@ -153,18 +153,9 @@ final class Indexer implements IndexerInterface
                     throw new AliasNotFoundException(\sprintf('Could not find expected alias \'%s\'', $newAlias));
                 }
 
-                if ($this->elasticClient->isAlias($indexName) === true &&
-                    $this->elasticClient->count($newAlias) === 0 &&
-                    $this->elasticClient->count($indexName) > 0) {
+                if ($this->shouldIndexSwap($indexName, $newAlias)) {
                     $indexToSkip[] = $latestAlias['index'];
                     $aliasedToRemove[] = $newAlias;
-                    /**
-                     * Swapping should not occur if all the conditions are met:
-                     *     - The root alias exists
-                     *     - New index has no documents
-                     *     - Old index contains data
-                     * Generally this is true when the SearchIndex type is not entity based.
-                     */
 
                     continue;
                 }
@@ -181,10 +172,14 @@ final class Indexer implements IndexerInterface
         }
 
         // Atomically switch which index the root alias is associated with
-        $this->elasticClient->moveAlias($aliasesToMove);
+        if (\count($aliasesToMove) > 0) {
+            $this->elasticClient->moveAlias($aliasesToMove);
+        }
 
         // Remove *_new alias for this handler
-        $this->elasticClient->deleteAlias($aliasedToRemove);
+        if (\count($aliasedToRemove) > 0) {
+            $this->elasticClient->deleteAlias($aliasedToRemove);
+        }
 
         return $actions;
     }
@@ -206,5 +201,24 @@ final class Indexer implements IndexerInterface
         }
 
         return false;
+    }
+
+    /**
+     * Swapping should not occur if all the conditions are met:
+     *     - The root alias exists
+     *     - New index has no documents
+     *     - Old index contains data
+     * Generally this is true when the SearchIndex type is not entity based.
+     *
+     * @param string $indexName
+     * @param string $newAlias
+     *
+     * @return bool
+     */
+    private function shouldIndexSwap(string $indexName, string $newAlias): bool
+    {
+        return $this->elasticClient->isAlias($indexName) === true &&
+            $this->elasticClient->count($newAlias) === 0 &&
+            $this->elasticClient->count($indexName) > 0;
     }
 }

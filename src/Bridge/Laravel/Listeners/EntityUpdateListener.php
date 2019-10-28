@@ -3,10 +3,11 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Bridge\Laravel\Listeners;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
 use LoyaltyCorp\EasyEntityChange\Events\EntityChangeEvent;
 use LoyaltyCorp\Search\Workers\EntityUpdateWorker;
 
-final class EntityUpdateListener
+final class EntityUpdateListener implements ShouldQueue
 {
     /**
      * @var \LoyaltyCorp\Search\Workers\EntityUpdateWorker

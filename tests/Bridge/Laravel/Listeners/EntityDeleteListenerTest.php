@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Bridge\Laravel\Listeners;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
 use LoyaltyCorp\EasyEntityChange\Events\EntityChangeEvent;
 use LoyaltyCorp\Search\Bridge\Laravel\Listeners\EntityDeleteListener;
 use LoyaltyCorp\Search\Workers\EntityDeleteWorker;
@@ -26,6 +27,8 @@ final class EntityDeleteListenerTest extends TestCase
         $listener = new EntityDeleteListener($worker);
 
         $listener->handle(new EntityChangeEvent(['search' => ['id1']], []));
+
+        self::assertInstanceOf(ShouldQueue::class, $listener);
 
         $result = $searchManager->getDeletes();
         self::assertSame([['id1']], $result);

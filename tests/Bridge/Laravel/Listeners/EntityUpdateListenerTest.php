@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Bridge\Laravel\Listeners;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
 use LoyaltyCorp\EasyEntityChange\Events\EntityChangeEvent;
 use LoyaltyCorp\Search\Bridge\Laravel\Listeners\EntityUpdateListener;
 use LoyaltyCorp\Search\Workers\EntityUpdateWorker;
@@ -38,6 +39,8 @@ final class EntityUpdateListenerTest extends TestCase
             \stdClass::class => [],
             self::class => ['id1'],
         ]));
+
+        self::assertInstanceOf(ShouldQueue::class, $listener);
 
         $updates = $searchManager->getUpdateObjects();
         self::assertCount(1, $updates);

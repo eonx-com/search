@@ -3,10 +3,11 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Bridge\Laravel\Listeners;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
 use LoyaltyCorp\EasyEntityChange\Events\EntityChangeEvent;
 use LoyaltyCorp\Search\Workers\EntityDeleteWorker;
 
-final class EntityDeleteListener
+final class EntityDeleteListener implements ShouldQueue
 {
     /**
      * @var \LoyaltyCorp\Search\Workers\EntityDeleteWorker

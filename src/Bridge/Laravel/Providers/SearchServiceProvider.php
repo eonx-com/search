@@ -65,6 +65,12 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
         $this->app->singleton(ClientInterface::class, static function (Container $app): ClientInterface {
             return new Client(
                 ClientBuilder::create()
+                    ->setConnectionParams([
+                        'client' => [
+                            'connect_timeout' => 2,
+                            'timeout' => 12,
+                        ],
+                    ])
                     ->setLogger($app->make(LoggerInterface::class))
                     ->setHosts(\array_filter([(string)\env('ELASTICSEARCH_HOST', '')]))
                     ->setSSLVerification((bool)\env('ELASTICSEARCH_VERIFY_SSL', true))

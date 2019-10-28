@@ -21,8 +21,10 @@ use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
+use LoyaltyCorp\Search\Interfaces\RequestProxyFactoryInterface;
 use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 use LoyaltyCorp\Search\Manager;
+use LoyaltyCorp\Search\RequestProxyFactory;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) High coupling required to ensure all services are bound
@@ -41,7 +43,8 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
             EntityManagerHelperInterface::class,
             IndexerInterface::class,
             ManagerInterface::class,
-            RegisteredSearchHandlerInterface::class
+            RegisteredSearchHandlerInterface::class,
+            RequestProxyFactoryInterface::class
         ];
     }
 
@@ -97,5 +100,13 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
 
             return new RegisteredSearchHandler($searchHandlers);
         });
+
+        // bind proxy factory
+        $this->app->singleton(
+            RequestProxyFactoryInterface::class,
+            static function (): RequestProxyFactory {
+                return new RequestProxyFactory(\env('ELASTICSEARCH_HOST', 'https://admin:admin@elasticsearch:9200'));
+            }
+        );
     }
 }

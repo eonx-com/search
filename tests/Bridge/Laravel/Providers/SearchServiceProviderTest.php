@@ -18,7 +18,9 @@ use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
+use LoyaltyCorp\Search\Interfaces\RequestProxyFactoryInterface;
 use LoyaltyCorp\Search\Manager;
+use LoyaltyCorp\Search\RequestProxyFactory;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\EntitySearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NonDoctrineHandlerStub;
@@ -58,6 +60,10 @@ final class SearchServiceProviderTest extends TestCase
             RegisteredSearchHandler::class,
             $application->make(RegisteredSearchHandlerInterface::class)
         );
+        self::assertInstanceOf(
+            RequestProxyFactory::class,
+            $application->make(RequestProxyFactoryInterface::class)
+        );
     }
 
     /**
@@ -72,7 +78,8 @@ final class SearchServiceProviderTest extends TestCase
             EntityManagerHelperInterface::class,
             IndexerInterface::class,
             ManagerInterface::class,
-            RegisteredSearchHandlerInterface::class
+            RegisteredSearchHandlerInterface::class,
+            RequestProxyFactoryInterface::class
         ], (new SearchServiceProvider(new ApplicationStub()))->provides());
     }
 

@@ -18,7 +18,7 @@ use function GuzzleHttp\Psr7\stream_for;
 /**
  * @covers \LoyaltyCorp\Search\Bridge\Laravel\Http\Controllers\V1\SearchController
  */
-class SearchControllerTest extends TestCase
+final class SearchControllerTest extends TestCase
 {
     /**
      * Test search method is defined in the controller.
@@ -31,7 +31,7 @@ class SearchControllerTest extends TestCase
             [],
             [],
             'https://search.example/search/transactions/_search',
-            'POST'
+            'POST',
         );
 
         $response = new Response();
@@ -39,8 +39,8 @@ class SearchControllerTest extends TestCase
 
         $result = $controller->search($request);
 
-        static::assertSame(200, $result->getStatusCode());
-        static::assertSame(str($response), str($result));
+        self::assertSame(200, $result->getStatusCode());
+        self::assertSame(str($response), str($result));
     }
 
     /**
@@ -55,7 +55,7 @@ class SearchControllerTest extends TestCase
             [],
             'https://subscriptions.system.example/transactions/_doc/_search?pp=5',
             'POST',
-            stream_for()
+            stream_for(),
         );
 
         $response = new Response(200, [
@@ -64,7 +64,7 @@ class SearchControllerTest extends TestCase
             'Access-Control-Allow-Headers' => 'Yep',
             'Access-Control-Allow-Methods' => 'Yep',
             'Access-Control-Expose-Headers' => 'Yep',
-            'Access-Control-Max-Age' => 'Yep'
+            'Access-Control-Max-Age' => 'Yep',
         ]);
 
         $expectedResponse = new Response();
@@ -72,8 +72,8 @@ class SearchControllerTest extends TestCase
 
         $result = $controller->search($request);
 
-        static::assertSame(200, $result->getStatusCode());
-        static::assertSame(str($expectedResponse), str($result));
+        self::assertSame(200, $result->getStatusCode());
+        self::assertSame(str($expectedResponse), str($result));
     }
 
     /**

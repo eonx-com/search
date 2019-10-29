@@ -8,7 +8,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Uri;
 
-class RequestProxyFactory implements RequestProxyFactoryInterface
+final class RequestProxyFactory implements RequestProxyFactoryInterface
 {
     /**
      * The full URI to hit the Elasticsearch system. ie: https://admin:admin@elasticsearch:9200.

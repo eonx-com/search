@@ -10,7 +10,7 @@ use function GuzzleHttp\Psr7\stream_for;
 /**
  * @covers \LoyaltyCorp\Search\RequestProxyFactory
  */
-class RequestProxyFactoryTest extends TestCase
+final class RequestProxyFactoryTest extends TestCase
 {
     /**
      * Tests the create createProxyRequest method when the configured elasticsearch
@@ -36,12 +36,11 @@ class RequestProxyFactoryTest extends TestCase
 
         $result = $instance->createProxyRequest($request);
 
-        static::assertSame($expectedUri, (string)$result->getUri());
-        static::assertSame($expectedAuth, $result->getHeaderLine('Authorization'));
-        static::assertSame('request body', (string)$result->getBody());
-        static::assertInstanceOf(ServerRequest::class, $result);
-        /** @var \Zend\Diactoros\ServerRequest $result */
-        static::assertNull($result->getAttribute('_encoder'));
+        self::assertSame($expectedUri, (string)$result->getUri());
+        self::assertSame($expectedAuth, $result->getHeaderLine('Authorization'));
+        self::assertSame('request body', (string)$result->getBody());
+        self::assertInstanceOf(ServerRequest::class, $result);
+        self::assertNull(($result instanceof ServerRequest) ? $result->getAttribute('_encoder') : '');
     }
 
     /**
@@ -67,12 +66,11 @@ class RequestProxyFactoryTest extends TestCase
 
         $result = $instance->createProxyRequest($request);
 
-        static::assertSame($expectedUri, (string)$result->getUri());
-        static::assertSame('', $result->getHeaderLine('Authorization'));
-        static::assertSame('request body', (string)$result->getBody());
-        static::assertInstanceOf(ServerRequest::class, $result);
-        /** @var \Zend\Diactoros\ServerRequest $result */
-        static::assertNull($result->getAttribute('_encoder'));
+        self::assertSame($expectedUri, (string)$result->getUri());
+        self::assertSame('', $result->getHeaderLine('Authorization'));
+        self::assertSame('request body', (string)$result->getBody());
+        self::assertInstanceOf(ServerRequest::class, $result);
+        self::assertNull(($result instanceof ServerRequest) ? $result->getAttribute('_encoder') : '');
     }
 
     /**

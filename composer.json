@@ -12,7 +12,8 @@
     "php": ">=7.3",
     "doctrine/orm": "^2.6",
     "elasticsearch/elasticsearch": "^6.1",
-    "eoneopay/externals": "^1.0",
+    "eoneopay/externals": "^1.1",
+    "eoneopay/utils": "^0.2",
     "guzzlehttp/guzzle": "^6.3",
     "illuminate/console": "^5.8",
     "zendframework/zend-diactoros": "^2.1"
@@ -21,6 +22,7 @@
     "eoneopay/standards": "dev-master",
     "guzzlehttp/psr7": "^1.5",
     "illuminate/container": "^5.8",
+    "illuminate/routing": "^5.8",
     "illuminate/support": "^5.8",
     "monolog/monolog": "^1.24",
     "phpmd/phpmd": "^2.6",

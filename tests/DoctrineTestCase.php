@@ -12,7 +12,7 @@ use Exception;
 /**
  * @coversNothing
  */
-class DoctrineTestCase extends TestCase
+abstract class DoctrineTestCase extends TestCase
 {
     /**
      * SQL queries to create database schema.
@@ -27,19 +27,18 @@ class DoctrineTestCase extends TestCase
     private $entityManager;
 
     /**
-     * Whether the database has been seeded or not
+     * Whether the database has been seeded or not.
      *
      * @var bool
      */
     private $seeded = false;
 
     /**
-     * Get doctrine entity manager instance
+     * Get doctrine entity manager instance.
      *
      * @return \Doctrine\ORM\EntityManagerInterface
      *
      * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\Common\Annotations\AnnotationException
      *
      * @SuppressWarnings(PHPMD.StaticAccess) Static access to entity manager required to create instance
      */
@@ -54,7 +53,7 @@ class DoctrineTestCase extends TestCase
     }
 
     /**
-     * Get entity manager
+     * Get entity manager.
      *
      * @return \Doctrine\ORM\EntityManagerInterface
      */
@@ -71,7 +70,7 @@ class DoctrineTestCase extends TestCase
     }
 
     /**
-     * Lazy load database schema only when required
+     * Lazy load database schema only when required.
      *
      * @return void
      */

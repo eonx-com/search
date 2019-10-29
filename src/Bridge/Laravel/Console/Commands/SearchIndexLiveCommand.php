@@ -37,7 +37,7 @@ final class SearchIndexLiveCommand extends Command
     }
 
     /**
-     * Swap root alias to point to newest index created on a per-seach-handler basis
+     * Swap root alias to point to newest index created on a per-seach-handler basis.
      *
      * @return void
      */
@@ -55,7 +55,7 @@ final class SearchIndexLiveCommand extends Command
     }
 
     /**
-     * Determine if command is in dry-run mode
+     * Determine if command is in dry-run mode.
      *
      * @return bool
      */

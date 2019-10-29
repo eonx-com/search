@@ -8,23 +8,8 @@ use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 /**
  * @coversNothing
  */
-class NonDoctrineHandlerStub implements SearchHandlerInterface
+final class NonDoctrineHandlerStub implements SearchHandlerInterface
 {
-    /**
-     * @var mixed[]
-     */
-    private $transformed;
-
-    /**
-     * NonDoctrineHandlerStub constructor.
-     *
-     * @param mixed[] $transformed
-     */
-    public function __construct(?array $transformed = null)
-    {
-        $this->transformed = $transformed ?? [];
-    }
-
     /**
      * {@inheritdoc}
      */

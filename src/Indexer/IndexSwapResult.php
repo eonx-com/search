@@ -8,27 +8,34 @@ final class IndexSwapResult
     /**
      * @var string[][]
      */
-    protected $movingAliases = [];
+    private $movingAliases = [];
 
     /**
      * @var string[]
      */
-    protected $removingAliases = [];
+    private $removingAliases = [];
+
+    /**
+     * @var string[]
+     */
+    private $skipIndices = [];
 
     /**
      * IndexSwapResult constructor.
      *
      * @param string[][] $aliasesToMove
      * @param string[] $aliasesToRemove
+     * @param string[] $skipIndices
      */
-    public function __construct(array $aliasesToMove, array $aliasesToRemove)
+    public function __construct(array $aliasesToMove, array $aliasesToRemove, array $skipIndices)
     {
         $this->movingAliases = $aliasesToMove;
         $this->removingAliases = $aliasesToRemove;
+        $this->skipIndices = $skipIndices;
     }
 
     /**
-     * Render an array of table structure results of actions that will be taken
+     * Render an array of table structure results of actions that will be taken.
      *
      * @return mixed[]
      */
@@ -45,9 +52,13 @@ final class IndexSwapResult
             $rows[] = [$action, '', 'Remove alias'];
         }
 
+        foreach ($this->skipIndices as $action) {
+            $rows[] = ['', $action, 'Skip swapping root alias'];
+        }
+
         return [
             $header,
-            $rows
+            $rows,
         ];
     }
 }

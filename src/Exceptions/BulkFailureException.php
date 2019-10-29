@@ -13,7 +13,7 @@ final class BulkFailureException extends SearchException
     private $errors;
 
     /**
-     * Create bulk failure exception
+     * Create bulk failure exception.
      *
      * @param mixed[] $errors Bulk failures
      * @param string|null $message Error message
@@ -28,7 +28,7 @@ final class BulkFailureException extends SearchException
     }
 
     /**
-     * Get errors
+     * Get errors.
      *
      * @return mixed[]
      */

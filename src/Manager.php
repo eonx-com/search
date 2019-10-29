@@ -4,9 +4,11 @@ declare(strict_types=1);
 namespace LoyaltyCorp\Search;
 
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
-use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
+use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
+use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
+use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 
 final class Manager implements ManagerInterface
 {
@@ -21,15 +23,33 @@ final class Manager implements ManagerInterface
     private $handlers;
 
     /**
-     * Constructor
-     *
-     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface $handlers Search Handlers
-     * @param \LoyaltyCorp\Search\Interfaces\ClientInterface $client Client instance to send update requests to
+     * @var \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface
      */
-    public function __construct(RegisteredSearchHandlerInterface $handlers, ClientInterface $client)
-    {
+    private $nameTransformer;
+
+    /**
+     * @var \LoyaltyCorp\Search\Interfaces\PopulatorInterface
+     */
+    private $populator;
+
+    /**
+     * Constructor.
+     *
+     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface $handlers
+     * @param \LoyaltyCorp\Search\Interfaces\ClientInterface $client
+     * @param \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface $nameTransformer
+     * @param \LoyaltyCorp\Search\Interfaces\PopulatorInterface $populator
+     */
+    public function __construct(
+        RegisteredSearchHandlerInterface $handlers,
+        ClientInterface $client,
+        IndexNameTransformerInterface $nameTransformer,
+        PopulatorInterface $populator
+    ) {
         $this->handlers = $handlers;
         $this->client = $client;
+        $this->nameTransformer = $nameTransformer;
+        $this->populator = $populator;
     }
 
     /**
@@ -41,7 +61,7 @@ final class Manager implements ManagerInterface
 
         $ids = [];
 
-        foreach ($this->handlers->getEntityHandlers() as $handler) {
+        foreach ($this->handlers->getTransformableHandlers() as $handler) {
             if ($this->isHandled($handler, $class) === false) {
                 continue;
             }
@@ -53,9 +73,10 @@ final class Manager implements ManagerInterface
                 continue;
             }
 
+            $indexName = $this->nameTransformer->transformIndexName($handler, $object);
             // Elastic search works with string ids, so we're forcing
             // them to strings here
-            $ids[$handler->getIndexName()] = (string)$searchId;
+            $ids[$indexName] = (string)$searchId;
         }
 
         return $ids;
@@ -74,69 +95,24 @@ final class Manager implements ManagerInterface
      */
     public function handleUpdates(string $class, string $indexSuffix, array $objects): void
     {
-        foreach ($this->handlers->getEntityHandlers() as $handler) {
+        foreach ($this->handlers->getTransformableHandlers() as $handler) {
             if ($this->isHandled($handler, $class) === false) {
                 continue;
             }
 
-            $transformed = [];
-
-            foreach ($objects as $object) {
-                $searchId = $handler->getSearchId($object);
-
-                if ($searchId === null) {
-                    // the handler didnt generate a search id
-                    continue;
-                }
-
-                $document = $handler->transform($object);
-
-                if ($document === null) {
-                    // no search document was generated
-
-                    continue;
-                }
-
-                // elasticsearch works with string ids, so we're forcing
-                // them to strings here
-                $transformed[(string)$searchId] = $document;
-            }
-
-            if (\count($transformed) === 0) {
-                // there were no transformed documents created by the handler, we have
-                // nothing to update
-                continue;
-            }
-
-            $index = \sprintf('%s%s', $handler->getIndexName(), $indexSuffix);
-
-            $this->client->bulkUpdate($index, $transformed);
+            $this->populator->populateWith($handler, $indexSuffix, $objects);
         }
     }
 
     /**
-     * @inheritdoc
-     */
-    public function isSearchable(string $class): bool
-    {
-        foreach ($this->handlers->getEntityHandlers() as $handler) {
-            if ($this->isHandled($handler, $class) === true) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Determine if object is supported (handled) by the given search handler
+     * Determine if object is supported (handled) by the given search handler.
      *
-     * @param \LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface $handler
+     * @param \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface $handler
      * @param string $class
      *
      * @return bool
      */
-    private function isHandled(EntitySearchHandlerInterface $handler, string $class): bool
+    private function isHandled(TransformableSearchHandlerInterface $handler, string $class): bool
     {
         $implements = \class_implements($class);
         $implements[] = $class;

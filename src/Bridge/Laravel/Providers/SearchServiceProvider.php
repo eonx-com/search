@@ -13,18 +13,25 @@ use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 use LoyaltyCorp\Search\Client;
 use LoyaltyCorp\Search\Exceptions\BindingResolutionException;
+use LoyaltyCorp\Search\Helpers\ClientBulkResponseHelper;
 use LoyaltyCorp\Search\Helpers\EntityManagerHelper;
 use LoyaltyCorp\Search\Helpers\RegisteredSearchHandler;
 use LoyaltyCorp\Search\Indexer;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
+use LoyaltyCorp\Search\Interfaces\Helpers\ClientBulkResponseHelperInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
-use LoyaltyCorp\Search\Interfaces\RequestProxyFactoryInterface;
+use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
 use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
+use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 use LoyaltyCorp\Search\Manager;
-use LoyaltyCorp\Search\RequestProxyFactory;
+use LoyaltyCorp\Search\Populator;
+use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
+use LoyaltyCorp\Search\Workers\EntityDeleteDataWorker;
+use LoyaltyCorp\Search\Workers\EntityDeleteWorker;
+use LoyaltyCorp\Search\Workers\EntityUpdateWorker;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) High coupling required to ensure all services are bound
@@ -40,11 +47,10 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
     {
         return [
             ClientInterface::class,
-            EntityManagerHelperInterface::class,
             IndexerInterface::class,
             ManagerInterface::class,
+            PopulatorInterface::class,
             RegisteredSearchHandlerInterface::class,
-            RequestProxyFactoryInterface::class
         ];
     }
 
@@ -57,17 +63,29 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
     {
         // Bind elasticsearch client
         $this->app->singleton(ClientInterface::class, static function (Container $app): ClientInterface {
-            return new Client(ClientBuilder::create()
-                ->setLogger($app->make(LoggerInterface::class))
-                ->setHosts(\array_filter([(string)\env('ELASTICSEARCH_HOST', '')]))
-                ->setSSLVerification(false)
-                ->build());
+            return new Client(
+                ClientBuilder::create()
+                    ->setConnectionParams([
+                        'client' => [
+                            'connect_timeout' => 2,
+                            'timeout' => 12,
+                        ],
+                    ])
+                    ->setLogger($app->make(LoggerInterface::class))
+                    ->setHosts(\array_filter([(string)\env('ELASTICSEARCH_HOST', '')]))
+                    ->setSSLVerification((bool)\env('ELASTICSEARCH_VERIFY_SSL', true))
+                    ->build(),
+                $app->make(ClientBulkResponseHelperInterface::class)
+            );
         });
 
+        $this->app->singleton(IndexNameTransformerInterface::class, DefaultIndexNameTransformer::class);
         $this->app->singleton(IndexerInterface::class, Indexer::class);
 
         // Bind search manager
         $this->app->singleton(ManagerInterface::class, Manager::class);
+        $this->app->singleton(ClientBulkResponseHelperInterface::class, ClientBulkResponseHelper::class);
+
         $this->app->singleton(EntityManagerHelperInterface::class, static function (Container $app) {
             /**
              * @var \Doctrine\Common\Persistence\ManagerRegistry|mixed $endpoint
@@ -87,6 +105,8 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
             throw new BindingResolutionException('Could not resolve Entity Manager from application container');
         });
 
+        $this->app->singleton(PopulatorInterface::class, Populator::class);
+
         $this->app->singleton(RegisteredSearchHandlerInterface::class, static function (Container $app) {
             $searchHandlers = [];
             foreach ($app->tagged('search_handler') as $searchHandler) {
@@ -101,12 +121,9 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
             return new RegisteredSearchHandler($searchHandlers);
         });
 
-        // bind proxy factory
-        $this->app->singleton(
-            RequestProxyFactoryInterface::class,
-            static function (): RequestProxyFactory {
-                return new RequestProxyFactory(\env('ELASTICSEARCH_HOST', 'https://admin:admin@elasticsearch:9200'));
-            }
-        );
+        // Bind workers
+        $this->app->singleton(EntityDeleteDataWorker::class);
+        $this->app->singleton(EntityDeleteWorker::class);
+        $this->app->singleton(EntityUpdateWorker::class);
     }
 }

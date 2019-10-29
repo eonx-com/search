@@ -7,13 +7,20 @@ use LoyaltyCorp\Search\Interfaces\ClientInterface;
 
 /**
  * @coversNothing
+ *
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods) Well tested code for all the cases
  */
-class ClientStub implements ClientInterface
+final class ClientStub implements ClientInterface
 {
     /**
      * @var mixed[]
      */
     private $aliases;
+
+    /**
+     * @var int[]
+     */
+    private $count;
 
     /**
      * @var mixed[]
@@ -67,17 +74,20 @@ class ClientStub implements ClientInterface
      * @param bool|null $isIndex
      * @param mixed[]|null $indices
      * @param mixed[]|null $aliases
+     * @param int[]|null $count
      */
     public function __construct(
         ?bool $isAlias = null,
         ?bool $isIndex = null,
         ?array $indices = null,
-        ?array $aliases = null
+        ?array $aliases = null,
+        ?array $count = null
     ) {
         $this->aliases = $aliases ?? [];
         $this->indices = $indices ?? [];
         $this->isAlias = $isAlias ?? false;
         $this->isIndex = $isIndex ?? false;
+        $this->count = \array_reverse($count ?? []);
     }
 
     /**
@@ -90,9 +100,17 @@ class ClientStub implements ClientInterface
     /**
      * {@inheritdoc}
      */
-    public function bulkUpdate(string $index, array $documents): void
+    public function bulkUpdate(array $updates): void
     {
-        $this->updatedIndices[] = \compact('index', 'documents');
+        $this->updatedIndices[] = $updates;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function count(string $index): int
+    {
+        return \array_pop($this->count) ?? 0;
     }
 
     /**
@@ -138,7 +156,7 @@ class ClientStub implements ClientInterface
     }
 
     /**
-     * Spy on created aliases
+     * Spy on created aliases.
      *
      * @return mixed[]
      */
@@ -148,7 +166,7 @@ class ClientStub implements ClientInterface
     }
 
     /**
-     * Spy on created indices
+     * Spy on created indices.
      *
      * @return mixed[]
      */
@@ -158,7 +176,7 @@ class ClientStub implements ClientInterface
     }
 
     /**
-     * Spy on deleted aliases
+     * Spy on deleted aliases.
      *
      * @return string[]
      */
@@ -168,7 +186,7 @@ class ClientStub implements ClientInterface
     }
 
     /**
-     * Spy on deleted indices
+     * Spy on deleted indices.
      *
      * @return string[]
      */
@@ -186,13 +204,23 @@ class ClientStub implements ClientInterface
     }
 
     /**
-     * Spy on alias that had its index swapped
+     * Spy on alias that had its index swapped.
      *
      * @return string[] Alias => Index
      */
     public function getSwappedAliases(): array
     {
         return $this->swappedAliases;
+    }
+
+    /**
+     * Get list if indices updated.
+     *
+     * @return mixed[]
+     */
+    public function getUpdatedIndices(): array
+    {
+        return $this->updatedIndices;
     }
 
     /**
@@ -219,15 +247,5 @@ class ClientStub implements ClientInterface
         foreach ($aliases as $alias) {
             $this->swappedAliases[$alias['alias']] = $alias['index'];
         }
-    }
-
-    /**
-     * Get list if indices updated.
-     *
-     * @return mixed[]
-     */
-    public function getUpdatedIndices(): array
-    {
-        return $this->updatedIndices;
     }
 }

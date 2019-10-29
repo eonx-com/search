@@ -4,33 +4,33 @@ declare(strict_types=1);
 namespace Tests\LoyaltyCorp\Search\Helpers;
 
 use LoyaltyCorp\Search\Helpers\RegisteredSearchHandler;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\EntityHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NonDoctrineHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableHandlerStub;
 use Tests\LoyaltyCorp\Search\TestCase;
 
 /**
  * @covers \LoyaltyCorp\Search\Helpers\RegisteredSearchHandler
  */
-class RegisteredSearchHandlerTest extends TestCase
+final class RegisteredSearchHandlerTest extends TestCase
 {
     /**
-     * Ensure the supplied search handlers matches the returned handlers from the same class
+     * Ensure the supplied search handlers matches the returned handlers from the same class.
      *
      * @return void
      */
     public function testGettingAllHandlersMatchesSuppliedHandlers(): void
     {
-        $entitySearchHandler = new EntityHandlerStub();
+        $entitySearchHandler = new TransformableHandlerStub();
         $otherSearchHandler = new NonDoctrineHandlerStub();
 
         $expected = [
             $entitySearchHandler,
-            $otherSearchHandler
+            $otherSearchHandler,
         ];
 
         $registeredHandlers = $this->createInstance([
             $entitySearchHandler,
-            $otherSearchHandler
+            $otherSearchHandler,
         ]);
 
         $result = $registeredHandlers->getAll();
@@ -45,25 +45,25 @@ class RegisteredSearchHandlerTest extends TestCase
      */
     public function testGettingEntitySearchHandlersOnly(): void
     {
-        $entitySearchHandler = new EntityHandlerStub();
+        $entitySearchHandler = new TransformableHandlerStub();
         $otherSearchHandler = new NonDoctrineHandlerStub();
 
         $expected = [
-            $entitySearchHandler
+            $entitySearchHandler,
         ];
 
         $registeredHandlers = $this->createInstance([
             $entitySearchHandler,
-            $otherSearchHandler
+            $otherSearchHandler,
         ]);
 
-        $result = $registeredHandlers->getEntityHandlers();
+        $result = $registeredHandlers->getTransformableHandlers();
 
         self::assertSame($expected, $result);
     }
 
     /**
-     * Create an instance of RegisteredSearchHandler
+     * Create an instance of RegisteredSearchHandler.
      *
      * @param \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[]|null $searchHandlers
      *

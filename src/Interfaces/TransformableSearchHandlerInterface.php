@@ -3,17 +3,25 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Interfaces;
 
-interface EntitySearchHandlerInterface extends SearchHandlerInterface
+interface TransformableSearchHandlerInterface extends SearchHandlerInterface
 {
     /**
-     * Get the class this search handler will support
+     * Returns an iterable that will be used to fill the index when doing a full
+     * index fill.
+     *
+     * @return iterable|mixed[]
+     */
+    public function getFillIterable(): iterable;
+
+    /**
+     * Get the class this search handler will support.
      *
      * @return string[] Fully Qualified Class Names that implement the Search Handler interface
      */
     public function getHandledClasses(): array;
 
     /**
-     * Returns the identifier used externally for the object.
+     * Returns the identifier used externally for the transformed object.
      *
      * @param object $object
      *
@@ -27,7 +35,7 @@ interface EntitySearchHandlerInterface extends SearchHandlerInterface
      *
      * @param mixed $object
      *
-     * @return mixed[][]|null
+     * @return mixed[]|null
      */
     public function transform($object): ?array;
 }

@@ -10,7 +10,7 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\BufferedOutput;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\EntitySearchHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\IndexerStub;
 use Tests\LoyaltyCorp\Search\TestCases\SearchIndexCommandTestCase;
@@ -20,10 +20,10 @@ use Tests\LoyaltyCorp\Search\TestCases\SearchIndexCommandTestCase;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Required for thorough testing
  */
-class SearchIndexLiveCommandTest extends SearchIndexCommandTestCase
+final class SearchIndexLiveCommandTest extends SearchIndexCommandTestCase
 {
     /**
-     * Ensure the command dryly running is only done when specified
+     * Ensure the command dryly running is only done when specified.
      *
      * @return void
      *
@@ -32,7 +32,7 @@ class SearchIndexLiveCommandTest extends SearchIndexCommandTestCase
     public function testDryRunModeIsNotDefault(): void
     {
         $indexer = new IndexerStub();
-        $handlers = [new EntitySearchHandlerStub()];
+        $handlers = [new TransformableSearchHandlerStub()];
         $command = $this->createInstance($indexer, new RegisteredSearchHandlerStub($handlers));
         $output = new BufferedOutput();
         $this->bootstrapCommand($command, null, $output, ['dry-run']);
@@ -43,7 +43,7 @@ class SearchIndexLiveCommandTest extends SearchIndexCommandTestCase
     }
 
     /**
-     * Ensure the command dryly running is verbose to the output
+     * Ensure the command dryly running is verbose to the output.
      *
      * @return void
      *
@@ -52,7 +52,7 @@ class SearchIndexLiveCommandTest extends SearchIndexCommandTestCase
     public function testDryRunModeOutputsMessage(): void
     {
         $indexer = new IndexerStub();
-        $handlers = [new EntitySearchHandlerStub()];
+        $handlers = [new TransformableSearchHandlerStub()];
         $command = $this->createInstance($indexer, new RegisteredSearchHandlerStub($handlers));
         $output = new BufferedOutput();
         $this->bootstrapCommand(
@@ -70,7 +70,7 @@ class SearchIndexLiveCommandTest extends SearchIndexCommandTestCase
     }
 
     /**
-     * Ensure search handlers are indeed passed to the indexSwap method
+     * Ensure search handlers are indeed passed to the indexSwap method.
      *
      * @return void
      *
@@ -79,7 +79,7 @@ class SearchIndexLiveCommandTest extends SearchIndexCommandTestCase
     public function testSearchHandlersPassedToIndexSwapMethod(): void
     {
         $indexer = new IndexerStub();
-        $handlers = [new EntitySearchHandlerStub()];
+        $handlers = [new TransformableSearchHandlerStub()];
         $command = $this->createInstance($indexer, new RegisteredSearchHandlerStub($handlers));
         $this->bootstrapCommand($command, null, null, ['dry-run']);
 
@@ -89,7 +89,7 @@ class SearchIndexLiveCommandTest extends SearchIndexCommandTestCase
     }
 
     /**
-     * Create command instance
+     * Create command instance.
      *
      * @param \LoyaltyCorp\Search\Interfaces\IndexerInterface $indexer
      * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface $registeredHandlers

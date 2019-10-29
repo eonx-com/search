@@ -3,13 +3,16 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch;
 
+use Elasticsearch\Client;
 use GuzzleHttp\Ring\Future\FutureArray;
 use React\Promise\Deferred;
 
 /**
- * This stub returns a callable response which will eventually resolve to an array when calling bulk()
+ * This stub returns a callable response which will eventually resolve to an array when calling bulk().
+ *
+ * @coversNothing
  */
-class CallableResponseClientStub extends ClientStub
+final class CallableResponseClientStub extends Client
 {
     /**
      * @var mixed[]
@@ -17,15 +20,15 @@ class CallableResponseClientStub extends ClientStub
     private $errors;
 
     /**
-     * Create deferred response stub
+     * Create deferred response stub.
+     *
+     * @noinspection PhpMissingParentConstructorInspection Parent is intentionally ignored
      *
      * @param mixed[] $errors Errors to return after resolution
      */
     public function __construct(?array $errors = null)
     {
         $this->errors = $errors ?? [];
-
-        parent::__construct(false);
     }
 
     /**

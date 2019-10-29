@@ -8,7 +8,7 @@ use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 /**
  * @coversNothing
  */
-class EntityManagerHelperStub implements EntityManagerHelperInterface
+final class EntityManagerHelperStub implements EntityManagerHelperInterface
 {
     /**
      * @var int

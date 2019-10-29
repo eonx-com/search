@@ -3,26 +3,50 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Stubs\Helpers;
 
-use LoyaltyCorp\Search\Helpers\RegisteredSearchHandler;
+use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
+use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 
 /**
- * This stub extends from the original class, as the functionality it provides
- * is no different from the real class. This can be changed in future if more logic
- * is added to the real class.
- *
- * @noinspection EmptyClassInspection Class intentionally left empty for tests
- *
  * @coversNothing
  */
-class RegisteredSearchHandlerStub extends RegisteredSearchHandler
+final class RegisteredSearchHandlerStub implements RegisteredSearchHandlerInterface
 {
     /**
-     * RegisteredSearchHandlerStub constructor.
-     *
-     * @param \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[]|null $searchHandlers
+     * @var \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[]
      */
-    public function __construct(?array $searchHandlers = null)
+    private $searchHandlers;
+
+    /**
+     * RegisteredSearchHandlers constructor.
+     *
+     * @param \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[] $searchHandlers
+     */
+    public function __construct(array $searchHandlers)
     {
-        parent::__construct($searchHandlers ?? []);
+        $this->searchHandlers = $searchHandlers;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAll(): array
+    {
+        return $this->searchHandlers;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTransformableHandlers(): array
+    {
+        $entityHandlers = [];
+
+        foreach ($this->searchHandlers as $handler) {
+            if ($handler instanceof TransformableSearchHandlerInterface === true) {
+                $entityHandlers[] = $handler;
+            }
+        }
+
+        return $entityHandlers;
     }
 }

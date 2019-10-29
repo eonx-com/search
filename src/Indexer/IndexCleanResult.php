@@ -21,7 +21,7 @@ final class IndexCleanResult
     }
 
     /**
-     * Get indices that will be cleaned
+     * Get indices that will be cleaned.
      *
      * @return string[]
      */

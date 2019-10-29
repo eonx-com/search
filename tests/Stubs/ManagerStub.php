@@ -8,10 +8,25 @@ use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 /**
  * @coversNothing
  */
-class ManagerStub implements ManagerInterface
+final class ManagerStub implements ManagerInterface
 {
     /**
-     * Used to determine how many times `handleUpdates` was called
+     * @var mixed[][]
+     */
+    private $deletes = [];
+
+    /**
+     * @var mixed[]
+     */
+    private $handlerUpdates = [];
+
+    /**
+     * @var mixed[][]
+     */
+    private $searchMeta = [];
+
+    /**
+     * Used to determine how many times `handleUpdates` was called.
      *
      * @var int
      */
@@ -23,15 +38,43 @@ class ManagerStub implements ManagerInterface
     private $updateObjects;
 
     /**
+     * @param mixed[] $meta
+     *
+     * @return void
+     */
+    public function addSearchMeta(array $meta): void
+    {
+        $this->searchMeta[] = $meta;
+    }
+
+    /**
+     * Get deletes.
+     *
+     * @return mixed[][]
+     */
+    public function getDeletes(): array
+    {
+        return $this->deletes;
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public function getHandlerUpdates(): array
+    {
+        return $this->handlerUpdates;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getSearchMeta(object $object): array
     {
-        return [];
+        return \array_shift($this->searchMeta) ?? [];
     }
 
     /**
-     * Get the amount of times `handleUpdates` has been called
+     * Get the amount of times `handleUpdates` has been called.
      *
      * @return int
      */
@@ -41,7 +84,7 @@ class ManagerStub implements ManagerInterface
     }
 
     /**
-     * Getter for spying on the values passed into handleUpdates
+     * Getter for spying on the values passed into handleUpdates.
      *
      * @return mixed[]
      */
@@ -55,6 +98,7 @@ class ManagerStub implements ManagerInterface
      */
     public function handleDeletes(array $ids): void
     {
+        $this->deletes[] = $ids;
     }
 
     /**
@@ -64,13 +108,5 @@ class ManagerStub implements ManagerInterface
     {
         $this->updateCount++;
         $this->updateObjects[] = \compact('class', 'indexSuffix', 'objects');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isSearchable(string $class): bool
-    {
-        return true;
     }
 }

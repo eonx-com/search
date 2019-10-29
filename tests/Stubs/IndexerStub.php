@@ -6,14 +6,13 @@ namespace Tests\LoyaltyCorp\Search\Stubs;
 use DateTime;
 use LoyaltyCorp\Search\Indexer\IndexCleanResult;
 use LoyaltyCorp\Search\Indexer\IndexSwapResult;
-use LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 
 /**
  * @coversNothing
  */
-class IndexerStub implements IndexerInterface
+final class IndexerStub implements IndexerInterface
 {
     /**
      * @var \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[]
@@ -54,7 +53,7 @@ class IndexerStub implements IndexerInterface
     }
 
     /**
-     * Spy method to look at cleaned handlers
+     * Spy method to look at cleaned handlers.
      *
      * @return \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[]
      */
@@ -64,7 +63,7 @@ class IndexerStub implements IndexerInterface
     }
 
     /**
-     * Get search handlers that have been passed for creation
+     * Get search handlers that have been passed for creation.
      *
      * @return \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[]
      */
@@ -74,7 +73,7 @@ class IndexerStub implements IndexerInterface
     }
 
     /**
-     * Spy for the number of time indexSwap was called
+     * Spy for the number of time indexSwap was called.
      *
      * @return int
      */
@@ -84,7 +83,7 @@ class IndexerStub implements IndexerInterface
     }
 
     /**
-     * Determine if indexed has called populate
+     * Determine if indexed has called populate.
      *
      * @return mixed[]
      */
@@ -102,25 +101,16 @@ class IndexerStub implements IndexerInterface
 
         $aliasesToMove = [];
         $aliasesToDelete = [];
+        $aliasesToSkip = [];
 
         foreach ($searchHandlers as $handler) {
             $rootIndex = $handler->getIndexName();
 
             $aliasesToMove[] = ['alias' => $rootIndex, 'index' => \sprintf('%s_123', $rootIndex)];
             $aliasesToDelete[] = \sprintf('%s_new', $rootIndex);
+            $aliasesToSkip[] = $rootIndex;
         }
 
-        return new IndexSwapResult(... [$aliasesToMove, $aliasesToDelete]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function populate(
-        EntitySearchHandlerInterface $searchHandler,
-        string $indexSuffix,
-        ?int $batchSize = null
-    ): void {
-        $this->populatedHandlers[] = \compact('searchHandler', 'indexSuffix', 'batchSize');
+        return new IndexSwapResult(...[$aliasesToMove, $aliasesToDelete, $aliasesToSkip]);
     }
 }

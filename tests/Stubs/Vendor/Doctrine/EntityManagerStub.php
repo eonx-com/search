@@ -9,8 +9,10 @@ use Doctrine\ORM\Query\ResultSetMapping;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods) This class is implemented from a Doctrine interface
  * @SuppressWarnings(PHPMD.TooManyPublicMethods) This class is implemented from a Doctrine interface
+ *
+ * @coversNothing
  */
-class EntityManagerStub implements EntityManagerInterface
+final class EntityManagerStub implements EntityManagerInterface
 {
     /**
      * @inheritdoc

@@ -5,8 +5,28 @@ namespace Tests\LoyaltyCorp\Search\Stubs\Vendor\EoneoPay\Externals\ORM;
 
 use EoneoPay\Externals\ORM\Interfaces\RepositoryInterface;
 
-class RepositoryStub implements RepositoryInterface
+/**
+ * @coversNothing
+ */
+final class RepositoryStub implements RepositoryInterface
 {
+    /**
+     * Entities.
+     *
+     * @var \EoneoPay\Externals\ORM\Interfaces\EntityInterface[]|null
+     */
+    private $entities;
+
+    /**
+     * RepositoryStub constructor.
+     *
+     * @param \EoneoPay\Externals\ORM\Interfaces\EntityInterface[]|null $entities
+     */
+    public function __construct(?array $entities = null)
+    {
+        $this->entities = $entities;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -29,6 +49,7 @@ class RepositoryStub implements RepositoryInterface
      */
     public function findAll()
     {
+        return $this->entities ?? [];
     }
 
     /**

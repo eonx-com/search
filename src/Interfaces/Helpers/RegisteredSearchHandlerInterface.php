@@ -6,16 +6,16 @@ namespace LoyaltyCorp\Search\Interfaces\Helpers;
 interface RegisteredSearchHandlerInterface
 {
     /**
-     * Get all search handlers that have been registered in the container
+     * Get all search handlers that have been registered in the container.
      *
      * @return \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[]
      */
     public function getAll(): array;
 
     /**
-     * Get entity search handlers that have been registered in the container.
+     * Get search handlers that support object transformations.
      *
-     * @return \LoyaltyCorp\Search\Interfaces\EntitySearchHandlerInterface[]
+     * @return \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface[]
      */
-    public function getEntityHandlers(): array;
+    public function getTransformableHandlers(): array;
 }

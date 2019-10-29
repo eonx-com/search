@@ -1,7 +1,13 @@
 <?php
 declare(strict_types=1);
 
+use EoneoPay\Utils\AnnotationReader;
+
 require \dirname(__DIR__) . '/vendor/autoload.php';
+
+// Ignore @covers and @coversNothing annotations
+AnnotationReader::addGlobalIgnoredName('covers');
+AnnotationReader::addGlobalIgnoredName('coversNothing');
 
 /**
  * @coversNothing

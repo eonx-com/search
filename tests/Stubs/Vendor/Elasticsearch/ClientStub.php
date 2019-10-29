@@ -5,12 +5,17 @@ namespace Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch;
 
 use Elasticsearch\Client;
 use RuntimeException;
+use Tests\LoyaltyCorp\Search\Stubs\CatStub;
 
 /**
  * This stub overloads methods within the elasticsearch client as it doesn't implement an interface so
- * can't be stubbed properly, this stub will not pass anything to the actual elasticsearch client
+ * can't be stubbed properly, this stub will not pass anything to the actual elasticsearch client.
+ *
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods) Well tested code for all the cases
+ *
+ * @coversNothing
  */
-class ClientStub extends Client
+final class ClientStub extends Client
 {
     /**
      * @var mixed[]
@@ -53,7 +58,17 @@ class ClientStub extends Client
     }
 
     /**
-     * Get bulk parameters used when calling bulk()
+     * @noinspection PhpMissingParentCallCommonInspection ReturnTypeCanBeDeclaredInspection
+     *
+     * @inheritdoc
+     */
+    public function cat()
+    {
+        return new CatStub($this->throwException);
+    }
+
+    /**
+     * Get bulk parameters used when calling bulk().
      *
      * @return mixed[]|null
      */

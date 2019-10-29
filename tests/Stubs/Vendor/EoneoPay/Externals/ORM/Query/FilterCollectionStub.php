@@ -5,7 +5,10 @@ namespace Tests\LoyaltyCorp\Search\Stubs\Vendor\EoneoPay\Externals\ORM\Query;
 
 use EoneoPay\Externals\ORM\Interfaces\Query\FilterCollectionInterface;
 
-class FilterCollectionStub implements FilterCollectionInterface
+/**
+ * @coversNothing
+ */
+final class FilterCollectionStub implements FilterCollectionInterface
 {
     /**
      * {@inheritdoc}

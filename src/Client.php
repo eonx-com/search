@@ -5,27 +5,37 @@ namespace LoyaltyCorp\Search;
 
 use Elasticsearch\Client as BaseClient;
 use Exception;
-use GuzzleHttp\Ring\Future\FutureArrayInterface;
-use LoyaltyCorp\Search\Exceptions\BulkFailureException;
 use LoyaltyCorp\Search\Exceptions\SearchCheckerException;
 use LoyaltyCorp\Search\Exceptions\SearchDeleteException;
 use LoyaltyCorp\Search\Exceptions\SearchUpdateException;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
+use LoyaltyCorp\Search\Interfaces\Helpers\ClientBulkResponseHelperInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) Decorated ES client class
+ */
 final class Client implements ClientInterface
 {
+    /**
+     * @var \LoyaltyCorp\Search\Interfaces\Helpers\ClientBulkResponseHelperInterface
+     */
+    private $bulkResponseHelper;
+
     /**
      * @var \Elasticsearch\Client
      */
     private $elastic;
 
     /**
-     * Create elastic search instance
+     * Create elastic search instance.
      *
      * @param \Elasticsearch\Client $elastic
+     * @param \LoyaltyCorp\Search\Interfaces\Helpers\ClientBulkResponseHelperInterface $bulkResponseHelper
      */
-    public function __construct(BaseClient $elastic)
+    public function __construct(BaseClient $elastic, ClientBulkResponseHelperInterface $bulkResponseHelper)
     {
+        $this->bulkResponseHelper = $bulkResponseHelper;
         $this->elastic = $elastic;
     }
 
@@ -69,20 +79,20 @@ final class Client implements ClientInterface
         }
 
         // Check responses for error
-        $this->checkBulkResponsesForErrors($responses, 'delete');
+        $this->bulkResponseHelper->checkBulkResponsesForErrors($responses, 'delete');
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      *
      * @throws \LoyaltyCorp\Search\Exceptions\BulkFailureException If there is at least one record with an error
      * @throws \LoyaltyCorp\Search\Exceptions\SearchUpdateException If backend client throws an exception via bulk()
      */
-    public function bulkUpdate(string $index, array $documents): void
+    public function bulkUpdate(array $updates): void
     {
         $bulk = [];
 
-        foreach ($documents as $documentId => $document) {
+        foreach ($updates as $update) {
             // The _type parameter is being deprecated, and in Elasticsearch 6.0+ means
             // nothing, but still must be provided. As a standard, anything using this
             // library will need to define the type as "doc" in any schema mappings until
@@ -90,8 +100,14 @@ final class Client implements ClientInterface
             //
             // See: https://www.elastic.co/guide/en/elasticsearch/reference/current/removal-of-types.html
 
-            $bulk[] = ['index' => ['_index' => $index, '_type' => 'doc', '_id' => $documentId]];
-            $bulk[] = $document;
+            $bulk[] = [
+                'index' => [
+                    '_index' => $update->getIndex(),
+                    '_type' => 'doc',
+                    '_id' => $update->getDocumentId(),
+                ],
+            ];
+            $bulk[] = $update->getDocument();
         }
 
         try {
@@ -101,7 +117,24 @@ final class Client implements ClientInterface
         }
 
         // Check responses for error
-        $this->checkBulkResponsesForErrors($responses, 'update');
+        $this->bulkResponseHelper->checkBulkResponsesForErrors($responses, 'update');
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @throws \LoyaltyCorp\Search\Exceptions\SearchCheckerException
+     */
+    public function count(string $index): int
+    {
+        try {
+            $count = $this->elastic->cat()->count(['index' => $index]);
+
+            // _cat/_count supports counting many indices, the response is an array of objects but we only need 0 index
+            return (int)$count[0]['count'];
+        } catch (Exception $exception) {
+            throw new SearchCheckerException('Unable to count number of documents within index', 0, $exception);
+        }
     }
 
     /**
@@ -129,7 +162,7 @@ final class Client implements ClientInterface
         try {
             $this->elastic->indices()->create([
                 'index' => $name,
-                'body' => \array_filter(\compact('settings', 'mappings'))
+                'body' => \array_filter(\compact('settings', 'mappings')),
             ]);
         } catch (Exception $exception) {
             throw new SearchUpdateException('Unable to create new index', 0, $exception);
@@ -162,7 +195,7 @@ final class Client implements ClientInterface
     {
         try {
             $this->elastic->indices()->delete([
-                'index' => $name
+                'index' => $name,
             ]);
         } catch (Exception $exception) {
             throw new SearchDeleteException('Unable to delete index', 0, $exception);
@@ -180,7 +213,7 @@ final class Client implements ClientInterface
             foreach ($this->elastic->cat()->aliases(\array_filter(['name' => $name])) as $alias) {
                 $aliases[$alias['alias']] = [
                     'name' => $alias['alias'],
-                    'index' => $alias['index']
+                    'index' => $alias['index'],
                 ];
             }
 
@@ -201,7 +234,7 @@ final class Client implements ClientInterface
             foreach ($this->elastic->cat()->indices(\array_filter(['index' => $name])) as $index) {
                 // Key as index name just for local ease of mapping
                 $indices[$index['index']] = [
-                    'name' => $index['index']
+                    'name' => $index['index'],
                 ];
             }
 
@@ -252,105 +285,12 @@ final class Client implements ClientInterface
             $this->elastic->indices()->updateAliases(
                 [
                     'body' => [
-                        'actions' => $actions
-                    ]
+                        'actions' => $actions,
+                    ],
                 ]
             );
         } catch (Exception $exception) {
             throw new SearchUpdateException('Unable to atomically swap alias', 0, $exception);
         }
-    }
-
-    /**
-     * Check a bulk response array for errors, throw an exception if errors are found
-     *
-     * @param mixed $response The response from the bulk action
-     * @param string $type The bulk action that was performed
-     *
-     * @return void
-     *
-     * @throws \LoyaltyCorp\Search\Exceptions\BulkFailureException If there is at least one record with an error
-     */
-    private function checkBulkResponsesForErrors($response, string $type): void
-    {
-        $responses = $this->extractBulkResponseItems($response, $type);
-
-        $errors = [];
-
-        /**
-         * @var mixed[] $item
-         *
-         * @see https://youtrack.jetbrains.com/issue/WI-37859 typehint required until PhpStorm recognises === check
-         */
-        foreach ($responses as $item) {
-            // If item isn't the right type or it's not an error, skip
-            if (isset($item[$type]) === false ||
-                \is_array($item[$type]) === false ||
-                isset($item[$type]['error']) === false ||
-                $item[$type]['error'] === false) {
-                continue;
-            }
-
-            // Get error
-            $errors[] = $item[$type]['error'];
-        }
-
-        // If there are no errors, return
-        if (\count($errors) === 0) {
-            return;
-        }
-
-        // Throw bulk exception
-        throw new BulkFailureException(
-            $errors,
-            \sprintf('At least one record returned an error during bulk %s', $type)
-        );
-    }
-
-    /**
-     * Extract items from bulk response
-     *
-     * @param mixed $response The response from the bulk action
-     * @param string $type The bulk action that was performed
-     *
-     * @return mixed[]
-     */
-    private function extractBulkResponseItems($response, string $type): array
-    {
-        // If response is callable, wait until we have the final response
-        if (($response instanceof FutureArrayInterface) === true) {
-            $response = $this->unwrapPromise($response);
-        }
-
-        // If final response isn't an array, throw exception
-        if (\is_array($response) === false) {
-            throw new BulkFailureException([], \sprintf('Invalid response received from bulk %s', $type));
-        }
-
-        // If the top level indicates no errors or items, return nothing
-        if (isset($response['errors']) === false ||
-            $response['errors'] === false ||
-            isset($response['items']) === false ||
-            \is_array($response['items']) === false) {
-            return [];
-        }
-
-        return $response['items'];
-    }
-
-    /**
-     * Wait for a promise to resolve and unwrap the response
-     *
-     * @param \GuzzleHttp\Ring\Future\FutureArrayInterface $promise
-     *
-     * @return mixed
-     */
-    private function unwrapPromise(FutureArrayInterface $promise)
-    {
-        do {
-            $promise = $promise->wait();
-        } while (($promise instanceof FutureArrayInterface) === true);
-
-        return $promise;
     }
 }

@@ -7,6 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
+ *
+ * @coversNothing
  */
 class EntityStub
 {
@@ -21,7 +23,7 @@ class EntityStub
     protected $identifier;
 
     /**
-     * Getter for primary key
+     * Getter for primary key.
      *
      * @return string
      */
@@ -31,7 +33,7 @@ class EntityStub
     }
 
     /**
-     * Setter for primary key
+     * Setter for primary key.
      *
      * @param string $identifier
      *

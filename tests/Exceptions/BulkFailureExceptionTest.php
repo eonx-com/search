@@ -12,7 +12,7 @@ use Tests\LoyaltyCorp\Search\TestCase;
 final class BulkFailureExceptionTest extends TestCase
 {
     /**
-     * Test exception returns errors from constructor
+     * Test exception returns errors from constructor.
      *
      * @return void
      */

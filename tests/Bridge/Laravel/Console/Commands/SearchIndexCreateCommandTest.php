@@ -6,8 +6,8 @@ namespace Tests\LoyaltyCorp\Search\Bridge\Laravel\Console\Commands;
 use LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexCreateCommand;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\EntitySearchHandlerStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\OtherEntitySearchHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\OtherTransformableSearchHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\IndexerStub;
 use Tests\LoyaltyCorp\Search\TestCases\SearchIndexCommandTestCase;
@@ -17,10 +17,10 @@ use Tests\LoyaltyCorp\Search\TestCases\SearchIndexCommandTestCase;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Required for thorough testing
  */
-class SearchIndexCreateCommandTest extends SearchIndexCommandTestCase
+final class SearchIndexCreateCommandTest extends SearchIndexCommandTestCase
 {
     /**
-     * Ensure the number of indices created matches the number of registered search handlers via container tagging
+     * Ensure the number of indices created matches the number of registered search handlers via container tagging.
      *
      * @return void
      *
@@ -29,7 +29,7 @@ class SearchIndexCreateCommandTest extends SearchIndexCommandTestCase
     public function testIndicesCreated(): void
     {
         $indexer = new IndexerStub();
-        $handlers = [new EntitySearchHandlerStub(), new OtherEntitySearchHandlerStub()];
+        $handlers = [new TransformableSearchHandlerStub(), new OtherTransformableSearchHandlerStub()];
         // Two search handlers registered should result in 2 'created' calls
         $command = $this->createInstance($indexer, new RegisteredSearchHandlerStub($handlers));
         $this->bootstrapCommand($command);
@@ -40,7 +40,7 @@ class SearchIndexCreateCommandTest extends SearchIndexCommandTestCase
     }
 
     /**
-     * Create command instance
+     * Create command instance.
      *
      * @param \LoyaltyCorp\Search\Interfaces\IndexerInterface $indexer
      * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface $registeredHandlers

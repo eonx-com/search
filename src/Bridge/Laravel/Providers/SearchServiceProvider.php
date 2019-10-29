@@ -133,7 +133,9 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
         $this->app->singleton(
             RequestProxyFactoryInterface::class,
             static function (): RequestProxyFactory {
-                return new RequestProxyFactory((string)\env('ELASTICSEARCH_HOST', 'https://admin:admin@elasticsearch:9200'));
+                return new RequestProxyFactory(
+                    (string)\env('ELASTICSEARCH_HOST', 'https://admin:admin@elasticsearch:9200')
+                );
             }
         );
     }

@@ -14,9 +14,11 @@ use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
+use LoyaltyCorp\Search\Interfaces\RequestProxyFactoryInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 use LoyaltyCorp\Search\Manager;
 use LoyaltyCorp\Search\Populator;
+use LoyaltyCorp\Search\RequestProxyFactory;
 use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NonDoctrineHandlerStub;
@@ -59,6 +61,10 @@ final class SearchServiceProviderTest extends TestCase
             DefaultIndexNameTransformer::class,
             $application->make(IndexNameTransformerInterface::class)
         );
+        self::assertInstanceOf(
+            RequestProxyFactory::class,
+            $application->make(RequestProxyFactoryInterface::class)
+        );
     }
 
     /**
@@ -74,6 +80,7 @@ final class SearchServiceProviderTest extends TestCase
             ManagerInterface::class,
             PopulatorInterface::class,
             RegisteredSearchHandlerInterface::class,
+            RequestProxyFactoryInterface::class,
         ], (new SearchServiceProvider(new ApplicationStub()))->provides());
     }
 

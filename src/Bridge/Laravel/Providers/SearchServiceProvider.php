@@ -24,10 +24,12 @@ use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
+use LoyaltyCorp\Search\Interfaces\RequestProxyFactoryInterface;
 use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 use LoyaltyCorp\Search\Manager;
 use LoyaltyCorp\Search\Populator;
+use LoyaltyCorp\Search\RequestProxyFactory;
 use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use LoyaltyCorp\Search\Workers\EntityDeleteDataWorker;
 use LoyaltyCorp\Search\Workers\EntityDeleteWorker;
@@ -51,6 +53,7 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
             ManagerInterface::class,
             PopulatorInterface::class,
             RegisteredSearchHandlerInterface::class,
+            RequestProxyFactoryInterface::class,
         ];
     }
 
@@ -125,5 +128,15 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
         $this->app->singleton(EntityDeleteDataWorker::class);
         $this->app->singleton(EntityDeleteWorker::class);
         $this->app->singleton(EntityUpdateWorker::class);
+
+        // Bind proxy factory
+        $this->app->singleton(
+            RequestProxyFactoryInterface::class,
+            static function (): RequestProxyFactory {
+                return new RequestProxyFactory(
+                    (string)\env('ELASTICSEARCH_HOST', 'https://admin:admin@elasticsearch:9200')
+                );
+            }
+        );
     }
 }

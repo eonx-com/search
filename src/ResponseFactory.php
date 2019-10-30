@@ -11,11 +11,26 @@ use Psr\Http\Message\ResponseInterface;
 final class ResponseFactory implements ResponseFactoryInterface
 {
     /**
+     * @var \EoneoPay\Externals\HttpClient\Interfaces\ClientInterface
+     */
+    private $client;
+
+    /**
+     * ResponseFactory constructor.
+     *
+     * @param \EoneoPay\Externals\HttpClient\Interfaces\ClientInterface $client
+     */
+    public function __construct(ClientInterface $client)
+    {
+        $this->client = $client;
+    }
+
+    /**
      * {@inheritdoc}
      */
-    public function sendRequest(ClientInterface $client, RequestInterface $request): ResponseInterface
+    public function sendRequest(RequestInterface $request): ResponseInterface
     {
-        $response = $client->sendRequest($request);
+        $response = $this->client->sendRequest($request);
 
         $response = $response
             // Remove all CORS headers, our application will re-add them

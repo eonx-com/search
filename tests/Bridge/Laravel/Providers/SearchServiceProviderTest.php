@@ -15,12 +15,10 @@ use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
 use LoyaltyCorp\Search\Interfaces\RequestProxyFactoryInterface;
-use LoyaltyCorp\Search\Interfaces\ResponseFactoryInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 use LoyaltyCorp\Search\Manager;
 use LoyaltyCorp\Search\Populator;
 use LoyaltyCorp\Search\RequestProxyFactory;
-use LoyaltyCorp\Search\ResponseFactory;
 use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NonDoctrineHandlerStub;
@@ -66,10 +64,6 @@ final class SearchServiceProviderTest extends TestCase
         self::assertInstanceOf(
             RequestProxyFactory::class,
             $application->make(RequestProxyFactoryInterface::class)
-        );
-        self::assertInstanceOf(
-            ResponseFactory::class,
-            $application->make(ResponseFactoryInterface::class)
         );
     }
 

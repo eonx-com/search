@@ -24,8 +24,6 @@ final class ResponseFactoryTest extends TestCase
      */
     public function testSendRequest(): void
     {
-        $service = new ResponseFactory();
-
         $response = new Response(200, [
             'Access-Control-Allow-Origin' => 'Yep',
             'Access-Control-Allow-Credentials' => 'Yep',
@@ -38,9 +36,10 @@ final class ResponseFactoryTest extends TestCase
         $expectedResponse = new Response();
 
         $client = new Client(new GuzzleClient(['handler' => new MockHandler([$response])]), new ExceptionHandler());
+        $service = new ResponseFactory($client);
         $request = new ServerRequest();
 
-        $result = $service->sendRequest($client, $request);
+        $result = $service->sendRequest($request);
 
         self::assertSame(str($expectedResponse), str($result));
     }

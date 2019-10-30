@@ -131,7 +131,6 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
         $this->app->singleton(EntityDeleteWorker::class);
         $this->app->singleton(EntityUpdateWorker::class);
 
-
         // Bind request and response factory
         $this->app->singleton(ResponseFactoryInterface::class, ResponseFactory::class);
         $this->app->singleton(
@@ -142,6 +141,5 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
                 );
             }
         );
-
     }
 }

@@ -1,0 +1,17 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    LoyaltyCorp\Search\Bridge\Symfony\Listeners\EntityDeleteDataListener:
+        tags:
+            - { name: kernel.event_listener, event: \LoyaltyCorp\EasyEntityChange\Events\EntityDeleteDataEvent }
+
+    LoyaltyCorp\Search\Bridge\Symfony\Listeners\EntityDeleteListener:
+        tags:
+            - { name: kernel.event_listener, event: \LoyaltyCorp\EasyEntityChange\Events\EntityChangeEvent }
+
+    LoyaltyCorp\Search\Bridge\Symfony\Listeners\EntityUpdateListener:
+        tags:
+            - { name: kernel.event_listener, event: \LoyaltyCorp\EasyEntityChange\Events\EntityChangeEvent }

@@ -21,6 +21,9 @@ final class SearchExtension extends Extension
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yaml');
 
+        // TODO Make it conditional based on config
+        $loader->load('services_events.yaml');
+
         // Auto tag search handlers
         $container->registerForAutoconfiguration(SearchHandlerInterface::class)->addTag('search_handler');
     }

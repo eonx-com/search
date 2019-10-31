@@ -1,0 +1,57 @@
+parameters:
+    default_elasticsearch_host: 'https://admin:admin@elasticsearch:9200'
+    elasticsearch_host: '%env(default:default_elasticsearch_host:ELASTICSEARCH_HOST)%'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    # --- Helpers --- #
+    LoyaltyCorp\Search\Interfaces\Helpers\ClientBulkResponseHelperInterface:
+        class: LoyaltyCorp\Search\Helpers\ClientBulkResponseHelper
+
+    LoyaltyCorp\Search\Bridge\Symfony\Interfaces\EntityManagerHelperFactoryInterface:
+        class: LoyaltyCorp\Search\Bridge\Symfony\Factories\EntityManagerHelperFactory
+
+    LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface:
+        factory: ['@LoyaltyCorp\Search\Bridge\Symfony\Interfaces\EntityManagerHelperFactoryInterface', 'create']
+
+    LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface:
+        class: LoyaltyCorp\Search\Helpers\RegisteredSearchHandler
+        arguments: [!tagged search_handler]
+
+    # --- Client + Factory --- #
+    LoyaltyCorp\Search\Bridge\Symfony\Interfaces\ClientFactoryInterface:
+        class: LoyaltyCorp\Search\Bridge\Symfony\Factories\ClientFactory
+        arguments:
+            $elasticsearchHost: '%elasticsearch_host%'
+            $verifySsl: '%env(bool:ELASTICSEARCH_VERIFY_SSL)%'
+
+    LoyaltyCorp\Search\Interfaces\ClientInterface:
+        factory: ['@LoyaltyCorp\Search\Bridge\Symfony\Interfaces\ClientFactoryInterface', 'create']
+
+    # --- Index Related --- #
+    LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface:
+        class: LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer
+
+    LoyaltyCorp\Search\Interfaces\IndexerInterface:
+        class: LoyaltyCorp\Search\Indexer
+
+    LoyaltyCorp\Search\Interfaces\ManagerInterface:
+        class: LoyaltyCorp\Search\Manager
+
+    LoyaltyCorp\Search\Interfaces\PopulatorInterface:
+        class: LoyaltyCorp\Search\Populator
+
+    # --- Workers --- #
+    LoyaltyCorp\Search\Workers\EntityDeleteDataWorker: ~
+    LoyaltyCorp\Search\Workers\EntityDeleteWorker: ~
+    LoyaltyCorp\Search\Workers\EntityUpdateWorker: ~
+
+    # --- Request Proxy --- #
+    LoyaltyCorp\Search\Interfaces\RequestProxyFactoryInterface:
+        class: LoyaltyCorp\Search\RequestProxyFactory
+        arguments:
+            $elasticHost: '%elasticsearch_host%'

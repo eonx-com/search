@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Bridge\Symfony\DependencyInjection;
 
+use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
@@ -19,5 +20,8 @@ final class SearchExtension extends Extension
     {
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yaml');
+
+        // Auto tag search handlers
+        $container->registerForAutoconfiguration(SearchHandlerInterface::class)->addTag('search_handler');
     }
 }

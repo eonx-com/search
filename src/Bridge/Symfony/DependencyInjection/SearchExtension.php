@@ -18,11 +18,15 @@ final class SearchExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container)
     {
+        $configuration = new Configuration();
+        $config = $this->processConfiguration($configuration, $configs);
+
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yaml');
 
-        // TODO Make it conditional based on config
-        $loader->load('services_events.yaml');
+        if (($config['use_listeners'] ?? false) === true) {
+            $loader->load('services_events.yaml');
+        }
 
         // Auto tag search handlers
         $container->registerForAutoconfiguration(SearchHandlerInterface::class)->addTag('search_handler');

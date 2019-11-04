@@ -68,10 +68,10 @@ final class AccessTokenMappingHelper implements MappingHelperInterface
             $key => [
                 'properties' => [
                     self::ACCESS_TOKEN_PROPERTY => [
-                        'type' => 'keyword'
-                    ]
-                ]
-            ]
+                        'type' => 'keyword',
+                    ],
+                ],
+            ],
         ]);
     }
 }

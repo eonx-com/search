@@ -9,6 +9,7 @@ use LoyaltyCorp\Search\Exceptions\AliasNotFoundException;
 use LoyaltyCorp\Search\Indexer\IndexCleanResult;
 use LoyaltyCorp\Search\Indexer\IndexSwapResult;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
+use LoyaltyCorp\Search\Interfaces\Indexer\MappingHelperInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
@@ -24,6 +25,11 @@ final class Indexer implements IndexerInterface
     private $elasticClient;
 
     /**
+     * @var \LoyaltyCorp\Search\Interfaces\Indexer\MappingHelperInterface
+     */
+    private $mappingHelper;
+
+    /**
      * @var \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface
      */
     private $nameTransformer;
@@ -32,13 +38,16 @@ final class Indexer implements IndexerInterface
      * Constructor.
      *
      * @param \LoyaltyCorp\Search\Interfaces\ClientInterface $elasticClient
+     * @param \LoyaltyCorp\Search\Interfaces\Indexer\MappingHelperInterface $mappingHelper
      * @param \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface $nameTransformer
      */
     public function __construct(
         ClientInterface $elasticClient,
+        MappingHelperInterface $mappingHelper,
         IndexNameTransformerInterface $nameTransformer
     ) {
         $this->elasticClient = $elasticClient;
+        $this->mappingHelper = $mappingHelper;
         $this->nameTransformer = $nameTransformer;
     }
 
@@ -115,7 +124,7 @@ final class Indexer implements IndexerInterface
 
             $this->elasticClient->createIndex(
                 $newIndex,
-                $searchHandler::getMappings(),
+                $this->mappingHelper->buildIndexMappings($searchHandler),
                 $searchHandler::getSettings()
             );
 

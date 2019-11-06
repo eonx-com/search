@@ -40,6 +40,7 @@ final class TransformableSearchHandlerStub implements TransformableSearchHandler
     {
         return [
             'doc' => [
+                'dynamic' => 'strict',
                 'properties' => [
                     'createdAt' => [
                         'type' => 'date',

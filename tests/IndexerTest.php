@@ -6,6 +6,7 @@ namespace Tests\LoyaltyCorp\Search;
 use EoneoPay\Utils\DateTime;
 use LoyaltyCorp\Search\Exceptions\AliasNotFoundException;
 use LoyaltyCorp\Search\Indexer;
+use LoyaltyCorp\Search\Indexer\AccessTokenMappingHelper;
 use LoyaltyCorp\Search\Indexer\IndexSwapResult;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
@@ -37,9 +38,13 @@ final class IndexerTest extends TestCase
             'name' => 'valid_20190102030405',
             'mappings' => [
                 'doc' => [
+                    'dynamic' => 'strict',
                     'properties' => [
                         'createdAt' => [
                             'type' => 'date',
+                        ],
+                        '_access_tokens' => [
+                            'type' => 'keyword',
                         ],
                     ],
                 ],
@@ -281,6 +286,7 @@ final class IndexerTest extends TestCase
     ): Indexer {
         return new Indexer(
             $client ?? new ClientStub(),
+            new AccessTokenMappingHelper(),
             new DefaultIndexNameTransformer()
         );
     }

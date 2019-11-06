@@ -11,12 +11,14 @@ use EoneoPay\Externals\ORM\Interfaces\EntityManagerInterface as EoneoPayEntityMa
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
+use LoyaltyCorp\Search\Access\AnonymousAccessPopulator;
 use LoyaltyCorp\Search\Client;
 use LoyaltyCorp\Search\Exceptions\BindingResolutionException;
 use LoyaltyCorp\Search\Helpers\ClientBulkResponseHelper;
 use LoyaltyCorp\Search\Helpers\EntityManagerHelper;
 use LoyaltyCorp\Search\Helpers\RegisteredSearchHandler;
 use LoyaltyCorp\Search\Indexer;
+use LoyaltyCorp\Search\Interfaces\Access\AccessPopulatorInterface;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\ClientBulkResponseHelperInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
@@ -64,6 +66,8 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
      */
     public function register(): void
     {
+        $this->app->singleton(AccessPopulatorInterface::class, AnonymousAccessPopulator::class);
+
         // Bind elasticsearch client
         $this->app->singleton(ClientInterface::class, static function (Container $app): ClientInterface {
             return new Client(

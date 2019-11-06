@@ -4,13 +4,21 @@ declare(strict_types=1);
 namespace LoyaltyCorp\Search;
 
 use LoyaltyCorp\Search\DataTransferObjects\DocumentUpdate;
+use LoyaltyCorp\Search\Indexer\AccessTokenMappingHelper;
+use LoyaltyCorp\Search\Interfaces\Access\AccessPopulatorInterface;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
+use LoyaltyCorp\Search\Interfaces\CustomAccessHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
 use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 
 final class Populator implements PopulatorInterface
 {
+    /**
+     * @var \LoyaltyCorp\Search\Interfaces\Access\AccessPopulatorInterface
+     */
+    private $accessPopulator;
+
     /**
      * @var \LoyaltyCorp\Search\Interfaces\ClientInterface
      */
@@ -24,13 +32,16 @@ final class Populator implements PopulatorInterface
     /**
      * Constructor.
      *
+     * @param \LoyaltyCorp\Search\Interfaces\Access\AccessPopulatorInterface $accessPopulator
      * @param \LoyaltyCorp\Search\Interfaces\ClientInterface $client
      * @param \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface $nameTransformer
      */
     public function __construct(
+        AccessPopulatorInterface $accessPopulator,
         ClientInterface $client,
         IndexNameTransformerInterface $nameTransformer
     ) {
+        $this->accessPopulator = $accessPopulator;
         $this->client = $client;
         $this->nameTransformer = $nameTransformer;
     }
@@ -74,6 +85,14 @@ final class Populator implements PopulatorInterface
             }
 
             $index = $this->nameTransformer->transformIndexName($handler, $object);
+
+            // If the handler is not doing its own security, add access tokens to the document.
+            if ($handler instanceof CustomAccessHandlerInterface === false) {
+                $accessTokens = $this->accessPopulator->getAccessTokens($object);
+
+                $transformed[AccessTokenMappingHelper::ACCESS_TOKEN_PROPERTY] = $accessTokens;
+            }
+
             $updates[] = new DocumentUpdate(
                 $index . $indexSuffix,
                 (string)$searchId,

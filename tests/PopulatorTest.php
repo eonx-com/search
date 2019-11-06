@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search;
 
+use LoyaltyCorp\Search\Access\AnonymousAccessPopulator;
 use LoyaltyCorp\Search\DataTransferObjects\DocumentUpdate;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
@@ -17,6 +18,8 @@ use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
 
 /**
  * @covers \LoyaltyCorp\Search\Populator
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) required to test
  */
 final class PopulatorTest extends TestCase
 {
@@ -34,10 +37,18 @@ final class PopulatorTest extends TestCase
 
         $expected = [
             [
-                new DocumentUpdate('valid_suffix', 'search1', ['search' => 'body']),
+                new DocumentUpdate(
+                    'valid_suffix',
+                    'search1',
+                    ['search' => 'body', '_access_tokens' => ['anonymous']]
+                ),
             ],
             [
-                new DocumentUpdate('valid_suffix', 'search2', ['search' => 'body']),
+                new DocumentUpdate(
+                    'valid_suffix',
+                    'search2',
+                    ['search' => 'body', '_access_tokens' => ['anonymous']]
+                ),
             ],
         ];
 
@@ -86,8 +97,16 @@ final class PopulatorTest extends TestCase
 
         $expected = [
             [
-                new DocumentUpdate('valid_suffix', 'search1', ['search' => 'body']),
-                new DocumentUpdate('valid_suffix', 'search2', ['search' => 'body']),
+                new DocumentUpdate(
+                    'valid_suffix',
+                    'search1',
+                    ['search' => 'body', '_access_tokens' => ['anonymous']]
+                ),
+                new DocumentUpdate(
+                    'valid_suffix',
+                    'search2',
+                    ['search' => 'body', '_access_tokens' => ['anonymous']]
+                ),
             ],
         ];
 
@@ -141,11 +160,23 @@ final class PopulatorTest extends TestCase
 
         $expected = [
             [
-                new DocumentUpdate('valid_suffix', 'search1', ['search' => 'body']),
-                new DocumentUpdate('valid_suffix', 'search2', ['search' => 'body']),
+                new DocumentUpdate(
+                    'valid_suffix',
+                    'search1',
+                    ['search' => 'body', '_access_tokens' => ['anonymous']]
+                ),
+                new DocumentUpdate(
+                    'valid_suffix',
+                    'search2',
+                    ['search' => 'body', '_access_tokens' => ['anonymous']]
+                ),
             ],
             [
-                new DocumentUpdate('valid_suffix', 'search3', ['search' => 'body']),
+                new DocumentUpdate(
+                    'valid_suffix',
+                    'search3',
+                    ['search' => 'body', '_access_tokens' => ['anonymous']]
+                ),
             ],
         ];
 
@@ -172,7 +203,11 @@ final class PopulatorTest extends TestCase
 
         $expected = [
             [
-                new DocumentUpdate('valid_suffix', 'search1', ['search' => 'body']),
+                new DocumentUpdate(
+                    'valid_suffix',
+                    'search1',
+                    ['search' => 'body', '_access_tokens' => ['anonymous']]
+                ),
             ],
         ];
 
@@ -199,6 +234,7 @@ final class PopulatorTest extends TestCase
         ?IndexNameTransformerInterface $nameTransformer = null
     ): Populator {
         return new Populator(
+            new AnonymousAccessPopulator(),
             $client ?? new ClientStub(),
             $nameTransformer ?? new DefaultIndexNameTransformer()
         );

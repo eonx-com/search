@@ -13,11 +13,11 @@
     "doctrine/orm": "^2.6",
     "elasticsearch/elasticsearch": "^6.1",
     "eoneopay/externals": "^1.1",
+    "ext-json": "*",
     "guzzlehttp/guzzle": "^6.3",
     "illuminate/console": "^5.8|^6.0"
   },
   "require-dev": {
-    "ext-json": "*",
     "eoneopay/standards": "dev-master",
     "friendsofphp/php-cs-fixer": "^2.15",
     "guzzlehttp/psr7": "^1.5",

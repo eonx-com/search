@@ -66,6 +66,7 @@ final class ApplicationStub implements Application, ArrayAccess
      */
     public function bind($abstract, $concrete = null, $shared = null): void
     {
+        $this->container->bind($abstract, $concrete, $shared);
     }
 
     /**

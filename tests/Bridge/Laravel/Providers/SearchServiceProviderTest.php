@@ -3,6 +3,13 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Bridge\Laravel\Providers;
 
+use EoneoPay\Externals\HttpClient\Client as HttpClient;
+use EoneoPay\Externals\HttpClient\ExceptionHandler;
+use EoneoPay\Externals\HttpClient\Interfaces\ClientInterface as HttpClientInterface;
+use EoneoPay\Externals\HttpClient\Interfaces\ExceptionHandlerInterface;
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\ClientInterface as GuzzleClientInterface;
+use Illuminate\Contracts\Foundation\Application;
 use LoyaltyCorp\Search\Bridge\Laravel\Providers\SearchServiceProvider;
 use LoyaltyCorp\Search\Client;
 use LoyaltyCorp\Search\Exceptions\BindingResolutionException;
@@ -15,10 +22,12 @@ use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
 use LoyaltyCorp\Search\Interfaces\RequestProxyFactoryInterface;
+use LoyaltyCorp\Search\Interfaces\ResponseFactoryInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 use LoyaltyCorp\Search\Manager;
 use LoyaltyCorp\Search\Populator;
 use LoyaltyCorp\Search\RequestProxyFactory;
+use LoyaltyCorp\Search\ResponseFactory;
 use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NonDoctrineHandlerStub;
@@ -58,6 +67,10 @@ final class SearchServiceProviderTest extends TestCase
             $application->make(RegisteredSearchHandlerInterface::class)
         );
         self::assertInstanceOf(
+            ResponseFactory::class,
+            $application->make(ResponseFactoryInterface::class)
+        );
+        self::assertInstanceOf(
             DefaultIndexNameTransformer::class,
             $application->make(IndexNameTransformerInterface::class)
         );
@@ -93,13 +106,13 @@ final class SearchServiceProviderTest extends TestCase
      */
     public function testDoctrineEntityManagerResolutionThrowsException(): void
     {
-        $this->expectException(BindingResolutionException::class);
-        $this->expectExceptionMessage('Could not resolve Entity Manager from application container');
-
         $application = $this->createApplication();
         $application->singleton('registry', ClientStub::class);
 
         (new SearchServiceProvider($application))->register();
+
+        $this->expectException(BindingResolutionException::class);
+        $this->expectExceptionMessage('Could not resolve Entity Manager from application container');
 
         $application->make(EntityManagerHelperInterface::class);
     }
@@ -129,5 +142,20 @@ final class SearchServiceProviderTest extends TestCase
         $registeredHandlers = $application->make(RegisteredSearchHandlerInterface::class);
 
         self::assertEquals($expected, $registeredHandlers->getAll());
+    }
+
+    /**
+     * Overridden to bind required dependencies.
+     *
+     * @return \Illuminate\Contracts\Foundation\Application
+     */
+    protected function createApplication(): Application
+    {
+        $app = parent::createApplication();
+        $app->bind(HttpClientInterface::class, HttpClient::class);
+        $app->bind(ExceptionHandlerInterface::class, ExceptionHandler::class);
+        $app->bind(GuzzleClientInterface::class, GuzzleClient::class);
+
+        return $app;
     }
 }

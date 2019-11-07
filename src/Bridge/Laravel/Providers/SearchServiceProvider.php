@@ -27,11 +27,13 @@ use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
 use LoyaltyCorp\Search\Interfaces\RequestProxyFactoryInterface;
+use LoyaltyCorp\Search\Interfaces\ResponseFactoryInterface;
 use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 use LoyaltyCorp\Search\Manager;
 use LoyaltyCorp\Search\Populator;
 use LoyaltyCorp\Search\RequestProxyFactory;
+use LoyaltyCorp\Search\ResponseFactory;
 use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use LoyaltyCorp\Search\Workers\EntityDeleteDataWorker;
 use LoyaltyCorp\Search\Workers\EntityDeleteWorker;
@@ -127,6 +129,8 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
 
             return new RegisteredSearchHandler($searchHandlers);
         });
+
+        $this->app->singleton(ResponseFactoryInterface::class, ResponseFactory::class);
 
         // Bind workers
         $this->app->singleton(EntityDeleteDataWorker::class);

@@ -10,14 +10,23 @@ use EoneoPay\Externals\HttpClient\Interfaces\ExceptionHandlerInterface;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\ClientInterface as GuzzleClientInterface;
 use Illuminate\Contracts\Foundation\Application;
+use LoyaltyCorp\Search\Access\AnonymousAccessPopulator;
+use LoyaltyCorp\Search\Bridge\Laravel\Listeners\EntityDeleteDataListener;
+use LoyaltyCorp\Search\Bridge\Laravel\Listeners\EntityUpdateListener;
 use LoyaltyCorp\Search\Bridge\Laravel\Providers\SearchServiceProvider;
 use LoyaltyCorp\Search\Client;
 use LoyaltyCorp\Search\Exceptions\BindingResolutionException;
+use LoyaltyCorp\Search\Helpers\ClientBulkResponseHelper;
 use LoyaltyCorp\Search\Helpers\EntityManagerHelper;
 use LoyaltyCorp\Search\Helpers\RegisteredSearchHandler;
+use LoyaltyCorp\Search\Indexer;
+use LoyaltyCorp\Search\Indexer\AccessTokenMappingHelper;
+use LoyaltyCorp\Search\Interfaces\Access\AccessPopulatorInterface;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
+use LoyaltyCorp\Search\Interfaces\Helpers\ClientBulkResponseHelperInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
+use LoyaltyCorp\Search\Interfaces\Indexer\MappingHelperInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
@@ -29,6 +38,7 @@ use LoyaltyCorp\Search\Populator;
 use LoyaltyCorp\Search\RequestProxyFactory;
 use LoyaltyCorp\Search\ResponseFactory;
 use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
+use LoyaltyCorp\Search\Workers\EntityDeleteWorker;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NonDoctrineHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NotSearchableStub;
@@ -57,44 +67,29 @@ final class SearchServiceProviderTest extends TestCase
         // Run registration
         (new SearchServiceProvider($application))->register();
 
-        // Ensure services are bound
-        self::assertInstanceOf(Client::class, $application->make(ClientInterface::class));
-        self::assertInstanceOf(Manager::class, $application->make(ManagerInterface::class));
-        self::assertInstanceOf(EntityManagerHelper::class, $application->make(EntityManagerHelperInterface::class));
-        self::assertInstanceOf(Populator::class, $application->make(PopulatorInterface::class));
-        self::assertInstanceOf(
-            RegisteredSearchHandler::class,
-            $application->make(RegisteredSearchHandlerInterface::class)
-        );
-        self::assertInstanceOf(
-            ResponseFactory::class,
-            $application->make(ResponseFactoryInterface::class)
-        );
-        self::assertInstanceOf(
-            DefaultIndexNameTransformer::class,
-            $application->make(IndexNameTransformerInterface::class)
-        );
-        self::assertInstanceOf(
-            RequestProxyFactory::class,
-            $application->make(RequestProxyFactoryInterface::class)
-        );
-    }
+        $services = [
+            AccessPopulatorInterface::class => AnonymousAccessPopulator::class,
+            ClientInterface::class => Client::class,
+            ClientBulkResponseHelperInterface::class => ClientBulkResponseHelper::class,
+            EntityManagerHelperInterface::class => EntityManagerHelper::class,
+            IndexNameTransformerInterface::class => DefaultIndexNameTransformer::class,
+            IndexerInterface::class => Indexer::class,
+            ManagerInterface::class => Manager::class,
+            MappingHelperInterface::class => AccessTokenMappingHelper::class,
+            PopulatorInterface::class => Populator::class,
+            RegisteredSearchHandlerInterface::class => RegisteredSearchHandler::class,
+            RequestProxyFactoryInterface::class => RequestProxyFactory::class,
+            ResponseFactoryInterface::class => ResponseFactory::class,
+            EntityDeleteDataListener::class => EntityDeleteDataListener::class,
+            EntityDeleteWorker::class => EntityDeleteWorker::class,
+            EntityUpdateListener::class => EntityUpdateListener::class
+        ];
 
-    /**
-     * Test service provider returns manager as a deferred service.
-     *
-     * @return void
-     */
-    public function testDeferredProvider(): void
-    {
-        self::assertSame([
-            ClientInterface::class,
-            IndexerInterface::class,
-            ManagerInterface::class,
-            PopulatorInterface::class,
-            RegisteredSearchHandlerInterface::class,
-            RequestProxyFactoryInterface::class,
-        ], (new SearchServiceProvider(new ApplicationStub()))->provides());
+        foreach ($services as $abstract => $concrete) {
+            $service = $application->make($abstract);
+
+            self::assertInstanceOf($concrete, $service);
+        }
     }
 
     /**

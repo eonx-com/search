@@ -43,7 +43,6 @@ use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NonDoctrineHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NotSearchableStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
-use Tests\LoyaltyCorp\Search\Stubs\Vendor\Illuminate\Contracts\Foundation\ApplicationStub;
 use Tests\LoyaltyCorp\Search\TestCase;
 
 /**
@@ -82,7 +81,7 @@ final class SearchServiceProviderTest extends TestCase
             ResponseFactoryInterface::class => ResponseFactory::class,
             EntityDeleteDataListener::class => EntityDeleteDataListener::class,
             EntityDeleteWorker::class => EntityDeleteWorker::class,
-            EntityUpdateListener::class => EntityUpdateListener::class
+            EntityUpdateListener::class => EntityUpdateListener::class,
         ];
 
         foreach ($services as $abstract => $concrete) {

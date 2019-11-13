@@ -10,6 +10,7 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Psr7\Response;
 use LoyaltyCorp\Search\Exceptions\InvalidSearchRequestException;
 use LoyaltyCorp\Search\ResponseFactory;
+use stdClass;
 use Zend\Diactoros\Response\TextResponse;
 use Zend\Diactoros\ServerRequest;
 use function GuzzleHttp\Psr7\str;
@@ -75,7 +76,7 @@ final class ResponseFactoryTest extends TestCase
             'query' => [
                 'bool' => [
                     'should' => [
-                        'match_all' => [],
+                        'match_all' => new stdClass(),
                     ],
                     'filter' => [
                         ['term' => ['_access_tokens' => ['anonymous']]],

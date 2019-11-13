@@ -10,6 +10,7 @@ use LoyaltyCorp\Search\Indexer\AccessTokenMappingHelper;
 use LoyaltyCorp\Search\Interfaces\ResponseFactoryInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use stdClass;
 use function GuzzleHttp\Psr7\stream_for;
 
 final class ResponseFactory implements ResponseFactoryInterface
@@ -96,7 +97,7 @@ final class ResponseFactory implements ResponseFactoryInterface
         ];
 
         // If the search request doesnt have a query, we add a default match_all query.
-        $query = $body['query'] ?? ['match_all' => []];
+        $query = $body['query'] ?? ['match_all' => new stdClass()];
 
         // Wrap the entire query in a bool/filter
         $body['query'] = [

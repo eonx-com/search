@@ -79,7 +79,7 @@ final class ResponseFactoryTest extends TestCase
                         'match_all' => new stdClass(),
                     ],
                     'filter' => [
-                        ['term' => ['_access_tokens' => ['anonymous']]],
+                        ['terms' => ['_access_tokens' => ['anonymous']]],
                     ],
                 ],
             ],
@@ -133,7 +133,7 @@ final class ResponseFactoryTest extends TestCase
                         ],
                     ],
                     'filter' => [
-                        ['term' => ['_access_tokens' => ['access-secret', 'purple-elephants']]],
+                        ['terms' => ['_access_tokens' => ['access-secret', 'purple-elephants']]],
                     ],
                 ],
             ],

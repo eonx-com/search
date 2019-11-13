@@ -105,7 +105,7 @@ final class ResponseFactory implements ResponseFactoryInterface
                 'should' => $query,
                 'filter' => [
                     [
-                        'term' => [
+                        'terms' => [
                             AccessTokenMappingHelper::ACCESS_TOKEN_PROPERTY => $accessTokens ?: ['anonymous'],
                         ],
                     ],

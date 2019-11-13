@@ -97,7 +97,7 @@ final class RequestProxyFactory implements RequestProxyFactoryInterface
         $query = $request->getUri()->getQuery();
 
         if ($query !== '') {
-            $searchPath .= '?' . $request->getUri();
+            $searchPath .= '?' . $request->getUri()->getQuery();
         }
 
         return $searchPath;

@@ -76,10 +76,12 @@ final class ResponseFactory implements ResponseFactoryInterface
         }
 
         // Decode the JSON. If it fails we rethrow the exception wrapped in one of ours.
+        // We use non assoc json_decode so we do not lose the difference between empty
+        // arrays or empty objects.
         try {
             $body = \json_decode(
                 $contents,
-                true,
+                false,
                 512,
                 \JSON_THROW_ON_ERROR
             );
@@ -92,26 +94,24 @@ final class ResponseFactory implements ResponseFactoryInterface
         }
 
         // Exclude the access field from the _source key of results
-        $body['_source'] = [
+        $body->_source = [
             'excludes' => [AccessTokenMappingHelper::ACCESS_TOKEN_PROPERTY],
         ];
 
         // If the search request doesnt have a query, we add a default match_all query.
-        $query = $body['query'] ?? ['match_all' => new stdClass()];
+        $query = $body->query ?? ['match_all' => new stdClass()];
+
+        // Create the access control filter
+        $filter = new stdClass();
+        $filter->terms = [
+            AccessTokenMappingHelper::ACCESS_TOKEN_PROPERTY => $accessTokens ?: ['anonymous'],
+        ];
 
         // Wrap the entire query in a bool/filter
-        $body['query'] = [
-            'bool' => [
-                'should' => $query,
-                'filter' => [
-                    [
-                        'terms' => [
-                            AccessTokenMappingHelper::ACCESS_TOKEN_PROPERTY => $accessTokens ?: ['anonymous'],
-                        ],
-                    ],
-                ],
-            ],
-        ];
+        $body->query = new stdClass();
+        $body->query->bool = new stdClass();
+        $body->query->bool->should = $query;
+        $body->query->bool->filter = [$filter];
 
         // Reencode the request body as a stream for the request.
         $modifiedBody = stream_for(\json_encode($body, \JSON_THROW_ON_ERROR));

@@ -170,6 +170,67 @@ final class ResponseFactoryTest extends TestCase
     }
 
     /**
+     * Tests what happens when an empty request body is proxied.
+     *
+     * @return void
+     */
+    public function testJsonNotConvertedToEmptyArray(): void
+    {
+        $response = new TextResponse('RESPONSE');
+
+        $mockHandler = new MockHandler([$response]);
+        $client = new Client(
+            new GuzzleClient([
+                'handler' => $mockHandler,
+            ]),
+            new ExceptionHandler()
+        );
+        $service = new ResponseFactory($client);
+
+        $expectedData = [
+            'query' => [
+                'bool' => [
+                    'should' => [
+                        'match_all' => new stdClass(),
+                    ],
+                    'filter' => [
+                        ['terms' => ['_access_tokens' => ['access-secret', 'purple-elephants']]],
+                    ],
+                ],
+            ],
+            '_source' => [
+                'excludes' => [
+                    '_access_tokens',
+                ],
+            ],
+        ];
+        $expectedRequest = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            stream_for(
+                \json_encode($expectedData, \JSON_THROW_ON_ERROR)
+            )
+        );
+
+        $request = new ServerRequest(
+            [],
+            [],
+            null,
+            'POST',
+            stream_for('{"query": {"match_all": {}}}')
+        );
+
+        $service->sendRequest($request, ['access-secret', 'purple-elephants']);
+
+        $actual = $mockHandler->getLastRequest()
+            ->withoutHeader('user-agent');
+
+        self::assertSame(str($expectedRequest), str($actual));
+    }
+
+    /**
      * Tests what happens when a request contains invalid json.
      *
      * @return void

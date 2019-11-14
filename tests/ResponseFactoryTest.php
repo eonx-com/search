@@ -75,7 +75,7 @@ final class ResponseFactoryTest extends TestCase
             ],
             'query' => [
                 'bool' => [
-                    'should' => [
+                    'must' => [
                         'match_all' => new stdClass(),
                     ],
                     'filter' => [
@@ -125,7 +125,7 @@ final class ResponseFactoryTest extends TestCase
         $expectedData = [
             'query' => [
                 'bool' => [
-                    'should' => [
+                    'must' => [
                         'term' => [
                             'user' => [
                                 'value' => 'tim',
@@ -190,7 +190,7 @@ final class ResponseFactoryTest extends TestCase
         $expectedData = [
             'query' => [
                 'bool' => [
-                    'should' => [
+                    'must' => [
                         'match_all' => new stdClass(),
                     ],
                     'filter' => [

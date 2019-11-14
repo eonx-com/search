@@ -110,7 +110,7 @@ final class ResponseFactory implements ResponseFactoryInterface
         // Wrap the entire query in a bool/filter
         $body->query = new stdClass();
         $body->query->bool = new stdClass();
-        $body->query->bool->should = $query;
+        $body->query->bool->must = $query;
         $body->query->bool->filter = [$filter];
 
         // Reencode the request body as a stream for the request.

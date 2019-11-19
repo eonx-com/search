@@ -33,7 +33,7 @@ interface ManagerInterface
      * Accepts a multi dimensional array of search ids keyed by the index
      * they should be removed from.
      *
-     * @param string[] $ids
+     * @param string[][] $ids
      *
      * @return void
      */

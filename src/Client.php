@@ -50,16 +50,6 @@ final class Client implements ClientInterface
         $bulk = [];
 
         foreach ($searchIds as $index => $indexIds) {
-            // Skip non-interable items
-            if (\is_iterable($indexIds) === false) {
-                continue;
-            }
-
-            /**
-             * @var mixed[] $indexIds
-             *
-             * @see https://youtrack.jetbrains.com/issue/WI-37859 typehint required until PhpStorm recognises === check
-             */
             foreach ($indexIds as $indexId) {
                 // The _type parameter is being deprecated, and in Elasticsearch 6.0+ means
                 // nothing, but still must be provided. As a standard, anything using this
@@ -219,7 +209,7 @@ final class Client implements ClientInterface
 
             return \array_values($aliases);
         } catch (Exception $exception) {
-            throw new SearchCheckerException('An error ocurred obtaining a list of aliases', 0, $exception);
+            throw new SearchCheckerException('An error occurred obtaining a list of aliases', 0, $exception);
         }
     }
 
@@ -241,7 +231,7 @@ final class Client implements ClientInterface
             // Reset keys to numerical indexes & remove aliases key
             return \array_values($indices);
         } catch (Exception $exception) {
-            throw new SearchCheckerException('An error ocurred obtaining a list of indices', 0, $exception);
+            throw new SearchCheckerException('An error occurred obtaining a list of indices', 0, $exception);
         }
     }
 

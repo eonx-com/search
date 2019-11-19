@@ -18,7 +18,7 @@ use Tests\LoyaltyCorp\Search\Stubs\CatStub;
 final class ClientStub extends Client
 {
     /**
-     * @var mixed[]
+     * @var mixed[]|null
      */
     private $bulk;
 

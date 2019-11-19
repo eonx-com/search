@@ -13,8 +13,8 @@ parameters:
             message: '#Tests\\LoyaltyCorp\\Search\\Stubs\\Vendor\\Elasticsearch\\CallableResponseClientStub::__construct\(\) does not call parent constructor from Elasticsearch\\Client.#'
             path: tests/Stubs/Vendor/Elasticsearch/CallableResponseClientStub.php
         -
-            message: '#Tests\\LoyaltyCorp\\Search\\Stubs\\Vendor\\Elasticsearch\\NullResponseClientStub::__construct\(\) does not call parent constructor from Elasticsearch\\Client.#'
-            path: tests/Stubs/Vendor/Elasticsearch/NullResponseClientStub.php
-        -
             message: '#Tests\\LoyaltyCorp\\Search\\Stubs\\CatStub::__construct\(\) does not call parent constructor from Elasticsearch\\Namespaces\\AbstractNamespace.#'
             path: tests/Stubs/CatStub.php
+        -
+            message: '#Method Tests\\LoyaltyCorp\\Search\\Stubs\\Vendor\\Elasticsearch\\CallableResponseClientStub::bulk\(\) should return array but returns GuzzleHttp\\Ring\\Future\\FutureArray\.#'
+            path: tests/Stubs/Vendor/Elasticsearch/CallableResponseClientStub.php

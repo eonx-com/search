@@ -37,7 +37,7 @@ final class SearchIndexLiveCommand extends Command
     }
 
     /**
-     * Swap root alias to point to newest index created on a per-seach-handler basis.
+     * Swap root alias to point to newest index created on a per-search-handler basis.
      *
      * @return void
      */

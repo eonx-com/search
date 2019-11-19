@@ -66,7 +66,7 @@ final class ApplicationStub implements Application, ArrayAccess
      */
     public function bind($abstract, $concrete = null, $shared = null): void
     {
-        $this->container->bind($abstract, $concrete, $shared);
+        $this->container->bind($abstract, $concrete, $shared ?? false);
     }
 
     /**
@@ -427,9 +427,9 @@ final class ApplicationStub implements Application, ArrayAccess
     /**
      * @inheritdoc
      */
-    public function singleton($abstract, $concrete = null)
+    public function singleton($abstract, $concrete = null): void
     {
-        return $this->callMethod('singleton', [$abstract, $concrete]);
+        $this->callMethod('singleton', [$abstract, $concrete]);
     }
 
     /**
@@ -442,9 +442,9 @@ final class ApplicationStub implements Application, ArrayAccess
     /**
      * @inheritdoc
      */
-    public function tag($abstracts, $tags)
+    public function tag($abstracts, $tags): void
     {
-        return $this->callMethod('tag', [$abstracts, $tags]);
+        $this->callMethod('tag', [$abstracts, $tags]);
     }
 
     /**

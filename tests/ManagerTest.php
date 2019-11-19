@@ -59,9 +59,17 @@ final class ManagerTest extends TestCase
         $manager = $this->getManager($handlers, $this->createClient($stub));
 
         // Test method passes through to elasticsearch
-        $manager->handleDeletes(['index' => [['9']]]);
+        $manager->handleDeletes(['index' => ['9', '10']]);
+
+        $expectedRequest = [
+            'body' => [
+                ['delete' => ['_index' => 'index', '_type' => 'doc', '_id' => '9']],
+                ['delete' => ['_index' => 'index', '_type' => 'doc', '_id' => '10']],
+            ]
+        ];
+
         self::assertSame(
-            ['body' => [['delete' => ['_index' => 'index', '_type' => 'doc', '_id' => ['9']]]]],
+            $expectedRequest,
             $stub->getBulkParameters()
         );
     }

@@ -1,5 +1,5 @@
 {
-  "name": "loyaltycorp/search",
+  "name": "eonx-com/search",
   "description": "Search functionality provided by elastic search",
   "keywords": [
     "elasticsearch",
@@ -12,19 +12,20 @@
     "php": ">=7.3",
     "doctrine/orm": "^2.6",
     "elasticsearch/elasticsearch": "^6.1",
-    "eoneopay/externals": "^1.1",
+    "eonx-com/externals": "^1.0",
     "ext-json": "*",
     "guzzlehttp/guzzle": "^6.3",
     "illuminate/console": "^5.8|^6.0"
   },
   "require-dev": {
-    "eoneopay/standards": "dev-master",
+    "eonx-com/multitenancy": "^1.0@RC",
+    "eonx-com/standards": "^0.2",
+    "eonx-com/utils": "^1.0",
     "friendsofphp/php-cs-fixer": "^2.15",
     "guzzlehttp/psr7": "^1.5",
     "illuminate/container": "^5.8|^6.0",
     "illuminate/support": "^5.8|^6.0",
     "loyaltycorp/easy-entity-change": "^0.10.4",
-    "loyaltycorp/multitenancy": "^1.0",
     "monolog/monolog": "^1.24",
     "phpmd/phpmd": "^2.6",
     "phpstan/phpstan": "^0.11",
@@ -33,6 +34,9 @@
     "sebastian/phpcpd": "^4.0",
     "squizlabs/php_codesniffer": "3.*",
     "vlucas/phpdotenv": "^3.0"
+  },
+  "replace": {
+    "loyaltycorp/search": "^2.1"
   },
   "autoload": {
     "psr-4": {
@@ -50,7 +54,7 @@
     "vlucas/phpdotenv": "Required when using the Laravel bridge",
     "loyaltycorp/easy-entity-change": "Required when using the Laravel events bridge"
   },
-  "minimum-stability": "dev",
+  "minimum-stability": "stable",
   "prefer-stable": true,
   "config": {
     "optimize-autoloader": true,

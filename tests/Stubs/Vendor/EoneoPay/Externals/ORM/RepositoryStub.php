@@ -47,7 +47,7 @@ final class RepositoryStub implements RepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function findAll()
+    public function findAll(): ?array
     {
         return $this->entities ?? [];
     }

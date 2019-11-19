@@ -23,11 +23,12 @@ final class EntityDeleteDataWorker
     }
 
     /**
-     * TODO Define this title.
+     * This method returns data about the deleted objects that should
+     * be removed from indices.
      *
      * @param object[] $deletes
      *
-     * @return mixed[]
+     * @return string[][][]
      */
     public function handle(array $deletes): array
     {
@@ -38,10 +39,10 @@ final class EntityDeleteDataWorker
 
             foreach ($searchIds as $index => $searchId) {
                 if (\array_key_exists($index, $ids) === false) {
-                    $ids[$index] = [];
+                    $ids[(string) $index] = [];
                 }
 
-                $ids[$index][] = $searchId;
+                $ids[(string) $index][] = $searchId;
             }
         }
 

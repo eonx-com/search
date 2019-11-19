@@ -33,6 +33,14 @@ final class EntityDeleteListener implements ShouldQueue
      */
     public function handle(EntityChangeEvent $event): void
     {
-        $this->worker->handle($event->getDeletes()['search'] ?? []);
+        /**
+         * @var array<string, array<string>> $search
+         *
+         * The search key on deletes, if it exists is a multi dimensional string
+         * array created by the EntityDeleteDataListener.
+         */
+        $search = $event->getDeletes()['search'] ?? [];
+
+        $this->worker->handle($search);
     }
 }

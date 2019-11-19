@@ -16,7 +16,6 @@ use LoyaltyCorp\Search\Helpers\ClientBulkResponseHelper;
 use PHPUnit\Framework\AssertionFailedError;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch\CallableResponseClientStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch\ClientStub;
-use Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch\NullResponseClientStub;
 
 /**
  * @covers \LoyaltyCorp\Search\Client
@@ -116,28 +115,11 @@ final class ClientTest extends TestCase
         $stub = new ClientStub();
         $client = $this->createInstance($stub);
 
-        $expected = ['body' => [['delete' => ['_index' => 'index', '_type' => 'doc', '_id' => ['1']]]]];
+        $expected = ['body' => [['delete' => ['_index' => 'index', '_type' => 'doc', '_id' => '1']]]];
 
-        $client->bulkDelete(['index' => [['1']]]);
+        $client->bulkDelete(['index' => ['1']]);
 
         self::assertSame($expected, $stub->getBulkParameters());
-    }
-
-    /**
-     * Test bulk() checks returned data for invalid values.
-     *
-     * @return void
-     */
-    public function testBulkReturnTypeCheck(): void
-    {
-        $stub = new NullResponseClientStub();
-        $client = $this->createInstance($stub);
-
-        // A null result should throw an exception
-        $this->expectException(BulkFailureException::class);
-        $this->expectExceptionMessage('Invalid response received from bulk update');
-
-        $client->bulkUpdate([new DocumentUpdate('index', '1', 'document')]);
     }
 
     /**
@@ -444,7 +426,7 @@ final class ClientTest extends TestCase
     public function testListAliasesThrowsException(): void
     {
         $this->expectException(SearchCheckerException::class);
-        $this->expectExceptionMessage('An error ocurred obtaining a list of aliases');
+        $this->expectExceptionMessage('An error occurred obtaining a list of aliases');
 
         $response = [['alias' => 'alias1', 'index' => 'index1'], ['alias' => 'alias2', 'index' => 'index1']];
         $elasticClient = $this->createElasticClient($response, 400);
@@ -477,12 +459,12 @@ final class ClientTest extends TestCase
      */
     public function testListingIndicesThrowsException(): void
     {
-        $this->expectException(SearchCheckerException::class);
-        $this->expectExceptionMessage('An error ocurred obtaining a list of indices');
-
         $response = [['index' => 'index1'], ['index' => 'index2']];
         $elasticClient = $this->createElasticClient($response, 400);
         $client = $this->createInstance($elasticClient);
+
+        $this->expectException(SearchCheckerException::class);
+        $this->expectExceptionMessage('An error occurred obtaining a list of indices');
 
         $client->getIndices();
     }
@@ -513,10 +495,10 @@ final class ClientTest extends TestCase
         $stub = new ClientStub();
         $client = $this->createInstance($stub);
 
-        $client->bulkDelete(['index' => [['7']], 'not-iterable']);
+        $client->bulkDelete(['index' => ['7']]);
 
         self::assertSame(
-            ['body' => [['delete' => ['_index' => 'index', '_type' => 'doc', '_id' => ['7']]]]],
+            ['body' => [['delete' => ['_index' => 'index', '_type' => 'doc', '_id' => '7']]]],
             $stub->getBulkParameters()
         );
     }
@@ -537,7 +519,10 @@ final class ClientTest extends TestCase
             throw new AssertionFailedError('Unable to open in-memory resource for mocked guzzle handler');
         }
 
-        if (\fwrite($stream, \json_encode($response) ?: 'null') === false) {
+        if (\fwrite(
+            $stream,
+            \json_encode($response, \JSON_THROW_ON_ERROR)
+        ) === false) {
             throw new AssertionFailedError('Unable to write to in-memory resource for mocked guzzle handler');
         }
 
@@ -545,11 +530,12 @@ final class ClientTest extends TestCase
         \rewind($stream);
 
         $mockResponse = [
+            'body' => $stream,
+            'effective_url' => 'localhost',
             'status' => $statusCode ?? 200,
             'transfer_stats' => [
                 'total_time' => 100,
             ],
-            'body' => $stream,
         ];
 
         return (new ClientBuilder())

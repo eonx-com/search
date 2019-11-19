@@ -20,17 +20,27 @@ final class EntityDeleteWorkerTest extends TestCase
     public function testHandle(): void
     {
         $searchManager = new ManagerStub();
-
         $worker = new EntityDeleteWorker($searchManager);
 
-        $worker->handle(['id1']);
+        $expectedResult = ['index' => ['id1']];
 
-        $result = $searchManager->getDeletes();
-        self::assertSame([['id1']], $result);
+        $worker->handle(['index' => ['id1']]);
+
+        self::assertSame([$expectedResult], $searchManager->getDeletes());
+    }
+
+    /**
+     * Test handle empty deletes.
+     *
+     * @return void
+     */
+    public function testHandleEmptyDeletes(): void
+    {
+        $searchManager = new ManagerStub();
+        $worker = new EntityDeleteWorker($searchManager);
 
         $worker->handle([]);
 
-        $secondResult = $searchManager->getDeletes();
-        self::assertSame($result, $secondResult);
+        self::assertSame([], $searchManager->getDeletes());
     }
 }

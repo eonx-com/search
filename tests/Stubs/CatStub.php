@@ -45,6 +45,6 @@ final class CatStub extends CatNamespace
             throw new RuntimeException('An error occured');
         }
 
-        return 0;
+        return [['count' => 0]];
     }
 }

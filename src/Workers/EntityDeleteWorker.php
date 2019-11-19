@@ -25,7 +25,7 @@ final class EntityDeleteWorker
     /**
      * Handles entity change event and updates ES indexes.
      *
-     * @param string[] $searchData
+     * @param string[][] $searchData
      *
      * @return void
      */

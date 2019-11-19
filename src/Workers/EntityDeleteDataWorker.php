@@ -39,10 +39,10 @@ final class EntityDeleteDataWorker
 
             foreach ($searchIds as $index => $searchId) {
                 if (\array_key_exists($index, $ids) === false) {
-                    $ids[(string) $index] = [];
+                    $ids[(string)$index] = [];
                 }
 
-                $ids[(string) $index][] = $searchId;
+                $ids[(string)$index][] = $searchId;
             }
         }
 

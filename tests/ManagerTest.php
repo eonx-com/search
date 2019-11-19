@@ -65,7 +65,7 @@ final class ManagerTest extends TestCase
             'body' => [
                 ['delete' => ['_index' => 'index', '_type' => 'doc', '_id' => '9']],
                 ['delete' => ['_index' => 'index', '_type' => 'doc', '_id' => '10']],
-            ]
+            ],
         ];
 
         self::assertSame(

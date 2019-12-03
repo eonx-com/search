@@ -9,7 +9,7 @@ use Tests\LoyaltyCorp\Search\TestCase;
 /**
  * @covers \LoyaltyCorp\Search\DataTransferObjects\ClusterHealth
  */
-class ClusterHealthTest extends TestCase
+final class ClusterHealthTest extends TestCase
 {
     /**
      * Tests the DTO getters.
@@ -33,7 +33,7 @@ class ClusterHealthTest extends TestCase
             'number_of_pending_tasks' => 9,
             'number_of_in_flight_fetch' => 10,
             'task_max_waiting_in_queue_millis' => 11,
-            'active_shards_percent_as_number' => 50.0
+            'active_shards_percent_as_number' => 50.0,
         ];
 
         $instance = new ClusterHealth($data);

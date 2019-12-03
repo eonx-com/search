@@ -6,7 +6,7 @@ namespace LoyaltyCorp\Search\DataTransferObjects;
 /**
  * @SuppressWarnings(PHPMD.LongVariable) Long variable names to keep inline with Elasticsearch API.
  */
-class ClusterHealth
+final class ClusterHealth
 {
     /**
      * The number of active primary shards.
@@ -183,7 +183,6 @@ class ClusterHealth
      * Gets the number of data nodes.
      *
      * @return int
-     *
      */
     public function getNumberOfDataNodes(): int
     {
@@ -254,7 +253,6 @@ class ClusterHealth
      * Gets the number of unassigned shards.
      *
      * @return int
-     *
      */
     public function getNumberOfUnassignedShards(): int
     {

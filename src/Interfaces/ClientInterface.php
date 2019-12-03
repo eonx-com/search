@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Interfaces;
 
+use LoyaltyCorp\Search\DataTransferObjects\ClusterHealth;
+
 interface ClientInterface
 {
     /**
@@ -94,6 +96,13 @@ interface ClientInterface
      * @return string[][]
      */
     public function getAliases(?string $name = null): array;
+
+    /**
+     * Gets the health of the cluster.
+     *
+     * @return \LoyaltyCorp\Search\DataTransferObjects\ClusterHealth
+     */
+    public function getHealth(): ClusterHealth;
 
     /**
      * List all existing indexes.

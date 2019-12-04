@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Stubs;
 
+use LoyaltyCorp\Search\DataTransferObjects\ClusterHealth;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 
 /**
@@ -43,6 +44,11 @@ final class ClientStub implements ClientInterface
     private $deletedIndices = [];
 
     /**
+     * @var \LoyaltyCorp\Search\DataTransferObjects\ClusterHealth|null
+     */
+    private $health;
+
+    /**
      * @var mixed[]
      */
     private $indices;
@@ -75,19 +81,22 @@ final class ClientStub implements ClientInterface
      * @param mixed[]|null $indices
      * @param mixed[]|null $aliases
      * @param int[]|null $count
+     * @param \LoyaltyCorp\Search\DataTransferObjects\ClusterHealth|null $health
      */
     public function __construct(
         ?bool $isAlias = null,
         ?bool $isIndex = null,
         ?array $indices = null,
         ?array $aliases = null,
-        ?array $count = null
+        ?array $count = null,
+        ?ClusterHealth $health = null
     ) {
         $this->aliases = $aliases ?? [];
         $this->indices = $indices ?? [];
         $this->isAlias = $isAlias ?? false;
         $this->isIndex = $isIndex ?? false;
         $this->count = \array_reverse($count ?? []);
+        $this->health = $health;
     }
 
     /**
@@ -193,6 +202,30 @@ final class ClientStub implements ClientInterface
     public function getDeletedIndices(): array
     {
         return $this->deletedIndices;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getHealth(): ClusterHealth
+    {
+        return $this->health ?? new ClusterHealth([
+                'cluster_name' => 'testcluster',
+                'status' => 'yellow',
+                'timed_out' => false,
+                'number_of_nodes' => 1,
+                'number_of_data_nodes' => 2,
+                'active_primary_shards' => 3,
+                'active_shards' => 4,
+                'relocating_shards' => 5,
+                'initializing_shards' => 6,
+                'unassigned_shards' => 7,
+                'delayed_unassigned_shards' => 8,
+                'number_of_pending_tasks' => 9,
+                'number_of_in_flight_fetch' => 10,
+                'task_max_waiting_in_queue_millis' => 11,
+                'active_shards_percent_as_number' => 50.0,
+            ]);
     }
 
     /**

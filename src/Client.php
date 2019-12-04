@@ -5,6 +5,7 @@ namespace LoyaltyCorp\Search;
 
 use Elasticsearch\Client as BaseClient;
 use Exception;
+use LoyaltyCorp\Search\DataTransferObjects\ClusterHealth;
 use LoyaltyCorp\Search\Exceptions\SearchCheckerException;
 use LoyaltyCorp\Search\Exceptions\SearchDeleteException;
 use LoyaltyCorp\Search\Exceptions\SearchUpdateException;
@@ -210,6 +211,21 @@ final class Client implements ClientInterface
             return \array_values($aliases);
         } catch (Exception $exception) {
             throw new SearchCheckerException('An error occurred obtaining a list of aliases', 0, $exception);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getHealth(): ClusterHealth
+    {
+        try {
+            $cluster = $this->elastic->cluster();
+            $result = $cluster->health();
+
+            return new ClusterHealth($result);
+        } catch (Exception $exception) {
+            throw new SearchCheckerException('An error occurred checking the cluster health', 0, $exception);
         }
     }
 

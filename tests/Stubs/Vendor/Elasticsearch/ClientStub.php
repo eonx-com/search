@@ -32,7 +32,7 @@ final class ClientStub extends Client
      *
      * Create stub
      *
-     * @param bool|null $throwException Whether a call to bulk() should throw an exception or not
+     * @param bool|null $throwException Whether calls should throw an exception or not
      */
     public function __construct(?bool $throwException = null)
     {

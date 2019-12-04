@@ -22,6 +22,7 @@ use Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch\ClientStub;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Required for thorough testing
  * @SuppressWarnings(PHPMD.TooManyPublicMethods) Well tested code for all the cases.
+ * @SuppressWarnings(PHPMD.TooManyMethods) Required for testing
  */
 final class ClientTest extends TestCase
 {
@@ -306,6 +307,69 @@ final class ClientTest extends TestCase
     }
 
     /**
+     * Tests that the 'getHealth' method returns the expected DTO values.
+     *
+     * @return void
+     */
+    public function testGetHealth(): void
+    {
+        $response = [
+            'cluster_name' => 'testcluster',
+            'status' => 'yellow',
+            'timed_out' => false,
+            'number_of_nodes' => 1,
+            'number_of_data_nodes' => 1,
+            'active_primary_shards' => 5,
+            'active_shards' => 5,
+            'relocating_shards' => 0,
+            'initializing_shards' => 0,
+            'unassigned_shards' => 5,
+            'delayed_unassigned_shards' => 0,
+            'number_of_pending_tasks' => 0,
+            'number_of_in_flight_fetch' => 0,
+            'task_max_waiting_in_queue_millis' => 0,
+            'active_shards_percent_as_number' => 50.0,
+        ];
+        $client = $this->createElasticClient($response, 200);
+        $instance = $this->createInstance($client);
+
+        $result = $instance->getHealth();
+
+        self::assertSame('testcluster', $result->getName());
+        self::assertSame('yellow', $result->getStatus());
+        self::assertFalse($result->hasTimedOut());
+        self::assertSame(1, $result->getNumberOfNodes());
+        self::assertSame(1, $result->getNumberOfDataNodes());
+        self::assertSame(5, $result->getNumberOfActivePrimaryShards());
+        self::assertSame(5, $result->getNumberOfActiveShards());
+        self::assertSame(0, $result->getNumberOfRelocatingShards());
+        self::assertSame(0, $result->getNumberOfInitializingShards());
+        self::assertSame(5, $result->getNumberOfUnassignedShards());
+        self::assertSame(0, $result->getNumberOfDelayedUnassignedShards());
+        self::assertSame(0, $result->getNumberOfPendingTasks());
+        self::assertSame(0, $result->getNumberOfInFlightFetch());
+        self::assertSame(0, $result->getTaskMaxWaitingInQueueMillis());
+        self::assertSame(50, $result->getActiveShardsPercent());
+    }
+
+    /**
+     * Tests that the 'getHealth' method throws an exception when the Elasticsearch response is not as documented,
+     * and creation of the DTO fails.
+     *
+     * @return void
+     */
+    public function testGetHealthThrowsExceptionWithInvalidResponse(): void
+    {
+        $client = $this->createElasticClient([], 500);
+        $instance = $this->createInstance($client);
+
+        $this->expectException(SearchCheckerException::class);
+        $this->expectExceptionMessage('An error occurred checking the cluster health');
+
+        $instance->getHealth();
+    }
+
+    /**
      * Ensure the isAlias method respects HTTP status code.
      *
      * @return void
@@ -519,10 +583,7 @@ final class ClientTest extends TestCase
             throw new AssertionFailedError('Unable to open in-memory resource for mocked guzzle handler');
         }
 
-        if (\fwrite(
-            $stream,
-            \json_encode($response, \JSON_THROW_ON_ERROR)
-        ) === false) {
+        if (\fwrite($stream, \json_encode($response, \JSON_THROW_ON_ERROR)) === false) {
             throw new AssertionFailedError('Unable to write to in-memory resource for mocked guzzle handler');
         }
 

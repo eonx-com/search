@@ -360,7 +360,7 @@ final class ClientTest extends TestCase
      */
     public function testGetHealthThrowsExceptionWithInvalidResponse(): void
     {
-        $client = $this->createElasticClient(['something' => 'here'], 200);
+        $client = $this->createElasticClient([], 500);
         $instance = $this->createInstance($client);
 
         $this->expectException(SearchCheckerException::class);

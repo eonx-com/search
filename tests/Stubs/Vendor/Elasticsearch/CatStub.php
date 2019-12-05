@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Tests\LoyaltyCorp\Search\Stubs;
+namespace Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch;
 
 use Elasticsearch\Namespaces\CatNamespace;
 use RuntimeException;
@@ -36,7 +36,7 @@ final class CatStub extends CatNamespace
     /**
      * @noinspection PhpMissingParentCallCommonInspection ReturnTypeCanBeDeclaredInspection
      *
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function count($params = [])
     {

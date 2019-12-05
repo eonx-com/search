@@ -20,7 +20,7 @@ interface ClientBulkResponseHelperInterface
     /**
      * Wait for a promise to resolve and unwrap the response.
      *
-     * @param \GuzzleHttp\Ring\Future\FutureArrayInterface $promise
+     * @param \GuzzleHttp\Ring\Future\FutureArrayInterface<mixed> $promise
      *
      * @return mixed
      */

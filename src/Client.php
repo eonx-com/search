@@ -41,7 +41,7 @@ final class Client implements ClientInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      *
      * @throws \LoyaltyCorp\Search\Exceptions\BulkFailureException If there is at least one record with an error
      * @throws \LoyaltyCorp\Search\Exceptions\SearchDeleteException If backend client throws an exception via bulk()

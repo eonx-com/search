@@ -34,7 +34,7 @@ final class CallableResponseClientStub extends Client
     /**
      * @noinspection PhpMissingParentCallCommonInspection Parent is intentionally ignored as per class comment
      *
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function bulk($params = null)
     {

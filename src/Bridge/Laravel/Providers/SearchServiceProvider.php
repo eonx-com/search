@@ -49,7 +49,7 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
     /**
      * @noinspection PhpMissingParentCallCommonInspection Parent implementation is empty
      *
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function register(): void
     {
@@ -73,7 +73,7 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
         $this->app->singleton(ClientBulkResponseHelperInterface::class, ClientBulkResponseHelper::class);
         $this->app->singleton(EntityManagerHelperInterface::class, static function (Container $app) {
             /**
-             * @var \Doctrine\Common\Persistence\ManagerRegistry|mixed $endpoint
+             * @var \Doctrine\Common\Persistence\ManagerRegistry|mixed $registry
              *
              * @see https://youtrack.jetbrains.com/issue/WI-37859 - typehint required until PhpStorm recognises check
              */

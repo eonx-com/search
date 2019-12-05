@@ -65,7 +65,7 @@ final class ProviderAwareSearchHandlerStub implements TransformableSearchHandler
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getHandledClasses(): array
     {
@@ -73,7 +73,7 @@ final class ProviderAwareSearchHandlerStub implements TransformableSearchHandler
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getIndexName(): string
     {
@@ -89,7 +89,7 @@ final class ProviderAwareSearchHandlerStub implements TransformableSearchHandler
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getSearchId(object $object)
     {
@@ -97,7 +97,7 @@ final class ProviderAwareSearchHandlerStub implements TransformableSearchHandler
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function transform($object = null): ?array
     {

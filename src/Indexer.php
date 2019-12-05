@@ -60,7 +60,6 @@ final class Indexer implements IndexerInterface
         $allIndices = [];
         $handlerIndices = [];
 
-        /** @var \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[] $searchHandlers */
         foreach ($searchHandlers as $searchHandler) {
             $handlerIndices[] = $this->nameTransformer->transformIndexNames($searchHandler);
         }
@@ -155,21 +154,20 @@ final class Indexer implements IndexerInterface
                 // Use index+_new to determine the latest index name
                 $newAlias = \sprintf('%s_new', $indexName);
 
-                /** @var string[]|null $latestIndex */
-                $latestAlias = $this->elasticClient->getAliases($newAlias)[0] ?? null;
+                $latestAlias = $this->elasticClient->getAliases($newAlias)[0]['index'] ?? null;
 
-                if ($latestAlias === null) {
+                if (\is_string($latestAlias) === false) {
                     throw new AliasNotFoundException(\sprintf('Could not find expected alias \'%s\'', $newAlias));
                 }
 
                 if ($this->shouldIndexSwap($indexName, $newAlias)) {
-                    $indexToSkip[] = $latestAlias['index'];
+                    $indexToSkip[] = $latestAlias;
                     $aliasedToRemove[] = $newAlias;
 
                     continue;
                 }
 
-                $aliasesToMove[] = ['alias' => $indexName, 'index' => $latestAlias['index']];
+                $aliasesToMove[] = ['alias' => $indexName, 'index' => $latestAlias];
                 $aliasedToRemove[] = $newAlias;
             }
         }

@@ -53,7 +53,7 @@ final class Manager implements ManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getSearchMeta(object $object): array
     {
@@ -83,7 +83,7 @@ final class Manager implements ManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function handleDeletes(array $ids): void
     {
@@ -91,7 +91,7 @@ final class Manager implements ManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function handleUpdates(string $class, string $indexSuffix, array $objects): void
     {

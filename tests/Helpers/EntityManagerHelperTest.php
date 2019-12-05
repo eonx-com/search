@@ -24,15 +24,10 @@ final class EntityManagerHelperTest extends DoctrineTestCase
      *
      * @return void
      *
-     * @throws \Doctrine\Common\Annotations\AnnotationException
      * @throws \Doctrine\ORM\ORMException
      */
     public function testExceptionCatching(): void
     {
-        $this->expectException(DoctrineException::class);
-        $this->expectExceptionMessage(
-            'Unable to iterate all primary keys of entity \'Tests\LoyaltyCorp\Search\Stubs\Entities\EntityStub\''
-        );
         $entityManager = $this->getDoctrineEntityManager();
         $entityManagerHelper = $this->getInstance($entityManager);
         /**
@@ -40,9 +35,14 @@ final class EntityManagerHelperTest extends DoctrineTestCase
          *
          * @link https://github.com/phpstan/phpstan/issues/1246
          *
-         * @var \Traversable $result
+         * @var mixed[]|\Traversable $result
          */
         $result = $entityManagerHelper->iterateAllIds(EntityStub::class);
+
+        $this->expectException(DoctrineException::class);
+        $this->expectExceptionMessage(
+            'Unable to iterate all primary keys of entity \'Tests\LoyaltyCorp\Search\Stubs\Entities\EntityStub\''
+        );
 
         // Execute generator
         \iterator_to_array($result);
@@ -92,7 +92,7 @@ final class EntityManagerHelperTest extends DoctrineTestCase
          *
          * @link https://github.com/phpstan/phpstan/issues/1246
          *
-         * @var \Traversable $result
+         * @var mixed[]|\Traversable $result
          */
         $result = $entityManagerHelper->iterateAllIds(EntityStub::class);
         $expected = ['pk1', 'pk2', 'pk3'];

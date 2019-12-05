@@ -5,7 +5,7 @@ namespace Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch;
 
 use Elasticsearch\Client;
 use RuntimeException;
-use Tests\LoyaltyCorp\Search\Stubs\CatStub;
+use Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch\CatStub;
 
 /**
  * This stub overloads methods within the elasticsearch client as it doesn't implement an interface so
@@ -42,7 +42,7 @@ final class ClientStub extends Client
     /**
      * @noinspection PhpMissingParentCallCommonInspection ReturnTypeCanBeDeclaredInspection
      *
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function bulk($params = null)
     {
@@ -60,7 +60,7 @@ final class ClientStub extends Client
     /**
      * @noinspection PhpMissingParentCallCommonInspection ReturnTypeCanBeDeclaredInspection
      *
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function cat()
     {
@@ -80,7 +80,7 @@ final class ClientStub extends Client
     /**
      * @noinspection PhpMissingParentCallCommonInspection Parent is intentionally ignored as per class comment
      *
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function indices()
     {

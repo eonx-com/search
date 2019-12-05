@@ -36,7 +36,7 @@ final class OtherTransformableSearchHandlerStub implements TransformableSearchHa
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getHandledClasses(): array
     {
@@ -44,7 +44,7 @@ final class OtherTransformableSearchHandlerStub implements TransformableSearchHa
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getIndexName(): string
     {
@@ -52,7 +52,7 @@ final class OtherTransformableSearchHandlerStub implements TransformableSearchHa
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getSearchId(object $object)
     {
@@ -60,7 +60,7 @@ final class OtherTransformableSearchHandlerStub implements TransformableSearchHa
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function transform($object = null): ?array
     {

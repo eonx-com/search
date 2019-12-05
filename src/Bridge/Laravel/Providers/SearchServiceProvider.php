@@ -59,8 +59,8 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
                 ClientBuilder::create()
                     ->setConnectionParams([
                         'client' => [
-                            'connect_timeout' => 2,
-                            'timeout' => 12,
+                            'connect_timeout' => (int)\env('ELASTICSEARCH_CONNECTION_TIMEOUT', 2),
+                            'timeout' => (int)\env('ELASTICSEARCH_TIMEOUT', 12),
                         ],
                     ])
                     ->setLogger($app->make(LoggerInterface::class))

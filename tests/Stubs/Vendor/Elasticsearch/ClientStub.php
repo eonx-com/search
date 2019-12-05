@@ -5,7 +5,6 @@ namespace Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch;
 
 use Elasticsearch\Client;
 use RuntimeException;
-use Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch\CatStub;
 
 /**
  * This stub overloads methods within the elasticsearch client as it doesn't implement an interface so

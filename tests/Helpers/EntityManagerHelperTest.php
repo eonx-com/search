@@ -35,7 +35,7 @@ final class EntityManagerHelperTest extends DoctrineTestCase
          *
          * @link https://github.com/phpstan/phpstan/issues/1246
          *
-         * @var \Traversable|mixed[] $result
+         * @var mixed[]|\Traversable $result
          */
         $result = $entityManagerHelper->iterateAllIds(EntityStub::class);
 
@@ -92,7 +92,7 @@ final class EntityManagerHelperTest extends DoctrineTestCase
          *
          * @link https://github.com/phpstan/phpstan/issues/1246
          *
-         * @var \Traversable|mixed[] $result
+         * @var mixed[]|\Traversable $result
          */
         $result = $entityManagerHelper->iterateAllIds(EntityStub::class);
         $expected = ['pk1', 'pk2', 'pk3'];

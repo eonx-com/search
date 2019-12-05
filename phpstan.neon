@@ -11,7 +11,7 @@ parameters:
             path: tests/Stubs/Vendor/Elasticsearch/CallableResponseClientStub.php
         -
             message: '#Method (.*) should return (.*) but return statement is missing\.#'
-            path: tests/Stubs/Vendo
+            path: tests/Stubs/Vendor
         -
             message: '#Method (.*) return type has no value type specified in iterable type (.*)\.#'
             path: tests/Stubs/Vendor

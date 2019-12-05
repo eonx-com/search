@@ -16,7 +16,7 @@ use Illuminate\Contracts\Foundation\Application;
  *
  * @coversNothing
  *
- * @implements() ArrayAccess<string, mixed>
+ * @implements \ArrayAccess<string, mixed>
  */
 final class ApplicationStub implements Application, ArrayAccess
 {

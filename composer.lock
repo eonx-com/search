@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "848fbfa848dc5e6dae531a358521b4ca",
+    "content-hash": "defe3f2f46ce72694533910a3a762a80",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2854,6 +2854,45 @@
             "time": "2019-11-11T00:01:47+00:00"
         },
         {
+            "name": "eonx-com/easy-entity-change",
+            "version": "v0.10.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/eonx-com/easy-entity-change.git",
+                "reference": "1a2a9a55876ee362e753c860cbdf6ae712eff214"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/eonx-com/easy-entity-change/zipball/1a2a9a55876ee362e753c860cbdf6ae712eff214",
+                "reference": "1a2a9a55876ee362e753c860cbdf6ae712eff214",
+                "shasum": ""
+            },
+            "require": {
+                "eoneopay/externals": "^1.0",
+                "php": "^7.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7.5"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.11-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LoyaltyCorp\\EasyEntityChange\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Provides an easy way to hook up logic in your entities lifecycle",
+            "time": "2019-11-25T04:46:56+00:00"
+        },
+        {
             "name": "eonx-com/flowconfig-wrapper",
             "version": "v1.0.5",
             "source": {
@@ -4660,46 +4699,6 @@
                 "rest"
             ],
             "time": "2017-06-12T11:04:56+00:00"
-        },
-        {
-            "name": "loyaltycorp/easy-entity-change",
-            "version": "v0.10.7",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/loyaltycorp/easy-entity-change.git",
-                "reference": "d2d4d8214dbd82dc9a8d9633231badb744e1af2a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/loyaltycorp/easy-entity-change/zipball/d2d4d8214dbd82dc9a8d9633231badb744e1af2a",
-                "reference": "d2d4d8214dbd82dc9a8d9633231badb744e1af2a",
-                "shasum": ""
-            },
-            "require": {
-                "eoneopay/externals": "^1.0",
-                "php": "^7.1"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^7.5"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "0.11-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "LoyaltyCorp\\EasyEntityChange\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Provides an easy way to hook up logic in your entities lifecycle",
-            "abandoned": "eonx-com/easy-entity-change",
-            "time": "2019-11-07T05:55:09+00:00"
         },
         {
             "name": "monolog/monolog",

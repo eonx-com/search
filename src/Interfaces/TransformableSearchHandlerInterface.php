@@ -14,11 +14,13 @@ interface TransformableSearchHandlerInterface extends SearchHandlerInterface
     public function getFillIterable(): iterable;
 
     /**
-     * Get the class this search handler will support.
+     * Returns a unique string to identify the handler. This function is intentionally not static
+     * as there can be more than one instance of a handler defined that needs to be uniquely
+     * identified.
      *
-     * @return string[] Fully Qualified Class Names that implement the Search Handler interface
+     * @return string
      */
-    public function getHandledClasses(): array;
+    public function getHandlerKey(): string;
 
     /**
      * Returns the identifier used externally for the transformed object.

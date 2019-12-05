@@ -19,7 +19,7 @@
   },
   "require-dev": {
     "eonx-com/multitenancy": "^1.0@RC",
-    "eonx-com/standards": "^0.2",
+    "eonx-com/standards": "^0.3",
     "eonx-com/utils": "^1.0",
     "friendsofphp/php-cs-fixer": "^2.15",
     "guzzlehttp/psr7": "^1.5",

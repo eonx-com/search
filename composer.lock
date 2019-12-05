@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "af19706fb0fbc40e8f9b2b97aff6662a",
+    "content-hash": "848fbfa848dc5e6dae531a358521b4ca",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -3087,27 +3087,30 @@
         },
         {
             "name": "eonx-com/standards",
-            "version": "v0.2.2",
+            "version": "v0.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/eonx-com/standards.git",
-                "reference": "4c6d90b559f1600b58f93f3941b6c25d844bbed7"
+                "reference": "2665eb88886ce3d734d74a23586a8685edbe5a19"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/eonx-com/standards/zipball/4c6d90b559f1600b58f93f3941b6c25d844bbed7",
-                "reference": "4c6d90b559f1600b58f93f3941b6c25d844bbed7",
+                "url": "https://api.github.com/repos/eonx-com/standards/zipball/2665eb88886ce3d734d74a23586a8685edbe5a19",
+                "reference": "2665eb88886ce3d734d74a23586a8685edbe5a19",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.1",
                 "slevomat/coding-standard": "~4.0"
             },
+            "conflict": {
+                "phpstan/phpstan": "<0.12"
+            },
             "replace": {
                 "eoneopay/standards": "*"
             },
             "require-dev": {
-                "phpstan/phpstan": "^0.11.13",
+                "phpstan/phpstan": "^0.12",
                 "phpunit/phpunit": "^7.0",
                 "squizlabs/php_codesniffer": "^3.0"
             },
@@ -3140,7 +3143,7 @@
                 "eoneopay",
                 "standards"
             ],
-            "time": "2019-11-19T21:44:08+00:00"
+            "time": "2019-12-05T03:40:11+00:00"
         },
         {
             "name": "eonx-com/webhooks",

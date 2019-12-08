@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "848fbfa848dc5e6dae531a358521b4ca",
+    "content-hash": "0feb8e8b03c5afe84323a9263cee2d09",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1056,16 +1056,16 @@
         },
         {
             "name": "eonx-com/utils",
-            "version": "v1.0.2",
+            "version": "v1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/eonx-com/utils.git",
-                "reference": "e20c1ba295ab760d43e72c1547e8d3aa69296b4e"
+                "reference": "ba295cc1b45c08dce13dc74fbdbd6e0b4d30b5c5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/eonx-com/utils/zipball/e20c1ba295ab760d43e72c1547e8d3aa69296b4e",
-                "reference": "e20c1ba295ab760d43e72c1547e8d3aa69296b4e",
+                "url": "https://api.github.com/repos/eonx-com/utils/zipball/ba295cc1b45c08dce13dc74fbdbd6e0b4d30b5c5",
+                "reference": "ba295cc1b45c08dce13dc74fbdbd6e0b4d30b5c5",
                 "shasum": ""
             },
             "require": {
@@ -1079,7 +1079,7 @@
             },
             "require-dev": {
                 "doctrine/annotations": "^1.6",
-                "eoneopay/standards": "dev-master",
+                "eonx-com/standards": "^0.2",
                 "ext-bcmath": "*",
                 "ext-simplexml": "*",
                 "illuminate/http": "^5.8",
@@ -1119,20 +1119,20 @@
                 "helpers",
                 "utilities"
             ],
-            "time": "2019-11-09T03:22:46+00:00"
+            "time": "2019-12-08T22:00:19+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "6.4.1",
+            "version": "6.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "0895c932405407fd3a7368b6910c09a24d26db11"
+                "reference": "dbc2bc3a293ed6b1ae08a3651e2bfd213d19b6a5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/0895c932405407fd3a7368b6910c09a24d26db11",
-                "reference": "0895c932405407fd3a7368b6910c09a24d26db11",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/dbc2bc3a293ed6b1ae08a3651e2bfd213d19b6a5",
+                "reference": "dbc2bc3a293ed6b1ae08a3651e2bfd213d19b6a5",
                 "shasum": ""
             },
             "require": {
@@ -1147,12 +1147,13 @@
                 "psr/log": "^1.1"
             },
             "suggest": {
+                "ext-intl": "Required for Internationalized Domain Name (IDN) support",
                 "psr/log": "Required for using the Log middleware"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "6.3-dev"
+                    "dev-master": "6.5-dev"
                 }
             },
             "autoload": {
@@ -1185,7 +1186,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2019-10-23T15:58:00+00:00"
+            "time": "2019-12-07T18:20:45+00:00"
         },
         {
             "name": "guzzlehttp/promises",
@@ -2788,16 +2789,16 @@
         },
         {
             "name": "eonx-com/apiformats",
-            "version": "v1.0.2",
+            "version": "v1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/eonx-com/apiformats.git",
-                "reference": "0c7a8460c2e15c9090f53492595999a730a963cb"
+                "reference": "ac8293459fe321765bdd92c45a62964535a35064"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/eonx-com/apiformats/zipball/0c7a8460c2e15c9090f53492595999a730a963cb",
-                "reference": "0c7a8460c2e15c9090f53492595999a730a963cb",
+                "url": "https://api.github.com/repos/eonx-com/apiformats/zipball/ac8293459fe321765bdd92c45a62964535a35064",
+                "reference": "ac8293459fe321765bdd92c45a62964535a35064",
                 "shasum": ""
             },
             "require": {
@@ -2851,27 +2852,66 @@
                 "eoneopay",
                 "formats"
             ],
-            "time": "2019-11-11T00:01:47+00:00"
+            "time": "2019-12-08T22:13:02+00:00"
         },
         {
-            "name": "eonx-com/flowconfig-wrapper",
-            "version": "v1.0.5",
+            "name": "eonx-com/easy-entity-change",
+            "version": "v0.10.9",
             "source": {
                 "type": "git",
-                "url": "https://github.com/eonx-com/flowconfig-wrapper.git",
-                "reference": "b679c4ab3f9e1fc720b78cec9e176eba729a0d0b"
+                "url": "https://github.com/eonx-com/easy-entity-change.git",
+                "reference": "1a2a9a55876ee362e753c860cbdf6ae712eff214"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/eonx-com/flowconfig-wrapper/zipball/b679c4ab3f9e1fc720b78cec9e176eba729a0d0b",
-                "reference": "b679c4ab3f9e1fc720b78cec9e176eba729a0d0b",
+                "url": "https://api.github.com/repos/eonx-com/easy-entity-change/zipball/1a2a9a55876ee362e753c860cbdf6ae712eff214",
+                "reference": "1a2a9a55876ee362e753c860cbdf6ae712eff214",
+                "shasum": ""
+            },
+            "require": {
+                "eoneopay/externals": "^1.0",
+                "php": "^7.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7.5"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.11-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LoyaltyCorp\\EasyEntityChange\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Provides an easy way to hook up logic in your entities lifecycle",
+            "time": "2019-11-25T04:46:56+00:00"
+        },
+        {
+            "name": "eonx-com/flowconfig-wrapper",
+            "version": "v1.0.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/eonx-com/flowconfig-wrapper.git",
+                "reference": "de9f8ff5a4893b21992ec0fe756eee162900ac00"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/eonx-com/flowconfig-wrapper/zipball/de9f8ff5a4893b21992ec0fe756eee162900ac00",
+                "reference": "de9f8ff5a4893b21992ec0fe756eee162900ac00",
                 "shasum": ""
             },
             "require": {
                 "code-foundation/flow-config": "^0.2.0",
                 "doctrine/orm": "^2.6.3",
                 "eonx-com/apiformats": "^1.0",
-                "eonx-com/externals": "^1.0",
+                "eonx-com/externals": "^1.0|^2.0",
                 "eonx-com/utils": "^1.0",
                 "ext-json": "*",
                 "php": ">=7.3"
@@ -2906,25 +2946,25 @@
                 "external",
                 "flow-config"
             ],
-            "time": "2019-11-13T01:51:01+00:00"
+            "time": "2019-12-08T22:27:16+00:00"
         },
         {
             "name": "eonx-com/framework",
-            "version": "v0.1.2",
+            "version": "v0.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/eonx-com/framework.git",
-                "reference": "f8b1ebda6bb5d82f1d39f279c51ee01997a46ab0"
+                "reference": "c599d6adfb843bf472bef1332902400d18f15710"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/eonx-com/framework/zipball/f8b1ebda6bb5d82f1d39f279c51ee01997a46ab0",
-                "reference": "f8b1ebda6bb5d82f1d39f279c51ee01997a46ab0",
+                "url": "https://api.github.com/repos/eonx-com/framework/zipball/c599d6adfb843bf472bef1332902400d18f15710",
+                "reference": "c599d6adfb843bf472bef1332902400d18f15710",
                 "shasum": ""
             },
             "require": {
                 "eonx-com/apiformats": "^1.0",
-                "eonx-com/externals": "^1.0",
+                "eonx-com/externals": "^1.0|^2.0",
                 "eonx-com/utils": "^1.0",
                 "ext-json": "*",
                 "laravel-doctrine/orm": "^1.4",
@@ -2945,6 +2985,11 @@
                 "squizlabs/php_codesniffer": "3.*"
             },
             "type": "project",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.2.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "EoneoPay\\Framework\\": "src/"
@@ -2959,26 +3004,26 @@
                 "eoneopay",
                 "framework"
             ],
-            "time": "2019-11-11T01:37:07+00:00"
+            "time": "2019-12-08T22:18:06+00:00"
         },
         {
             "name": "eonx-com/multitenancy",
-            "version": "v1.0.2",
+            "version": "v1.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/eonx-com/multitenancy.git",
-                "reference": "7d943b8a2909dcd9a50b1e8b9889872c5e8cc905"
+                "reference": "11392eabdc21db83ddd6786ecc956dfb385e08fe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/eonx-com/multitenancy/zipball/7d943b8a2909dcd9a50b1e8b9889872c5e8cc905",
-                "reference": "7d943b8a2909dcd9a50b1e8b9889872c5e8cc905",
+                "url": "https://api.github.com/repos/eonx-com/multitenancy/zipball/11392eabdc21db83ddd6786ecc956dfb385e08fe",
+                "reference": "11392eabdc21db83ddd6786ecc956dfb385e08fe",
                 "shasum": ""
             },
             "require": {
                 "doctrine/orm": "^2.6.3",
                 "eonx-com/apiformats": "^1.0",
-                "eonx-com/externals": "^1.0",
+                "eonx-com/externals": "^1.0|^2.0",
                 "eonx-com/flowconfig-wrapper": "^1.0.5",
                 "eonx-com/framework": "^0.1",
                 "eonx-com/requesthandlers": "^1.1",
@@ -2992,11 +3037,11 @@
                 "loyaltycorp/multitenancy": "*"
             },
             "require-dev": {
+                "eonx-com/search": "^2.0",
                 "eonx-com/standards": "^0.2",
                 "friendsofphp/php-cs-fixer": "^2.9",
                 "indigophp/doctrine-annotation-autoload": "^0.1.0",
                 "laravel/lumen-framework": "^5.8",
-                "loyaltycorp/search": "^2.0",
                 "phpmd/phpmd": "^2.6",
                 "phpstan/phpstan": "^0.11",
                 "phpstan/phpstan-phpunit": "^0.11",
@@ -3024,20 +3069,20 @@
                 "loyaltycorp",
                 "multitenancy"
             ],
-            "time": "2019-11-19T04:28:36+00:00"
+            "time": "2019-12-08T22:37:55+00:00"
         },
         {
             "name": "eonx-com/requesthandlers",
-            "version": "v1.2.8",
+            "version": "v1.2.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/eonx-com/requesthandlers.git",
-                "reference": "0a860a3b7e94e42f942d6c71939481ca3a19c63f"
+                "reference": "8a703c05d6e384f0914b597c85671f6054545594"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/eonx-com/requesthandlers/zipball/0a860a3b7e94e42f942d6c71939481ca3a19c63f",
-                "reference": "0a860a3b7e94e42f942d6c71939481ca3a19c63f",
+                "url": "https://api.github.com/repos/eonx-com/requesthandlers/zipball/8a703c05d6e384f0914b597c85671f6054545594",
+                "reference": "8a703c05d6e384f0914b597c85671f6054545594",
                 "shasum": ""
             },
             "require": {
@@ -3083,7 +3128,7 @@
                 "lumen",
                 "paramconverters"
             ],
-            "time": "2019-11-13T03:05:30+00:00"
+            "time": "2019-12-08T22:31:32+00:00"
         },
         {
             "name": "eonx-com/standards",
@@ -3147,21 +3192,21 @@
         },
         {
             "name": "eonx-com/webhooks",
-            "version": "v0.20.7",
+            "version": "v0.20.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/eonx-com/webhooks.git",
-                "reference": "609b64f131130f46c759f67dc33a63f0b77c6751"
+                "reference": "d7fb066da2a1037268953fa48869d23ec32a64b1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/eonx-com/webhooks/zipball/609b64f131130f46c759f67dc33a63f0b77c6751",
-                "reference": "609b64f131130f46c759f67dc33a63f0b77c6751",
+                "url": "https://api.github.com/repos/eonx-com/webhooks/zipball/d7fb066da2a1037268953fa48869d23ec32a64b1",
+                "reference": "d7fb066da2a1037268953fa48869d23ec32a64b1",
                 "shasum": ""
             },
             "require": {
                 "doctrine/orm": "^2.6.3",
-                "eonx-com/externals": "^1.0",
+                "eonx-com/externals": "^1.0|^2.0",
                 "eonx-com/utils": "^1.0",
                 "ext-json": "*",
                 "ext-mbstring": "*",
@@ -3203,7 +3248,7 @@
                 "eoneopay",
                 "webhook"
             ],
-            "time": "2019-11-11T00:34:52+00:00"
+            "time": "2019-12-05T22:58:24+00:00"
         },
         {
             "name": "friendsofphp/php-cs-fixer",
@@ -4662,46 +4707,6 @@
             "time": "2017-06-12T11:04:56+00:00"
         },
         {
-            "name": "loyaltycorp/easy-entity-change",
-            "version": "v0.10.7",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/loyaltycorp/easy-entity-change.git",
-                "reference": "d2d4d8214dbd82dc9a8d9633231badb744e1af2a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/loyaltycorp/easy-entity-change/zipball/d2d4d8214dbd82dc9a8d9633231badb744e1af2a",
-                "reference": "d2d4d8214dbd82dc9a8d9633231badb744e1af2a",
-                "shasum": ""
-            },
-            "require": {
-                "eoneopay/externals": "^1.0",
-                "php": "^7.1"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^7.5"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "0.11-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "LoyaltyCorp\\EasyEntityChange\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Provides an easy way to hook up logic in your entities lifecycle",
-            "abandoned": "eonx-com/easy-entity-change",
-            "time": "2019-11-07T05:55:09+00:00"
-        },
-        {
             "name": "monolog/monolog",
             "version": "1.25.2",
             "source": {
@@ -5668,16 +5673,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.0",
+            "version": "0.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "1cc06d8493917d16b1742f6c9fd2963c51a4e773"
+                "reference": "c33f6f7c83377510b4c134d66869a7c55453c41d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/1cc06d8493917d16b1742f6c9fd2963c51a4e773",
-                "reference": "1cc06d8493917d16b1742f6c9fd2963c51a4e773",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/c33f6f7c83377510b4c134d66869a7c55453c41d",
+                "reference": "c33f6f7c83377510b4c134d66869a7c55453c41d",
                 "shasum": ""
             },
             "require": {
@@ -5704,20 +5709,20 @@
                 "MIT"
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
-            "time": "2019-12-04T00:09:47+00:00"
+            "time": "2019-12-08T15:07:52+00:00"
         },
         {
             "name": "phpstan/phpstan-phpunit",
-            "version": "0.12.0",
+            "version": "0.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-phpunit.git",
-                "reference": "a9790e1bee7feea2a9dac7e1f39fc9e6aac0b703"
+                "reference": "cc14b74ba437bb08ce189aada455946890a8414b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-phpunit/zipball/a9790e1bee7feea2a9dac7e1f39fc9e6aac0b703",
-                "reference": "a9790e1bee7feea2a9dac7e1f39fc9e6aac0b703",
+                "url": "https://api.github.com/repos/phpstan/phpstan-phpunit/zipball/cc14b74ba437bb08ce189aada455946890a8414b",
+                "reference": "cc14b74ba437bb08ce189aada455946890a8414b",
                 "shasum": ""
             },
             "require": {
@@ -5760,7 +5765,7 @@
                 "MIT"
             ],
             "description": "PHPUnit extensions and rules for PHPStan",
-            "time": "2019-11-27T16:24:02+00:00"
+            "time": "2019-12-07T20:34:22+00:00"
         },
         {
             "name": "phpstan/phpstan-strict-rules",
@@ -6068,16 +6073,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "7.5.17",
+            "version": "7.5.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "4c92a15296e58191a4cd74cff3b34fc8e374174a"
+                "reference": "fcf6c4bfafaadc07785528b06385cce88935474d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/4c92a15296e58191a4cd74cff3b34fc8e374174a",
-                "reference": "4c92a15296e58191a4cd74cff3b34fc8e374174a",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/fcf6c4bfafaadc07785528b06385cce88935474d",
+                "reference": "fcf6c4bfafaadc07785528b06385cce88935474d",
                 "shasum": ""
             },
             "require": {
@@ -6148,7 +6153,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2019-10-28T10:37:36+00:00"
+            "time": "2019-12-06T05:14:37+00:00"
         },
         {
             "name": "psr/cache",
@@ -9728,7 +9733,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "eonx-com/multitenancy": 5,
         "roave/security-advisories": 20
     },
     "prefer-stable": true,

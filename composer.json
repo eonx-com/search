@@ -18,14 +18,14 @@
     "illuminate/console": "^5.8|^6.0"
   },
   "require-dev": {
-    "eonx-com/multitenancy": "^1.0@RC",
+    "eonx-com/easy-entity-change": "^0.10.4",
+    "eonx-com/multitenancy": "^1.0",
     "eonx-com/standards": "^0.3",
     "eonx-com/utils": "^1.0",
     "friendsofphp/php-cs-fixer": "^2.15",
     "guzzlehttp/psr7": "^1.5",
     "illuminate/container": "^5.8|^6.0",
     "illuminate/support": "^5.8|^6.0",
-    "loyaltycorp/easy-entity-change": "^0.10.4",
     "monolog/monolog": "^1.24",
     "phpmd/phpmd": "^2.6",
     "phpstan/phpstan": "^0.12",

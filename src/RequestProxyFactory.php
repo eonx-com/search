@@ -8,6 +8,11 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Uri;
 
+/**
+ * Proxy requests to an ElasticSearch instance.
+ *
+ * Passes on whitelisted headers only.s
+ */
 final class RequestProxyFactory implements RequestProxyFactoryInterface
 {
     /**

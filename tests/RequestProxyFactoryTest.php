@@ -25,7 +25,8 @@ final class RequestProxyFactoryTest extends TestCase
             [],
             'https://subscriptions.system.example/search/index/_doc/_search?pp=5',
             'POST',
-            stream_for('request body')
+            stream_for('request body'),
+            ['Origin' => 'https://eonx.example.org']
         );
         $request = $request->withAttribute('_encoder', 'value');
 
@@ -38,6 +39,7 @@ final class RequestProxyFactoryTest extends TestCase
 
         self::assertSame($expectedUri, (string)$result->getUri());
         self::assertSame($expectedAuth, $result->getHeaderLine('Authorization'));
+        self::assertSame('', $result->getHeaderLine('Origin'));
         self::assertSame('request body', (string)$result->getBody());
         self::assertInstanceOf(ServerRequest::class, $result);
         self::assertNull(($result instanceof ServerRequest) ? $result->getAttribute('_encoder') : '');
@@ -56,7 +58,8 @@ final class RequestProxyFactoryTest extends TestCase
             [],
             'https://subscriptions.system.example/search/index/_doc/_search?pp=5',
             'POST',
-            stream_for('request body')
+            stream_for('request body'),
+            ['BadHeader' => 'BadValue']
         );
         $request = $request->withAttribute('_encoder', 'value');
 
@@ -68,6 +71,7 @@ final class RequestProxyFactoryTest extends TestCase
 
         self::assertSame($expectedUri, (string)$result->getUri());
         self::assertSame('', $result->getHeaderLine('Authorization'));
+        self::assertSame('', $result->getHeaderLine('BadHeader'));
         self::assertSame('request body', (string)$result->getBody());
         self::assertInstanceOf(ServerRequest::class, $result);
         self::assertNull(($result instanceof ServerRequest) ? $result->getAttribute('_encoder') : '');

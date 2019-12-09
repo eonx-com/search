@@ -63,7 +63,7 @@ final class RequestProxyFactory implements RequestProxyFactoryInterface
         }
 
         // Strip all headers.
-        foreach ($request->getHeaders() as $headerKey => $_) {
+        foreach (\array_keys($request->getHeaders()) as $headerKey) {
             $request = $request->withoutHeader($headerKey);
         }
 

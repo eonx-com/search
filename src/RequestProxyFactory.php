@@ -62,13 +62,14 @@ final class RequestProxyFactory implements RequestProxyFactoryInterface
             $request = $request->withoutAttribute('_encoder');
         }
 
-        // Strip any authentication headers from the request.
-        $request = $request->withoutHeader('Authorization');
+        // Strip all headers.
+        foreach ($request->getHeaders() as $headerKey => $_) {
+            $request = $request->withoutHeader($headerKey);
+        }
 
         $userInfo = $searchUri->getUserInfo();
         if ($userInfo !== '') {
             // If the URI had a userinfo component, add an Authorization header.
-
             $request = $request->withHeader(
                 'Authorization',
                 \sprintf('Basic %s', \base64_encode($userInfo))
@@ -76,9 +77,7 @@ final class RequestProxyFactory implements RequestProxyFactoryInterface
         }
 
         return $request
-            // Remove the original Content-Length - the underlying Http Client will repopulate
-            ->withoutHeader('Content-Length')
-            // Force a json content type
+            // ElasticSearch requests are always Content-Type: application/json.
             ->withHeader(
                 'Content-Type',
                 'application/json'

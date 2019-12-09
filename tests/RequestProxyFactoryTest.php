@@ -39,6 +39,7 @@ final class RequestProxyFactoryTest extends TestCase
 
         self::assertSame($expectedUri, (string)$result->getUri());
         self::assertSame($expectedAuth, $result->getHeaderLine('Authorization'));
+        self::assertSame('', $result->getHeaderLine('Content-Length'));
         self::assertSame('', $result->getHeaderLine('Origin'));
         self::assertSame('request body', (string)$result->getBody());
         self::assertInstanceOf(ServerRequest::class, $result);
@@ -59,7 +60,7 @@ final class RequestProxyFactoryTest extends TestCase
             'https://subscriptions.system.example/search/index/_doc/_search?pp=5',
             'POST',
             stream_for('request body'),
-            ['BadHeader' => 'BadValue']
+            ['BadHeader' => 'BadValue', 'Content-Length' => '123']
         );
         $request = $request->withAttribute('_encoder', 'value');
 
@@ -71,6 +72,7 @@ final class RequestProxyFactoryTest extends TestCase
 
         self::assertSame($expectedUri, (string)$result->getUri());
         self::assertSame('', $result->getHeaderLine('Authorization'));
+        self::assertSame('', $result->getHeaderLine('Content-Length'));
         self::assertSame('', $result->getHeaderLine('BadHeader'));
         self::assertSame('request body', (string)$result->getBody());
         self::assertInstanceOf(ServerRequest::class, $result);

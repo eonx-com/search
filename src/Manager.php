@@ -93,15 +93,9 @@ final class Manager implements ManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function handleUpdates(string $class, string $indexSuffix, array $objects): void
+    public function handleUpdates(string $indexSuffix, array $objects): void
     {
-        foreach ($this->handlers->getTransformableHandlers() as $handler) {
-            if ($this->isHandled($handler, $class) === false) {
-                continue;
-            }
-
-            $this->populator->populateWith($handler, $indexSuffix, $objects);
-        }
+        // TBD. Iterate over objects and call handlers that want to know about it.
     }
 
     /**

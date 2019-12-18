@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Interfaces;
 
+use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate;
+
 interface TransformableSearchHandlerInterface extends SearchHandlerInterface
 {
     /**
@@ -32,12 +34,31 @@ interface TransformableSearchHandlerInterface extends SearchHandlerInterface
     public function getSearchId(object $object);
 
     /**
+     * Returns an array of ChangeSubscription objects that indicate what this handler
+     * would like to be subscribed to, and how to transform that data when passed into
+     * the getSearchId() and transform() methods.
+     *
+     * @return \LoyaltyCorp\Search\DataTransferObjects\Handlers\ChangeSubscription[]
+     */
+    public function getSubscriptions(): array;
+
+    /**
+     * Takes ObjectForUpdate DTOs and turns them into objects. The objects will then be
+     * passed into transform or getSearchId().
+     *
+     * @param ObjectForUpdate[] $forUpdate
+     *
+     * @return object[]
+     */
+    public function resolveObjects(array $forUpdate): iterable;
+
+    /**
      * Transforms objects supplied into serialized search arrays that
      * should be indexed.
      *
-     * @param mixed $object
+     * @param object $object
      *
      * @return mixed[]|null
      */
-    public function transform($object): ?array;
+    public function transform(object $object): ?array;
 }

@@ -6,7 +6,7 @@ namespace Tests\LoyaltyCorp\Search\Bridge\Laravel\Listeners;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use LoyaltyCorp\EasyEntityChange\Events\EntityChangeEvent;
 use LoyaltyCorp\Search\Bridge\Laravel\Listeners\EntityUpdateListener;
-use LoyaltyCorp\Search\Workers\EntityUpdateWorker;
+use LoyaltyCorp\Search\Workers\UpdateWorker;
 use Tests\LoyaltyCorp\Search\Stubs\Entities\EntityStub;
 use Tests\LoyaltyCorp\Search\Stubs\ManagerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\EoneoPay\Externals\ORM\EntityManagerStub;
@@ -26,7 +26,7 @@ final class EntityUpdateListenerTest extends TestCase
     {
         $entityManager = new EntityManagerStub();
         $searchManager = new ManagerStub();
-        $worker = new EntityUpdateWorker($entityManager, $searchManager);
+        $worker = new UpdateWorker($entityManager, $searchManager);
         $listener = new EntityUpdateListener($worker);
 
         $entityManager->addFindByIds([

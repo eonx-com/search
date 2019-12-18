@@ -36,20 +36,26 @@ final class ChangeSubscription
      * If provided, a callable that will be used to transform the ObjectUpdated DTO into an array
      * of ObjectForUpdate DTOs.
      *
-     * @phpstan-var null|callable(\LoyaltyCorp\Search\DataTransferObjects\ObjectUpdated): \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate[]
+     * phpcs:disable
+     *
+     * @phpstan-var null|callable(\LoyaltyCorp\Search\DataTransferObjects\ObjectUpdated): array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate>
      *
      * @var callable|null
+     *
+     * phpcs:enable
      */
     private $transform;
 
     /**
      * Constructor.
      *
-     * @phpstan-return null|callable(\LoyaltyCorp\Search\DataTransferObjects\ObjectUpdated): \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate[] $transform
+     * phpcs:disable
+     * @phpstan-param callable(\LoyaltyCorp\Search\DataTransferObjects\ObjectUpdated): array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate> $transform
      *
      * @param string $class
      * @param string[] $properties
      * @param callable|null $transform
+     * phpcs:enable
      */
     public function __construct(string $class, array $properties, ?callable $transform = null)
     {
@@ -81,9 +87,13 @@ final class ChangeSubscription
     /**
      * Return transform callable.
      *
-     * @phpstan-return callable(\LoyaltyCorp\Search\DataTransferObjects\ObjectUpdated): \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate[]|null
+     * phpcs:disable
+     *
+     * @phpstan-return null|callable(\LoyaltyCorp\Search\DataTransferObjects\ObjectUpdated): array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate>
      *
      * @return callable|null
+     *
+     * phpcs:enable
      */
     public function getTransform(): ?callable
     {

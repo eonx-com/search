@@ -6,6 +6,25 @@ namespace LoyaltyCorp\Search\DataTransferObjects;
 final class DocumentUpdate
 {
     /**
+     * The index action will index/update the document.
+     *
+     * @const string
+     */
+    public const ACTION_INDEX = 'index';
+
+    /**
+     * The index action will delete the document.
+     *
+     * @const string
+     */
+    public const ACTION_DELETE = 'delete';
+
+    /**
+     * @var string
+     */
+    private $action;
+
+    /**
      * The document to be written.
      *
      * @var mixed
@@ -20,30 +39,33 @@ final class DocumentUpdate
     private $documentId;
 
     /**
-     * The index the document will be written to.
-     *
-     * @var string
-     */
-    private $index;
-
-    /**
      * Constructor.
      *
-     * @param string $index
+     * @param string $action
      * @param string $documentId
-     * @param mixed $document
+     * @param mixed|null $document
      */
-    public function __construct(string $index, string $documentId, $document)
+    public function __construct(string $action, string $documentId, $document = null)
     {
-        $this->index = $index;
-        $this->documentId = $documentId;
+        $this->action = $action;
         $this->document = $document;
+        $this->documentId = $documentId;
+    }
+
+    /**
+     * Returns the action to be performed on the document.
+     *
+     * @return string
+     */
+    public function getAction(): string
+    {
+        return $this->action;
     }
 
     /**
      * Returns the document to be indexed.
      *
-     * @return mixed
+     * @return mixed|null
      */
     public function getDocument()
     {
@@ -58,15 +80,5 @@ final class DocumentUpdate
     public function getDocumentId(): string
     {
         return $this->documentId;
-    }
-
-    /**
-     * Returns the index name to be used for the update.
-     *
-     * @return string
-     */
-    public function getIndex(): string
-    {
-        return $this->index;
     }
 }

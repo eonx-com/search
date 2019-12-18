@@ -14,6 +14,14 @@ final class OtherTransformableSearchHandlerStub implements TransformableSearchHa
     /**
      * {@inheritdoc}
      */
+    public function getHandlerKey(): string
+    {
+        return '';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public static function getMappings(): array
     {
         return [];
@@ -38,9 +46,9 @@ final class OtherTransformableSearchHandlerStub implements TransformableSearchHa
     /**
      * {@inheritdoc}
      */
-    public function getHandledClasses(): array
+    public function getSubscriptions(): array
     {
-        return [SearchableStub::class];
+        return [];
     }
 
     /**

@@ -39,7 +39,7 @@ use LoyaltyCorp\Search\ResponseFactory;
 use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use LoyaltyCorp\Search\Workers\EntityDeleteDataWorker;
 use LoyaltyCorp\Search\Workers\EntityDeleteWorker;
-use LoyaltyCorp\Search\Workers\EntityUpdateWorker;
+use LoyaltyCorp\Search\Workers\UpdateWorker;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) High coupling required to ensure all services are bound
@@ -120,6 +120,6 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
         // Bind workers
         $this->app->singleton(EntityDeleteDataWorker::class);
         $this->app->singleton(EntityDeleteWorker::class);
-        $this->app->singleton(EntityUpdateWorker::class);
+        $this->app->singleton(UpdateWorker::class);
     }
 }

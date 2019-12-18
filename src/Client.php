@@ -91,14 +91,18 @@ final class Client implements ClientInterface
             //
             // See: https://www.elastic.co/guide/en/elasticsearch/reference/current/removal-of-types.html
 
+            $documentUpdate = $update->getDocumentUpdate();
             $bulk[] = [
-                'index' => [
+                $documentUpdate->getAction() => [
                     '_index' => $update->getIndex(),
                     '_type' => 'doc',
-                    '_id' => $update->getDocumentId(),
+                    '_id' => $documentUpdate->getDocumentId(),
                 ],
             ];
-            $bulk[] = $update->getDocument();
+            // If we're doing an update, we provide the update as another entry in the bulk index.
+            if ($documentUpdate->getAction() === $documentUpdate::ACTION_INDEX) {
+                $bulk[] = $update->getDocument();
+            }
         }
 
         try {

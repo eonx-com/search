@@ -104,9 +104,9 @@ final class ManagerStub implements ManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function handleUpdates(string $class, string $indexSuffix, array $objects): void
+    public function handleUpdates(string $indexSuffix, array $objects): void
     {
         $this->updateCount++;
-        $this->updateObjects[] = \compact('class', 'indexSuffix', 'objects');
+        $this->updateObjects[] = \compact('indexSuffix', 'objects');
     }
 }

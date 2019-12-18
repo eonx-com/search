@@ -14,6 +14,13 @@ final class NotSearchableSearchHandlerStub implements TransformableSearchHandler
     /**
      * {@inheritdoc}
      */
+    public function getHandlerKey(): string
+    {
+        return '';
+    }
+    /**
+     * {@inheritdoc}
+     */
     public static function getMappings(): array
     {
         return [];
@@ -38,9 +45,9 @@ final class NotSearchableSearchHandlerStub implements TransformableSearchHandler
     /**
      * {@inheritdoc}
      */
-    public function getHandledClasses(): array
+    public function getSubscriptions(): array
     {
-        return [NotSearchableStub::class];
+        return [];
     }
 
     /**

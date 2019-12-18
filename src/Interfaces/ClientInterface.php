@@ -30,7 +30,7 @@ interface ClientInterface
     /**
      * Upserts all documents provided into the index.
      *
-     * @param \LoyaltyCorp\Search\DataTransferObjects\DocumentUpdate[] $updates
+     * @param \LoyaltyCorp\Search\DataTransferObjects\IndexAction[] $updates
      *
      * @return void
      */

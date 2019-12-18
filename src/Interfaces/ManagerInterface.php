@@ -40,15 +40,12 @@ interface ManagerInterface
     public function handleDeletes(array $ids): void;
 
     /**
-     * Takes an array of entity ids that are or have been updated in
-     * a Doctrine lifecycle and updates any related search entries
-     * based on those entities.
+     * Handles updates for changes.
      *
-     * @param string $class
      * @param string $indexSuffix
-     * @param object[] $objects
+     * @param \LoyaltyCorp\Search\DataTransferObjects\ObjectUpdated[] $objects
      *
      * @return void
      */
-    public function handleUpdates(string $class, string $indexSuffix, array $objects): void;
+    public function handleUpdates(string $indexSuffix, array $objects): void;
 }

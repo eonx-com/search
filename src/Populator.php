@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace LoyaltyCorp\Search;
 
 use LoyaltyCorp\Search\DataTransferObjects\DocumentUpdate;
+use LoyaltyCorp\Search\DataTransferObjects\IndexAction;
 use LoyaltyCorp\Search\Indexer\AccessTokenMappingHelper;
 use LoyaltyCorp\Search\Interfaces\Access\AccessPopulatorInterface;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
@@ -93,10 +94,9 @@ final class Populator implements PopulatorInterface
                 $transformed[AccessTokenMappingHelper::ACCESS_TOKEN_PROPERTY] = $accessTokens;
             }
 
-            $updates[] = new DocumentUpdate(
-                $index . $indexSuffix,
-                (string)$searchId,
-                $transformed
+            $updates[] = new IndexAction(
+                $documentUpdate,
+                $index . $indexSuffix
             );
         }
 

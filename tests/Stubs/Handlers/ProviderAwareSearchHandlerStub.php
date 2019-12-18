@@ -13,6 +13,13 @@ use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\SearchableStub;
 final class ProviderAwareSearchHandlerStub implements TransformableSearchHandlerInterface, ProviderAwareInterface
 {
     /**
+     * {@inheritdoc}
+     */
+    public function getHandlerKey(): string
+    {
+        return '';
+    }
+    /**
      * Index name.
      *
      * @var string|null
@@ -67,9 +74,9 @@ final class ProviderAwareSearchHandlerStub implements TransformableSearchHandler
     /**
      * {@inheritdoc}
      */
-    public function getHandledClasses(): array
+    public function getSubscriptions(): array
     {
-        return [SearchableStub::class];
+        return [];
     }
 
     /**

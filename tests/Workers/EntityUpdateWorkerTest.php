@@ -3,14 +3,14 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Workers;
 
-use LoyaltyCorp\Search\Workers\EntityUpdateWorker;
+use LoyaltyCorp\Search\Workers\UpdateWorker;
 use Tests\LoyaltyCorp\Search\Stubs\Entities\EntityStub;
 use Tests\LoyaltyCorp\Search\Stubs\ManagerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\EoneoPay\Externals\ORM\EntityManagerStub;
 use Tests\LoyaltyCorp\Search\TestCase;
 
 /**
- * @covers \LoyaltyCorp\Search\Workers\EntityUpdateWorker
+ * @covers \LoyaltyCorp\Search\Workers\UpdateWorker
  */
 final class EntityUpdateWorkerTest extends TestCase
 {
@@ -24,7 +24,7 @@ final class EntityUpdateWorkerTest extends TestCase
         $entityManager = new EntityManagerStub();
         $searchManager = new ManagerStub();
 
-        $worker = new EntityUpdateWorker($entityManager, $searchManager);
+        $worker = new UpdateWorker($entityManager, $searchManager);
 
         $entityManager->addFindByIds([
             $entity1 = new EntityStub(),

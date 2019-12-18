@@ -5,21 +5,21 @@ namespace LoyaltyCorp\Search\Bridge\Laravel\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use LoyaltyCorp\EasyEntityChange\Events\EntityChangeEvent;
-use LoyaltyCorp\Search\Workers\EntityUpdateWorker;
+use LoyaltyCorp\Search\Workers\UpdateWorker;
 
 final class EntityUpdateListener implements ShouldQueue
 {
     /**
-     * @var \LoyaltyCorp\Search\Workers\EntityUpdateWorker
+     * @var \LoyaltyCorp\Search\Workers\UpdateWorker
      */
     private $worker;
 
     /**
      * Constructor.
      *
-     * @param \LoyaltyCorp\Search\Workers\EntityUpdateWorker $worker
+     * @param \LoyaltyCorp\Search\Workers\UpdateWorker $worker
      */
-    public function __construct(EntityUpdateWorker $worker)
+    public function __construct(UpdateWorker $worker)
     {
         $this->worker = $worker;
     }

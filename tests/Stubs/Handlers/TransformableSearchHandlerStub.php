@@ -12,6 +12,13 @@ use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\SearchableStub;
 final class TransformableSearchHandlerStub implements TransformableSearchHandlerInterface
 {
     /**
+     * {@inheritdoc}
+     */
+    public function getHandlerKey(): string
+    {
+        return '';
+    }
+    /**
      * @var mixed[]|null
      */
     private $objects;
@@ -72,9 +79,9 @@ final class TransformableSearchHandlerStub implements TransformableSearchHandler
     /**
      * {@inheritdoc}
      */
-    public function getHandledClasses(): array
+    public function getSubscriptions(): array
     {
-        return [SearchableStub::class];
+        return [];
     }
 
     /**

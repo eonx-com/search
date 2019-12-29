@@ -102,16 +102,9 @@ final class ClientStub implements ClientInterface
     /**
      * {@inheritdoc}
      */
-    public function bulkDelete(array $searchIds): void
+    public function bulk(array $actions): void
     {
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function bulkUpdate(array $updates): void
-    {
-        $this->updatedIndices[] = $updates;
+        $this->updatedIndices[] = $actions;
     }
 
     /**

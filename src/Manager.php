@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search;
 
+use LoyaltyCorp\Search\DataTransferObjects\DocumentDelete;
+use LoyaltyCorp\Search\DataTransferObjects\IndexAction;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
@@ -87,7 +89,15 @@ final class Manager implements ManagerInterface
      */
     public function handleDeletes(array $ids): void
     {
-        $this->client->bulkDelete($ids);
+        $actions = [];
+
+        foreach ($ids as $index => $indexIds) {
+            foreach ($indexIds as $documentId) {
+                $actions[] = new IndexAction(new DocumentDelete($documentId), $index);
+            }
+        }
+
+        $this->client->bulk($actions);
     }
 
     /**

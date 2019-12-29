@@ -7,9 +7,9 @@ use LoyaltyCorp\Search\DataTransferObjects\DocumentUpdate;
 use Tests\LoyaltyCorp\Search\TestCase;
 
 /**
- * @covers \LoyaltyCorp\Search\DataTransferObjects\DocumentUpdate
+ * @covers \LoyaltyCorp\Search\DataTransferObjects\DocumentAction
  */
-final class DocumentUpdateTest extends TestCase
+final class DocumentActionTest extends TestCase
 {
     /**
      * Tests DTO methods.
@@ -20,7 +20,6 @@ final class DocumentUpdateTest extends TestCase
     {
         $update = new DocumentUpdate('id', 'document');
 
-        self::assertSame('document', $update->getDocument());
-        self::assertSame('update', $update::getAction());
+        self::assertSame('id', $update->getDocumentId());
     }
 }

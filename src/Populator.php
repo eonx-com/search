@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search;
 
+use LoyaltyCorp\Search\DataTransferObjects\DocumentDelete;
 use LoyaltyCorp\Search\DataTransferObjects\DocumentUpdate;
+use LoyaltyCorp\Search\DataTransferObjects\IndexAction;
 use LoyaltyCorp\Search\Indexer\AccessTokenMappingHelper;
 use LoyaltyCorp\Search\Interfaces\Access\AccessPopulatorInterface;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
@@ -69,7 +71,7 @@ final class Populator implements PopulatorInterface
         string $indexSuffix,
         iterable $objects
     ): void {
-        $updates = [];
+        $actions = [];
 
         foreach ($objects as $object) {
             $searchId = $handler->getSearchId($object);
@@ -78,13 +80,15 @@ final class Populator implements PopulatorInterface
                 continue;
             }
 
+            $index = $this->nameTransformer->transformIndexName($handler, $object) . $indexSuffix;
+
             $transformed = $handler->transform($object);
-            // If the handler didnt transform the document there is nothing to index.
+            // If the handler returned null, the document should be deleted (if it exists).
             if ($transformed === null) {
+                $actions[] = new IndexAction(new DocumentDelete($searchId), $index);
+
                 continue;
             }
-
-            $index = $this->nameTransformer->transformIndexName($handler, $object);
 
             // If the handler is not doing its own security, add access tokens to the document.
             if ($handler instanceof CustomAccessHandlerInterface === false) {
@@ -93,19 +97,18 @@ final class Populator implements PopulatorInterface
                 $transformed[AccessTokenMappingHelper::ACCESS_TOKEN_PROPERTY] = $accessTokens;
             }
 
-            $updates[] = new DocumentUpdate(
-                $index . $indexSuffix,
-                (string)$searchId,
-                $transformed
+            $actions[] = new IndexAction(
+                new DocumentUpdate((string) $searchId, $transformed),
+                $index
             );
         }
 
         // If there were no updates generated we have nothing to update.
-        if (\count($updates) === 0) {
+        if (\count($actions) === 0) {
             return;
         }
 
-        $this->client->bulkUpdate($updates);
+        $this->client->bulk($actions);
     }
 
     /**

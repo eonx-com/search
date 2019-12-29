@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace Tests\LoyaltyCorp\Search;
 
 use LoyaltyCorp\Search\Access\AnonymousAccessPopulator;
+use LoyaltyCorp\Search\DataTransferObjects\DocumentDelete;
 use LoyaltyCorp\Search\DataTransferObjects\DocumentUpdate;
+use LoyaltyCorp\Search\DataTransferObjects\IndexAction;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 use LoyaltyCorp\Search\Populator;
@@ -37,18 +39,22 @@ final class PopulatorTest extends TestCase
 
         $expected = [
             [
-                new DocumentUpdate(
-                    'valid_suffix',
-                    'search1',
-                    ['search' => 'body', '_access_tokens' => ['anonymous']]
+                new IndexAction(
+                    new DocumentUpdate(
+                        'search1',
+                        ['search' => 'body', '_access_tokens' => ['anonymous']]
+                    ),
+                    'valid_suffix'
                 ),
             ],
             [
-                new DocumentUpdate(
-                    'valid_suffix',
-                    'search2',
-                    ['search' => 'body', '_access_tokens' => ['anonymous']]
-                ),
+                new IndexAction(
+                    new DocumentUpdate(
+                        'search2',
+                        ['search' => 'body', '_access_tokens' => ['anonymous']]
+                    ),
+                    'valid_suffix'
+                )
             ],
         ];
 
@@ -97,15 +103,19 @@ final class PopulatorTest extends TestCase
 
         $expected = [
             [
-                new DocumentUpdate(
-                    'valid_suffix',
-                    'search1',
-                    ['search' => 'body', '_access_tokens' => ['anonymous']]
+                new IndexAction(
+                    new DocumentUpdate(
+                        'search1',
+                        ['search' => 'body', '_access_tokens' => ['anonymous']]
+                    ),
+                    'valid_suffix'
                 ),
-                new DocumentUpdate(
-                    'valid_suffix',
-                    'search2',
-                    ['search' => 'body', '_access_tokens' => ['anonymous']]
+                new IndexAction(
+                    new DocumentUpdate(
+                        'search2',
+                        ['search' => 'body', '_access_tokens' => ['anonymous']]
+                    ),
+                    'valid_suffix'
                 ),
             ],
         ];
@@ -133,7 +143,14 @@ final class PopulatorTest extends TestCase
             new NoSearchIdStub(),
         ];
 
-        $expected = [];
+        $expected = [
+            [
+                new IndexAction(
+                    new DocumentDelete('nobody'),
+                    'valid_suffix'
+                ),
+            ]
+        ];
 
         $handler = new TransformableSearchHandlerStub($objects);
 
@@ -160,22 +177,28 @@ final class PopulatorTest extends TestCase
 
         $expected = [
             [
-                new DocumentUpdate(
-                    'valid_suffix',
-                    'search1',
-                    ['search' => 'body', '_access_tokens' => ['anonymous']]
+                new IndexAction(
+                    new DocumentUpdate(
+                        'search1',
+                        ['search' => 'body', '_access_tokens' => ['anonymous']]
+                    ),
+                    'valid_suffix'
                 ),
-                new DocumentUpdate(
-                    'valid_suffix',
-                    'search2',
-                    ['search' => 'body', '_access_tokens' => ['anonymous']]
-                ),
+                new IndexAction(
+                    new DocumentUpdate(
+                        'search2',
+                        ['search' => 'body', '_access_tokens' => ['anonymous']]
+                    ),
+                    'valid_suffix'
+                )
             ],
             [
-                new DocumentUpdate(
-                    'valid_suffix',
-                    'search3',
-                    ['search' => 'body', '_access_tokens' => ['anonymous']]
+                new IndexAction(
+                    new DocumentUpdate(
+                        'search3',
+                        ['search' => 'body', '_access_tokens' => ['anonymous']]
+                    ),
+                    'valid_suffix'
                 ),
             ],
         ];
@@ -203,10 +226,12 @@ final class PopulatorTest extends TestCase
 
         $expected = [
             [
-                new DocumentUpdate(
-                    'valid_suffix',
-                    'search1',
-                    ['search' => 'body', '_access_tokens' => ['anonymous']]
+                new IndexAction(
+                    new DocumentUpdate(
+                        'search1',
+                        ['search' => 'body', '_access_tokens' => ['anonymous']]
+                    ),
+                    'valid_suffix'
                 ),
             ],
         ];

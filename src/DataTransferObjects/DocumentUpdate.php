@@ -3,70 +3,46 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\DataTransferObjects;
 
-final class DocumentUpdate
+/**
+ * This DTO indicates that a document should be inserted or updated in the search index.
+ */
+final class DocumentUpdate extends DocumentAction
 {
     /**
-     * The document to be written.
+     * The document body to be written.
      *
      * @var mixed
      */
     private $document;
 
     /**
-     * The id of the document.
-     *
-     * @var string
-     */
-    private $documentId;
-
-    /**
-     * The index the document will be written to.
-     *
-     * @var string
-     */
-    private $index;
-
-    /**
      * Constructor.
      *
-     * @param string $index
      * @param string $documentId
-     * @param mixed $document
+     * @param mixed|null $document
      */
-    public function __construct(string $index, string $documentId, $document)
+    public function __construct(string $documentId, $document = null)
     {
-        $this->index = $index;
-        $this->documentId = $documentId;
+        parent::__construct($documentId);
+
         $this->document = $document;
     }
 
     /**
-     * Returns the document to be indexed.
+     * {@inheritdoc}
+     */
+    public static function getAction(): string
+    {
+        return 'update';
+    }
+
+    /**
+     * Returns the document body to be indexed.
      *
-     * @return mixed
+     * @return mixed|null
      */
     public function getDocument()
     {
         return $this->document;
-    }
-
-    /**
-     * Returns the id of the document.
-     *
-     * @return string
-     */
-    public function getDocumentId(): string
-    {
-        return $this->documentId;
-    }
-
-    /**
-     * Returns the index name to be used for the update.
-     *
-     * @return string
-     */
-    public function getIndex(): string
-    {
-        return $this->index;
     }
 }

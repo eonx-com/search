@@ -7,7 +7,9 @@ use Elasticsearch\Client as BaseClient;
 use Elasticsearch\ClientBuilder;
 use GuzzleHttp\Ring\Client\MockHandler;
 use LoyaltyCorp\Search\Client;
+use LoyaltyCorp\Search\DataTransferObjects\DocumentDelete;
 use LoyaltyCorp\Search\DataTransferObjects\DocumentUpdate;
+use LoyaltyCorp\Search\DataTransferObjects\IndexAction;
 use LoyaltyCorp\Search\Exceptions\BulkFailureException;
 use LoyaltyCorp\Search\Exceptions\SearchCheckerException;
 use LoyaltyCorp\Search\Exceptions\SearchDeleteException;
@@ -33,18 +35,11 @@ final class ClientTest extends TestCase
      */
     public function getInputsCausingExceptions(): iterable
     {
-        yield 'bulkUpdate' => [
-            'method' => 'bulkUpdate',
-            'arguments' => [[new DocumentUpdate('index', '1', 'document')]],
+        yield 'bulk' => [
+            'method' => 'bulk',
+            'arguments' => [[new IndexAction(new DocumentUpdate('1', 'document'), 'index')]],
             'exception' => SearchUpdateException::class,
             'exceptionMessage' => 'An error occured while performing bulk update on backend',
-        ];
-
-        yield 'bulkDelete' => [
-            'method' => 'bulkDelete',
-            'arguments' => [['index' => [['1']]]],
-            'exception' => SearchDeleteException::class,
-            'exceptionMessage' => 'An error occured while performing bulk delete on backend',
         ];
 
         yield 'count' => [
@@ -100,7 +95,9 @@ final class ClientTest extends TestCase
         $stub = new CallableResponseClientStub();
         $client = $this->createInstance($stub);
 
-        $client->bulkUpdate([new DocumentUpdate('index', '1', 'document')]);
+        $client->bulk([
+            new IndexAction(new DocumentUpdate('1', 'document'), 'index')
+        ]);
 
         // If call was successful there should be no return/exception
         $this->addToAssertionCount(1);
@@ -118,7 +115,9 @@ final class ClientTest extends TestCase
 
         $expected = ['body' => [['delete' => ['_index' => 'index', '_type' => 'doc', '_id' => '1']]]];
 
-        $client->bulkDelete(['index' => ['1']]);
+        $client->bulk([
+            new IndexAction(new DocumentDelete('1'), 'index')
+        ]);
 
         self::assertSame($expected, $stub->getBulkParameters());
     }
@@ -246,7 +245,9 @@ final class ClientTest extends TestCase
         $this->expectException(BulkFailureException::class);
         $this->expectExceptionMessage('At least one record returned an error during bulk update');
 
-        $client->bulkUpdate([new DocumentUpdate('index', '1', 'document')]);
+        $client->bulk([
+            new IndexAction(new DocumentUpdate('1', 'document'), 'my_index')
+        ]);
     }
 
     /**
@@ -277,7 +278,9 @@ final class ClientTest extends TestCase
         ]);
         $client = $this->createInstance($stub);
 
-        $client->bulkUpdate([new DocumentUpdate('index', '1', 'document')]);
+        $client->bulk([
+            new IndexAction(new DocumentUpdate('1', 'document'), 'my_index')
+        ]);
 
         // No exception should be thrown since the error is on create and we've called update
         $this->addToAssertionCount(1);
@@ -550,24 +553,6 @@ final class ClientTest extends TestCase
     }
 
     /**
-     * Test non-iterable items in delete are skipped before handling to bulk().
-     *
-     * @return void
-     */
-    public function testNonIterableItemsAreSkipped(): void
-    {
-        $stub = new ClientStub();
-        $client = $this->createInstance($stub);
-
-        $client->bulkDelete(['index' => ['7']]);
-
-        self::assertSame(
-            ['body' => [['delete' => ['_index' => 'index', '_type' => 'doc', '_id' => '7']]]],
-            $stub->getBulkParameters()
-        );
-    }
-
-    /**
      * Create an elastic search client with mocked transport handler.
      *
      * @param mixed[] $response
@@ -587,7 +572,7 @@ final class ClientTest extends TestCase
             throw new AssertionFailedError('Unable to write to in-memory resource for mocked guzzle handler');
         }
 
-        // Reposition pointer to the start of the streama
+        // Reposition pointer to the start of the stream
         \rewind($stream);
 
         $mockResponse = [

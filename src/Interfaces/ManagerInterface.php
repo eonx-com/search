@@ -14,22 +14,6 @@ namespace LoyaltyCorp\Search\Interfaces;
 interface ManagerInterface
 {
     /**
-     * Returns an array of any indexes that this object is primary.
-     * The key is the index name and the value is the identifier used
-     * for that index.
-     *
-     * [
-     *   'index-name' => 'SEARCH ID',
-     *   'index-name-2' => 'SEARCH ID',
-     * ]
-     *
-     * @param object $object
-     *
-     * @return string[]
-     */
-    public function getSearchMeta(object $object): array;
-
-    /**
      * Accepts a multi dimensional array of search ids keyed by the index
      * they should be removed from.
      *

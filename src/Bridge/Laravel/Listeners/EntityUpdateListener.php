@@ -3,23 +3,23 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Bridge\Laravel\Listeners;
 
+use EonX\EasyEntityChange\Events\EntityChangeEvent;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use LoyaltyCorp\EasyEntityChange\Events\EntityChangeEvent;
-use LoyaltyCorp\Search\Workers\EntityUpdateWorker;
+use LoyaltyCorp\Search\Interfaces\Workers\EntityUpdateWorkerInterface;
 
 final class EntityUpdateListener implements ShouldQueue
 {
     /**
-     * @var \LoyaltyCorp\Search\Workers\EntityUpdateWorker
+     * @var \LoyaltyCorp\Search\Interfaces\Workers\EntityUpdateWorkerInterface
      */
     private $worker;
 
     /**
      * Constructor.
      *
-     * @param \LoyaltyCorp\Search\Workers\EntityUpdateWorker $worker
+     * @param \LoyaltyCorp\Search\Interfaces\Workers\EntityUpdateWorkerInterface $worker
      */
-    public function __construct(EntityUpdateWorker $worker)
+    public function __construct(EntityUpdateWorkerInterface $worker)
     {
         $this->worker = $worker;
     }
@@ -27,12 +27,12 @@ final class EntityUpdateListener implements ShouldQueue
     /**
      * Handles entity change event and updates ES indexes.
      *
-     * @param \LoyaltyCorp\EasyEntityChange\Events\EntityChangeEvent $event
+     * @param \EonX\EasyEntityChange\Events\EntityChangeEvent $event
      *
      * @return void
      */
     public function handle(EntityChangeEvent $event): void
     {
-        $this->worker->handle($event->getUpdates());
+        $this->worker->handle($event->getChanges());
     }
 }

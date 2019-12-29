@@ -3,13 +3,11 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Bridge\Laravel\Listeners;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use LoyaltyCorp\EasyEntityChange\Events\EntityChangeEvent;
+use EonX\EasyEntityChange\DataTransferObjects\UpdatedEntity;
+use EonX\EasyEntityChange\Events\EntityChangeEvent;
 use LoyaltyCorp\Search\Bridge\Laravel\Listeners\EntityUpdateListener;
-use LoyaltyCorp\Search\Workers\EntityUpdateWorker;
-use Tests\LoyaltyCorp\Search\Stubs\Entities\EntityStub;
-use Tests\LoyaltyCorp\Search\Stubs\ManagerStub;
-use Tests\LoyaltyCorp\Search\Stubs\Vendor\EoneoPay\Externals\ORM\EntityManagerStub;
+use stdClass;
+use Tests\LoyaltyCorp\Search\Stubs\Workers\EntityUpdateWorkerStub;
 use Tests\LoyaltyCorp\Search\TestCase;
 
 /**
@@ -24,26 +22,23 @@ final class EntityUpdateListenerTest extends TestCase
      */
     public function testHandle(): void
     {
-        $entityManager = new EntityManagerStub();
-        $searchManager = new ManagerStub();
-        $worker = new EntityUpdateWorker($entityManager, $searchManager);
+        $worker = new EntityUpdateWorkerStub();
         $listener = new EntityUpdateListener($worker);
 
-        $entityManager->addFindByIds([
-            $entity1 = new EntityStub(),
-            $entity2 = new EntityStub(),
-        ]);
+        $updatedEntity = new UpdatedEntity(
+            ['property'],
+            stdClass::class,
+            ['id' => 'value']
+        );
 
-        $listener->handle(new EntityChangeEvent([], [
-            EntityStub::class => ['id1', 'id2'],
-            \stdClass::class => [],
-            self::class => ['id1'],
+        $expectedCalls = [
+            ['changes' => [$updatedEntity]]
+        ];
+
+        $listener->handle(new EntityChangeEvent([
+            $updatedEntity,
         ]));
 
-        self::assertInstanceOf(ShouldQueue::class, $listener);
-
-        $updates = $searchManager->getUpdateObjects();
-        self::assertCount(1, $updates);
-        self::assertSame([$entity1, $entity2], $updates[0]['objects']);
+        self::assertSame($expectedCalls, $worker->getHandleCalls());
     }
 }

@@ -5,8 +5,9 @@ namespace LoyaltyCorp\Search\Workers;
 
 use EoneoPay\Externals\ORM\Interfaces\EntityManagerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
+use LoyaltyCorp\Search\Interfaces\Workers\EntityUpdateWorkerInterface;
 
-final class EntityUpdateWorker
+final class EntityUpdateWorker implements EntityUpdateWorkerInterface
 {
     /**
      * @var \EoneoPay\Externals\ORM\Interfaces\EntityManagerInterface
@@ -33,26 +34,15 @@ final class EntityUpdateWorker
     }
 
     /**
-     * Handles entity change event and updates ES indexes.
-     *
-     * @param mixed[] $updates
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function handle(array $updates): void
+    public function handle(array $changes): void
     {
-        foreach ($updates as $class => $ids) {
-            if (\count($ids) === 0) {
-                continue;
-            }
+        foreach ($changes as $change) {
+            $entity = $this->entityManager->getRepository($change->getClass())
+                ->findOneBy($change->getIds());
 
-            $entities = $this->entityManager->findByIds($class, \array_values($ids));
-
-            if (\count($entities) === 0) {
-                continue;
-            }
-
-            $this->searchManager->handleUpdates($class, '', $entities);
+            $this->searchManager->handleUpdates($change->getClass(), '', [$entity]);
         }
     }
 }

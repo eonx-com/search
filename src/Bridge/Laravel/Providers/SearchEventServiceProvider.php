@@ -3,11 +3,8 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Bridge\Laravel\Providers;
 
+use EonX\EasyEntityChange\Events\EntityChangeEvent;
 use Laravel\Lumen\Providers\EventServiceProvider;
-use LoyaltyCorp\EasyEntityChange\Events\EntityChangeEvent;
-use LoyaltyCorp\EasyEntityChange\Events\EntityDeleteDataEvent;
-use LoyaltyCorp\Search\Bridge\Laravel\Listeners\EntityDeleteDataListener;
-use LoyaltyCorp\Search\Bridge\Laravel\Listeners\EntityDeleteListener;
 use LoyaltyCorp\Search\Bridge\Laravel\Listeners\EntityUpdateListener;
 
 final class SearchEventServiceProvider extends EventServiceProvider
@@ -20,11 +17,7 @@ final class SearchEventServiceProvider extends EventServiceProvider
         // Set listeners
         $this->listen = [
             EntityChangeEvent::class => [
-                EntityDeleteListener::class,
                 EntityUpdateListener::class,
-            ],
-            EntityDeleteDataEvent::class => [
-                EntityDeleteDataListener::class,
             ],
         ];
 

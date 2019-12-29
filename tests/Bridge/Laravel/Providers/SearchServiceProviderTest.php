@@ -32,11 +32,13 @@ use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
 use LoyaltyCorp\Search\Interfaces\RequestProxyFactoryInterface;
 use LoyaltyCorp\Search\Interfaces\ResponseFactoryInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
+use LoyaltyCorp\Search\Interfaces\Workers\EntityUpdateWorkerInterface;
 use LoyaltyCorp\Search\Manager;
 use LoyaltyCorp\Search\Populator;
 use LoyaltyCorp\Search\RequestProxyFactory;
 use LoyaltyCorp\Search\ResponseFactory;
 use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
+use LoyaltyCorp\Search\Workers\EntityUpdateWorker;
 use stdClass;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NonDoctrineHandlerStub;
@@ -78,6 +80,7 @@ final class SearchServiceProviderTest extends TestCase
             RequestProxyFactoryInterface::class => RequestProxyFactory::class,
             ResponseFactoryInterface::class => ResponseFactory::class,
             EntityUpdateListener::class => EntityUpdateListener::class,
+            EntityUpdateWorkerInterface::class => EntityUpdateWorker::class,
         ];
 
         foreach ($services as $abstract => $concrete) {

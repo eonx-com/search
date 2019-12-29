@@ -10,7 +10,6 @@ use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
 use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
-use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 
 final class Manager implements ManagerInterface
 {
@@ -25,11 +24,6 @@ final class Manager implements ManagerInterface
     private $handlers;
 
     /**
-     * @var \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface
-     */
-    private $nameTransformer;
-
-    /**
      * @var \LoyaltyCorp\Search\Interfaces\PopulatorInterface
      */
     private $populator;
@@ -39,49 +33,16 @@ final class Manager implements ManagerInterface
      *
      * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface $handlers
      * @param \LoyaltyCorp\Search\Interfaces\ClientInterface $client
-     * @param \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface $nameTransformer
      * @param \LoyaltyCorp\Search\Interfaces\PopulatorInterface $populator
      */
     public function __construct(
         RegisteredSearchHandlerInterface $handlers,
         ClientInterface $client,
-        IndexNameTransformerInterface $nameTransformer,
         PopulatorInterface $populator
     ) {
         $this->handlers = $handlers;
         $this->client = $client;
-        $this->nameTransformer = $nameTransformer;
         $this->populator = $populator;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getSearchMeta(object $object): array
-    {
-        $class = \get_class($object);
-
-        $ids = [];
-
-        foreach ($this->handlers->getTransformableHandlers() as $handler) {
-            if ($this->isHandled($handler, $class) === false) {
-                continue;
-            }
-
-            $searchId = $handler->getSearchId($object);
-
-            // Make sure search id is provided/generated
-            if ($searchId === null) {
-                continue;
-            }
-
-            $indexName = $this->nameTransformer->transformIndexName($handler, $object);
-            // Elastic search works with string ids, so we're forcing
-            // them to strings here
-            $ids[$indexName] = (string)$searchId;
-        }
-
-        return $ids;
     }
 
     /**

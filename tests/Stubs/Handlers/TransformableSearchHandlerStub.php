@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Stubs\Handlers;
 
+use LoyaltyCorp\Search\DataTransferObjects\DocumentAction;
 use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\SearchableStub;
 
@@ -12,25 +13,25 @@ use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\SearchableStub;
 final class TransformableSearchHandlerStub implements TransformableSearchHandlerInterface
 {
     /**
-     * @var mixed[]|null
-     */
-    private $objects;
-
-    /**
      * @var string
      */
     private $indexName;
 
     /**
+     * @var \LoyaltyCorp\Search\DataTransferObjects\DocumentAction[]
+     */
+    private $objects;
+
+    /**
      * Constructor.
      *
-     * @param mixed[]|null $objects
+     * @param \LoyaltyCorp\Search\DataTransferObjects\DocumentAction[]|null $objects
      * @param string|null $indexName
      */
     public function __construct(?array $objects = null, ?string $indexName = null)
     {
         $this->indexName = $indexName ?? 'valid';
-        $this->objects = $objects;
+        $this->objects = $objects ?? [];
     }
 
     /**
@@ -88,16 +89,8 @@ final class TransformableSearchHandlerStub implements TransformableSearchHandler
     /**
      * {@inheritdoc}
      */
-    public function getSearchId(object $object)
+    public function transform($object = null): ?DocumentAction
     {
-        return \method_exists($object, 'getSearchId') ? $object->getSearchId() : null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function transform($object = null): ?array
-    {
-        return \method_exists($object, 'toArray') ? $object->toArray() : null;
+        return \array_shift($this->objects);
     }
 }

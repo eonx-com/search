@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search;
 
-use LoyaltyCorp\Search\Access\AnonymousAccessPopulator;
-use LoyaltyCorp\Search\DataTransferObjects\DocumentDelete;
 use LoyaltyCorp\Search\DataTransferObjects\DocumentUpdate;
 use LoyaltyCorp\Search\DataTransferObjects\IndexAction;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
@@ -12,10 +10,6 @@ use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 use LoyaltyCorp\Search\Populator;
 use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NoDocumentBodyStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NoSearchIdStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NotSearchableStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\SearchableStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
 
 /**
@@ -32,29 +26,20 @@ final class PopulatorTest extends TestCase
      */
     public function testBigBatch(): void
     {
+        $documentUpdate1 = new DocumentUpdate('search1', '');
+        $documentUpdate2 = new DocumentUpdate('search2', '');
+
         $objects = [
-            new SearchableStub('search1'),
-            new SearchableStub('search2'),
+            $documentUpdate1,
+            $documentUpdate2,
         ];
 
         $expected = [
             [
-                new IndexAction(
-                    new DocumentUpdate(
-                        'search1',
-                        ['search' => 'body', '_access_tokens' => ['anonymous']]
-                    ),
-                    'valid_suffix'
-                ),
+                new IndexAction($documentUpdate1, 'valid_suffix'),
             ],
             [
-                new IndexAction(
-                    new DocumentUpdate(
-                        'search2',
-                        ['search' => 'body', '_access_tokens' => ['anonymous']]
-                    ),
-                    'valid_suffix'
-                )
+                new IndexAction($documentUpdate2, 'valid_suffix'),
             ],
         ];
 
@@ -76,7 +61,6 @@ final class PopulatorTest extends TestCase
     public function testEmptyIterable(): void
     {
         $objects = [];
-
         $expected = [];
 
         $handler = new TransformableSearchHandlerStub($objects);
@@ -96,60 +80,19 @@ final class PopulatorTest extends TestCase
      */
     public function testExactBatch(): void
     {
+        $documentUpdate1 = new DocumentUpdate('search1', '');
+        $documentUpdate2 = new DocumentUpdate('search2', '');
+
         $objects = [
-            new SearchableStub('search1'),
-            new SearchableStub('search2'),
+            $documentUpdate1,
+            $documentUpdate2,
         ];
 
         $expected = [
             [
-                new IndexAction(
-                    new DocumentUpdate(
-                        'search1',
-                        ['search' => 'body', '_access_tokens' => ['anonymous']]
-                    ),
-                    'valid_suffix'
-                ),
-                new IndexAction(
-                    new DocumentUpdate(
-                        'search2',
-                        ['search' => 'body', '_access_tokens' => ['anonymous']]
-                    ),
-                    'valid_suffix'
-                ),
+                new IndexAction($documentUpdate1, 'valid_suffix'),
+                new IndexAction($documentUpdate2, 'valid_suffix'),
             ],
-        ];
-
-        $handler = new TransformableSearchHandlerStub($objects);
-
-        $client = new ClientStub();
-        $populator = $this->getPopulator($client);
-
-        $populator->populate($handler, '_suffix', 2);
-
-        self::assertEquals($expected, $client->getUpdatedIndices());
-    }
-
-    /**
-     * Tests the handler returning an iterable with less than batch size.
-     *
-     * @return void
-     */
-    public function testSkippedObjects(): void
-    {
-        $objects = [
-            new NotSearchableStub(),
-            new NoDocumentBodyStub(),
-            new NoSearchIdStub(),
-        ];
-
-        $expected = [
-            [
-                new IndexAction(
-                    new DocumentDelete('nobody'),
-                    'valid_suffix'
-                ),
-            ]
         ];
 
         $handler = new TransformableSearchHandlerStub($objects);
@@ -169,37 +112,23 @@ final class PopulatorTest extends TestCase
      */
     public function testOddBatch(): void
     {
+        $documentUpdate1 = new DocumentUpdate('search1', '');
+        $documentUpdate2 = new DocumentUpdate('search2', '');
+        $documentUpdate3 = new DocumentUpdate('search3', '');
+
         $objects = [
-            new SearchableStub('search1'),
-            new SearchableStub('search2'),
-            new SearchableStub('search3'),
+            $documentUpdate1,
+            $documentUpdate2,
+            $documentUpdate3,
         ];
 
         $expected = [
             [
-                new IndexAction(
-                    new DocumentUpdate(
-                        'search1',
-                        ['search' => 'body', '_access_tokens' => ['anonymous']]
-                    ),
-                    'valid_suffix'
-                ),
-                new IndexAction(
-                    new DocumentUpdate(
-                        'search2',
-                        ['search' => 'body', '_access_tokens' => ['anonymous']]
-                    ),
-                    'valid_suffix'
-                )
+                new IndexAction($documentUpdate1, 'valid_suffix'),
+                new IndexAction($documentUpdate2, 'valid_suffix'),
             ],
             [
-                new IndexAction(
-                    new DocumentUpdate(
-                        'search3',
-                        ['search' => 'body', '_access_tokens' => ['anonymous']]
-                    ),
-                    'valid_suffix'
-                ),
+                new IndexAction($documentUpdate3, 'valid_suffix'),
             ],
         ];
 
@@ -220,19 +149,15 @@ final class PopulatorTest extends TestCase
      */
     public function testSmallBatch(): void
     {
+        $documentUpdate1 = new DocumentUpdate('search1', '');
+
         $objects = [
-            new SearchableStub('search1'),
+            $documentUpdate1,
         ];
 
         $expected = [
             [
-                new IndexAction(
-                    new DocumentUpdate(
-                        'search1',
-                        ['search' => 'body', '_access_tokens' => ['anonymous']]
-                    ),
-                    'valid_suffix'
-                ),
+                new IndexAction($documentUpdate1, 'valid_suffix'),
             ],
         ];
 
@@ -259,7 +184,6 @@ final class PopulatorTest extends TestCase
         ?IndexNameTransformerInterface $nameTransformer = null
     ): Populator {
         return new Populator(
-            new AnonymousAccessPopulator(),
             $client ?? new ClientStub(),
             $nameTransformer ?? new DefaultIndexNameTransformer()
         );

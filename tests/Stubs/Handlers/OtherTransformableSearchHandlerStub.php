@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Stubs\Handlers;
 
+use LoyaltyCorp\Search\DataTransferObjects\DocumentAction;
 use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\SearchableStub;
 
@@ -54,16 +55,8 @@ final class OtherTransformableSearchHandlerStub implements TransformableSearchHa
     /**
      * {@inheritdoc}
      */
-    public function getSearchId(object $object)
+    public function transform($object = null): ?DocumentAction
     {
-        return \method_exists($object, 'getSearchId') ? $object->getSearchId() : null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function transform($object = null): ?array
-    {
-        return \method_exists($object, 'toArray') ? $object->toArray() : null;
+        return null;
     }
 }

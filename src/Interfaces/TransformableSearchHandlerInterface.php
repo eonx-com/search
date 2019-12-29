@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Interfaces;
 
+use LoyaltyCorp\Search\DataTransferObjects\DocumentAction;
+
 interface TransformableSearchHandlerInterface extends SearchHandlerInterface
 {
     /**
@@ -21,21 +23,12 @@ interface TransformableSearchHandlerInterface extends SearchHandlerInterface
     public function getHandledClasses(): array;
 
     /**
-     * Returns the identifier used externally for the transformed object.
-     *
-     * @param object $object
-     *
-     * @return mixed|null
-     */
-    public function getSearchId(object $object);
-
-    /**
      * Transforms objects supplied into serialized search arrays that
      * should be indexed.
      *
      * @param mixed $object
      *
-     * @return mixed[]|null
+     * @return \LoyaltyCorp\Search\DataTransferObjects\DocumentAction|null
      */
-    public function transform($object): ?array;
+    public function transform($object): ?DocumentAction;
 }

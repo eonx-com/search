@@ -7,7 +7,7 @@ use LoyaltyCorp\Search\Exceptions\InvalidMappingException;
 use LoyaltyCorp\Search\Indexer\AccessTokenMappingHelper;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\CustomAccessHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\InvalidMappingHandlerStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableHandlerStub;
 use Tests\LoyaltyCorp\Search\TestCase;
 
 /**
@@ -27,7 +27,16 @@ final class AccessTokenMappingHelperTest extends TestCase
 
         $handler = new CustomAccessHandlerStub();
 
-        $expectedMappings = ['mappings'];
+        $expectedMappings = [
+            'doc' => [
+                'dynamic' => 'strict',
+                'properties' => [
+                    'createdAt' => [
+                        'type' => 'date',
+                    ],
+                ],
+            ],
+        ];
 
         $mappings = $helper->buildIndexMappings($handler);
 
@@ -43,7 +52,7 @@ final class AccessTokenMappingHelperTest extends TestCase
     {
         $helper = new AccessTokenMappingHelper();
 
-        $handler = new TransformableSearchHandlerStub();
+        $handler = new TransformableHandlerStub();
 
         $expectedMappings = [
             'doc' => [

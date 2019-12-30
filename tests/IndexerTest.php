@@ -11,7 +11,7 @@ use LoyaltyCorp\Search\Indexer\IndexSwapResult;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableHandlerStub;
 
 /**
  * @covers \LoyaltyCorp\Search\Indexer
@@ -56,7 +56,7 @@ final class IndexerTest extends TestCase
         ];
 
         $now = new DateTime('2019-01-02T03:04:05');
-        $indexer->create(new TransformableSearchHandlerStub(), $now);
+        $indexer->create(new TransformableHandlerStub(), $now);
 
         self::assertSame([$expectedAlias], $elasticClient->getCreatedAliases());
         self::assertSame([$expectedIndexCreate], $elasticClient->getCreatedIndices());
@@ -83,8 +83,8 @@ final class IndexerTest extends TestCase
         $indexer = $this->createInstance($client);
 
         $indexer->clean([
-            new TransformableSearchHandlerStub(),
-            new TransformableSearchHandlerStub(null, 'other-index'),
+            new TransformableHandlerStub(),
+            new TransformableHandlerStub(null, null, null, 'other-index'),
         ]);
 
         self::assertSame($expected, $client->getDeletedIndices());
@@ -106,7 +106,7 @@ final class IndexerTest extends TestCase
         $indexer = $this->createInstance($client);
         $expected = ['valid-123'];
 
-        $indexer->clean([new TransformableSearchHandlerStub()]);
+        $indexer->clean([new TransformableHandlerStub()]);
 
         self::assertSame($expected, $client->getDeletedIndices());
     }
@@ -125,7 +125,7 @@ final class IndexerTest extends TestCase
         );
         $indexer = $this->createInstance($client);
 
-        $indexer->clean([new TransformableSearchHandlerStub()], true);
+        $indexer->clean([new TransformableHandlerStub()], true);
 
         self::assertSame([], $client->getDeletedIndices());
     }
@@ -146,7 +146,7 @@ final class IndexerTest extends TestCase
         $indexer = $this->createInstance($client);
         $expected = ['valid-unused'];
 
-        $indexer->clean([new TransformableSearchHandlerStub()]);
+        $indexer->clean([new TransformableHandlerStub()]);
 
         self::assertSame($expected, $client->getDeletedIndices());
     }
@@ -168,7 +168,7 @@ final class IndexerTest extends TestCase
         $indexer = $this->createInstance($elasticClient);
 
         $result = $indexer->indexSwap(
-            [new TransformableSearchHandlerStub()],
+            [new TransformableHandlerStub()],
             true
         );
 
@@ -191,7 +191,7 @@ final class IndexerTest extends TestCase
         $indexer = $this->createInstance($elasticClient);
         $expected = ['valid_new'];
 
-        $indexer->indexSwap([new TransformableSearchHandlerStub()]);
+        $indexer->indexSwap([new TransformableHandlerStub()]);
 
         self::assertSame($expected, $elasticClient->getDeletedAliases());
     }
@@ -211,7 +211,7 @@ final class IndexerTest extends TestCase
         );
         $indexer = $this->createInstance($elasticClient);
 
-        $indexer->indexSwap([new TransformableSearchHandlerStub()], true);
+        $indexer->indexSwap([new TransformableHandlerStub()], true);
 
         self::assertSame([], $elasticClient->getSwappedAliases());
         self::assertSame([], $elasticClient->getDeletedAliases());
@@ -234,7 +234,7 @@ final class IndexerTest extends TestCase
         // alias => index
         $expected = ['valid' => 'valid_201900502'];
 
-        $indexer->indexSwap([new TransformableSearchHandlerStub()]);
+        $indexer->indexSwap([new TransformableHandlerStub()]);
 
         self::assertSame($expected, $elasticClient->getSwappedAliases());
     }
@@ -252,7 +252,7 @@ final class IndexerTest extends TestCase
         $elasticClient = new ClientStub(true);
         $indexer = $this->createInstance($elasticClient);
 
-        $indexer->indexSwap([new TransformableSearchHandlerStub()]);
+        $indexer->indexSwap([new TransformableHandlerStub()]);
     }
 
     /**
@@ -268,7 +268,7 @@ final class IndexerTest extends TestCase
         $indexer = $this->createInstance($elasticClient);
         $expected = ['valid_new'];
 
-        $indexer->create(new TransformableSearchHandlerStub());
+        $indexer->create(new TransformableHandlerStub());
 
         // No deleted aliases because *_new was not existing already
         self::assertSame($expected, $elasticClient->getDeletedAliases());

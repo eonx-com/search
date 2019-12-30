@@ -6,8 +6,7 @@ namespace Tests\LoyaltyCorp\Search\Bridge\Laravel\Console\Commands;
 use LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexFillCommand;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\OtherTransformableSearchHandlerStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\PopulatorStub;
 use Tests\LoyaltyCorp\Search\TestCases\SearchIndexCommandTestCase;
@@ -29,10 +28,10 @@ final class SearchIndexFillCommandTest extends SearchIndexCommandTestCase
     public function testIndexerPopulateCalled(): void
     {
         $populator = new PopulatorStub();
-
-        $handlerStub = new TransformableSearchHandlerStub();
-        $otherHandler = new OtherTransformableSearchHandlerStub();
+        $handlerStub = new TransformableHandlerStub();
+        $otherHandler = new TransformableHandlerStub(null, null, null, 'other');
         $handlers = [$handlerStub, $otherHandler];
+
         $command = $this->createInstance($populator, new RegisteredSearchHandlerStub($handlers));
         $this->bootstrapCommand($command);
 

@@ -6,7 +6,7 @@ namespace Tests\LoyaltyCorp\Search\Transformers;
 use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use Tests\LoyaltyCorp\Search\Stubs\Entities\EntityStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NonDoctrineHandlerStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableHandlerStub;
 use Tests\LoyaltyCorp\Search\TestCase;
 
 /**
@@ -22,7 +22,7 @@ final class DefaultIndexNameTransformerTest extends TestCase
     public function testTransformIndexName(): void
     {
         $entity = new EntityStub();
-        $handler = new TransformableSearchHandlerStub();
+        $handler = new TransformableHandlerStub();
         $transformer = $this->getTransformer();
 
         $expectedIndexName = 'valid';

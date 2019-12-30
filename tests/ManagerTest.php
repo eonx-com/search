@@ -10,12 +10,9 @@ use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
 use LoyaltyCorp\Search\Manager;
 use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\NotSearchableSearchHandlerStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NoDocumentBodyStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NoSearchIdStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NotSearchableStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\SearchableStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
+use stdClass;
+use Tests\LoyaltyCorp\Search\Stubs\Entities\EntityStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\PopulatorStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch\ClientStub;
@@ -28,26 +25,6 @@ use Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch\ClientStub;
 final class ManagerTest extends TestCase
 {
     /**
-     * Test getSearchMeta() functionality.
-     *
-     * @return void
-     */
-    public function testGetSearchMetaFunctionality(): void
-    {
-        $handlers = new RegisteredSearchHandlerStub([new TransformableSearchHandlerStub()]);
-        $manager = $this->getManager($handlers);
-
-        // Test against a searchable object
-        self::assertSame(['valid' => 'searchable'], $manager->getSearchMeta(new SearchableStub()));
-
-        // Test against a non-searchable object
-        self::assertSame([], $manager->getSearchMeta(new NotSearchableStub()));
-
-        // Test against a searchable object which doesn't have an id
-        self::assertSame([], $manager->getSearchMeta(new NoSearchIdStub()));
-    }
-
-    /**
      * Test handleDeletes() functionality.
      *
      * @return void
@@ -55,7 +32,7 @@ final class ManagerTest extends TestCase
     public function testHandleDeletesFunctionality(): void
     {
         $stub = new ClientStub();
-        $handlers = new RegisteredSearchHandlerStub([new TransformableSearchHandlerStub()]);
+        $handlers = new RegisteredSearchHandlerStub([new TransformableHandlerStub()]);
         $manager = $this->getManager($handlers, $this->createClient($stub));
 
         // Test method passes through to elasticsearch
@@ -83,17 +60,18 @@ final class ManagerTest extends TestCase
     {
         $populator = new PopulatorStub();
 
-        $handler = new TransformableSearchHandlerStub();
+        $handler = new TransformableHandlerStub(null, [stdClass::class]);
         $handlers = new RegisteredSearchHandlerStub([$handler]);
         $manager = $this->getManager($handlers, null, $populator);
 
         $objects = [
-            new NoDocumentBodyStub(),
-            new NoSearchIdStub(),
-            new SearchableStub(),
+            new stdClass(),
+            new class
+            {
+            },
         ];
 
-        $manager->handleUpdates(SearchableStub::class, '_new', $objects);
+        $manager->handleUpdates(stdClass::class, '_new', $objects);
 
         $expectedCalls = [
             'Tests\LoyaltyCorp\Search\Stubs\PopulatorStub::populateWith' => [
@@ -117,11 +95,11 @@ final class ManagerTest extends TestCase
     {
         $populator = new PopulatorStub();
 
-        $handlers = new RegisteredSearchHandlerStub([new TransformableSearchHandlerStub()]);
+        $handlers = new RegisteredSearchHandlerStub([new TransformableHandlerStub()]);
         $manager = $this->getManager($handlers, null, $populator);
 
         // Test an unsupported class doesn't do anything
-        $manager->handleUpdates(NotSearchableStub::class, '_new', []);
+        $manager->handleUpdates(stdClass::class, '_new', []);
         self::assertEmpty($populator->getCalls());
     }
 
@@ -133,31 +111,16 @@ final class ManagerTest extends TestCase
     public function testHandleUpdatesWhenNoTransformationsOccur(): void
     {
         $stub = new ClientStub();
-        $handlers = new RegisteredSearchHandlerStub([new TransformableSearchHandlerStub()]);
+        $handlers = new RegisteredSearchHandlerStub([new TransformableHandlerStub()]);
         $manager = $this->getManager($handlers, $this->createClient($stub));
 
         // Tests whats going to happen when handleUpdates is called with objects that result
         // in no transformations
-        $manager->handleUpdates(SearchableStub::class, '', [
-            new NoDocumentBodyStub(),
+        $manager->handleUpdates(stdClass::class, '', [
+            new EntityStub()
         ]);
 
         self::assertNull($stub->getBulkParameters());
-    }
-
-    /**
-     * Ensure no results are returned when a handler is passed an object that has no searchId.
-     *
-     * @return void
-     */
-    public function testSearchMetaReturnsNothingWhenSearchIdNulled(): void
-    {
-        $handlers = new RegisteredSearchHandlerStub([new NotSearchableSearchHandlerStub()]);
-        $manager = $this->getManager($handlers);
-
-        $result = $manager->getSearchMeta(new NotSearchableStub());
-
-        self::assertSame([], $result);
     }
 
     /**
@@ -192,7 +155,6 @@ final class ManagerTest extends TestCase
         return new Manager(
             $handlers,
             $client ?? $this->createClient(),
-            new DefaultIndexNameTransformer(),
             $populator ?? new PopulatorStub(),
         );
     }

@@ -10,7 +10,7 @@ use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 use LoyaltyCorp\Search\Populator;
 use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableHandlerStub;
 
 /**
  * @covers \LoyaltyCorp\Search\Populator
@@ -43,7 +43,7 @@ final class PopulatorTest extends TestCase
             ],
         ];
 
-        $handler = new TransformableSearchHandlerStub($objects);
+        $handler = new TransformableHandlerStub($objects, null, null, null, $objects);
 
         $client = new ClientStub();
         $populator = $this->getPopulator($client);
@@ -63,7 +63,7 @@ final class PopulatorTest extends TestCase
         $objects = [];
         $expected = [];
 
-        $handler = new TransformableSearchHandlerStub($objects);
+        $handler = new TransformableHandlerStub($objects, null, null, null, $objects);
 
         $client = new ClientStub();
         $populator = $this->getPopulator($client);
@@ -95,7 +95,7 @@ final class PopulatorTest extends TestCase
             ],
         ];
 
-        $handler = new TransformableSearchHandlerStub($objects);
+        $handler = new TransformableHandlerStub($objects, null, null, null, $objects);
 
         $client = new ClientStub();
         $populator = $this->getPopulator($client);
@@ -132,7 +132,7 @@ final class PopulatorTest extends TestCase
             ],
         ];
 
-        $handler = new TransformableSearchHandlerStub($objects);
+        $handler = new TransformableHandlerStub($objects, null, null, null, $objects);
 
         $client = new ClientStub();
         $populator = $this->getPopulator($client);
@@ -161,7 +161,7 @@ final class PopulatorTest extends TestCase
             ],
         ];
 
-        $handler = new TransformableSearchHandlerStub($objects);
+        $handler = new TransformableHandlerStub($objects, null, null, null, $objects);
 
         $client = new ClientStub();
         $populator = $this->getPopulator($client);

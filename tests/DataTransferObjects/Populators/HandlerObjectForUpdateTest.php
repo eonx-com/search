@@ -8,6 +8,9 @@ use LoyaltyCorp\Search\DataTransferObjects\Populators\HandlerObjectForUpdate;
 use stdClass;
 use Tests\LoyaltyCorp\Search\TestCase;
 
+/**
+ * @covers \LoyaltyCorp\Search\DataTransferObjects\Populators\HandlerObjectForUpdate
+ */
 class HandlerObjectForUpdateTest extends TestCase
 {
     /**

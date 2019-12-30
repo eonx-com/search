@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Stubs\Helpers;
 
+use LoyaltyCorp\Search\Exceptions\HandlerDoesntExistException;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 
@@ -32,6 +33,24 @@ final class RegisteredSearchHandlerStub implements RegisteredSearchHandlerInterf
     public function getAll(): array
     {
         return $this->searchHandlers;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTransformableHandlerByKey(string $key): TransformableSearchHandlerInterface
+    {
+        foreach ($this->searchHandlers as $handler) {
+            if ($handler instanceof TransformableSearchHandlerInterface === false) {
+                continue;
+            }
+
+            if ($handler->getHandlerKey() === $key) {
+                return $handler;
+            }
+        }
+
+        throw new HandlerDoesntExistException('');
     }
 
     /**

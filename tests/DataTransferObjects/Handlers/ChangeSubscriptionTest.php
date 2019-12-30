@@ -5,10 +5,13 @@ namespace Tests\LoyaltyCorp\Search\DataTransferObjects\Handlers;
 
 use EonX\EasyEntityChange\DataTransferObjects\ChangedEntity;
 use LoyaltyCorp\Search\DataTransferObjects\Handlers\ChangeSubscription;
+use stdClass;
 use Tests\LoyaltyCorp\Search\TestCase;
 
 /**
  * @covers \LoyaltyCorp\Search\DataTransferObjects\Handlers\ChangeSubscription
+ *
+ * @SuppressWarnings(PHPMD)
  */
 class ChangeSubscriptionTest extends TestCase
 {
@@ -31,12 +34,12 @@ class ChangeSubscriptionTest extends TestCase
         };
 
         $subscription = new ChangeSubscription(
-            'class',
+            stdClass::class,
             ['property'],
             $func
         );
 
-        self::assertSame('class', $subscription->getClass());
+        self::assertSame(stdClass::class, $subscription->getClass());
         self::assertSame(['property'], $subscription->getProperties());
         self::assertSame($func, $subscription->getTransform());
     }

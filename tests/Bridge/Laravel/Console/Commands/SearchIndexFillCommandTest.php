@@ -29,7 +29,7 @@ final class SearchIndexFillCommandTest extends SearchIndexCommandTestCase
     {
         $populator = new PopulatorStub();
         $handlerStub = new TransformableHandlerStub();
-        $otherHandler = new TransformableHandlerStub(null, null, null, 'other');
+        $otherHandler = new TransformableHandlerStub('other');
         $handlers = [$handlerStub, $otherHandler];
 
         $command = $this->createInstance($populator, new RegisteredSearchHandlerStub($handlers));

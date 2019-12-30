@@ -56,7 +56,9 @@ final class IndexerTest extends TestCase
         ];
 
         $now = new DateTime('2019-01-02T03:04:05');
-        $indexer->create(new TransformableHandlerStub(), $now);
+        $handler = new TransformableHandlerStub();
+
+        $indexer->create($handler, $now);
 
         self::assertSame([$expectedAlias], $elasticClient->getCreatedAliases());
         self::assertSame([$expectedIndexCreate], $elasticClient->getCreatedIndices());
@@ -84,7 +86,7 @@ final class IndexerTest extends TestCase
 
         $indexer->clean([
             new TransformableHandlerStub(),
-            new TransformableHandlerStub(null, null, null, 'other-index'),
+            new TransformableHandlerStub('other-index'),
         ]);
 
         self::assertSame($expected, $client->getDeletedIndices());

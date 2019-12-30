@@ -9,7 +9,6 @@ use LoyaltyCorp\Search\Helpers\ClientBulkResponseHelper;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
 use LoyaltyCorp\Search\Manager;
-use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use stdClass;
 use Tests\LoyaltyCorp\Search\Stubs\Entities\EntityStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableHandlerStub;
@@ -60,7 +59,9 @@ final class ManagerTest extends TestCase
     {
         $populator = new PopulatorStub();
 
-        $handler = new TransformableHandlerStub(null, [stdClass::class]);
+        $handler = new TransformableHandlerStub(null, [
+            'getHandledClasses' => [[stdClass::class]]
+        ]);
         $handlers = new RegisteredSearchHandlerStub([$handler]);
         $manager = $this->getManager($handlers, null, $populator);
 
@@ -71,7 +72,7 @@ final class ManagerTest extends TestCase
             },
         ];
 
-        $manager->handleUpdates(stdClass::class, '_new', $objects);
+        $manager->handleUpdates('_new', $objects);
 
         $expectedCalls = [
             'Tests\LoyaltyCorp\Search\Stubs\PopulatorStub::populateWith' => [

@@ -30,7 +30,7 @@ final class SearchIndexCreateCommandTest extends SearchIndexCommandTestCase
         $indexer = new IndexerStub();
         $handlers = [
             new TransformableHandlerStub(),
-            new TransformableHandlerStub(null, null, null, 'other')
+            new TransformableHandlerStub('other')
         ];
 
         // Two search handlers registered should result in 2 'created' calls

@@ -22,10 +22,11 @@ final class RegisteredSearchHandlerTest extends TestCase
      */
     public function testGetByHandlerKey(): void
     {
-        $handler1 = new TransformableHandlerStub(null, null, 'handler1');
-        $handler2 = new TransformableHandlerStub(null, null, 'handler2');
+        $handler1 = new TransformableHandlerStub(null, [
+            'getHandlerKey' => ['handler1', 'handler1'],
+        ]);
 
-        $registered = $this->createInstance([$handler1, $handler2]);
+        $registered = $this->createInstance([$handler1]);
 
         $result = $registered->getTransformableHandlerByKey('handler1');
 
@@ -39,8 +40,12 @@ final class RegisteredSearchHandlerTest extends TestCase
      */
     public function testGetByHandlerKeyDuplicateKeys(): void
     {
-        $handler1 = new TransformableHandlerStub(null, null, 'handler1');
-        $handler2 = new TransformableHandlerStub(null, null, 'handler1');
+        $handler1 = new TransformableHandlerStub(null, [
+            'getHandlerKey' => ['handler1', 'handler1'],
+        ]);
+        $handler2 = new TransformableHandlerStub(null, [
+            'getHandlerKey' => ['handler1', 'handler1'],
+        ]);
 
         $registered = $this->createInstance([$handler1, $handler2]);
 

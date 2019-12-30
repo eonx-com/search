@@ -10,6 +10,8 @@ final class InvalidMappingHandlerStub extends TransformableHandlerStub
 {
     /**
      * {@inheritdoc}
+     *
+     * @noinspection PhpMissingParentCallCommonInspection
      */
     public static function getMappings(): array
     {

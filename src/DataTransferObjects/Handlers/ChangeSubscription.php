@@ -13,8 +13,8 @@ namespace LoyaltyCorp\Search\DataTransferObjects\Handlers;
  * properties are unknown.
  *
  * A transformation callback can be optionally provided that will receive the ChangedEntity DTO
- * that matches the class/properties and is expected to return an array of ObjectForUpdate DTOs
- * that * will be passed into the SearchHandler's retrieveObjects method.
+ * that matches the class/properties and is expected to return an array of ObjectForChange DTOs
+ * that will be passed into the SearchHandler's retrieveObjects method.
  */
 final class ChangeSubscription
 {
@@ -40,7 +40,7 @@ final class ChangeSubscription
      *
      * phpcs:disable
      *
-     * @phpstan-var null|callable(\EonX\EasyEntityChange\DataTransferObjects\ChangedEntity): array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate>
+     * @phpstan-var null|callable(\EonX\EasyEntityChange\DataTransferObjects\ChangedEntity): array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange>
      *
      * @var callable|null
      *
@@ -53,7 +53,7 @@ final class ChangeSubscription
      *
      * phpcs:disable
      * @phpstan-param class-string $class
-     * @phpstan-param callable(\EonX\EasyEntityChange\DataTransferObjects\ChangedEntity): array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate> $transform
+     * @phpstan-param callable(\EonX\EasyEntityChange\DataTransferObjects\ChangedEntity): array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange> $transform
      *
      * @param string $class
      * @param string[] $properties
@@ -94,7 +94,7 @@ final class ChangeSubscription
      *
      * phpcs:disable
      *
-     * @phpstan-return null|callable(\EonX\EasyEntityChange\DataTransferObjects\ChangedEntity): array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate>
+     * @phpstan-return null|callable(\EonX\EasyEntityChange\DataTransferObjects\ChangedEntity): array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange>
      *
      * @return callable|null
      *

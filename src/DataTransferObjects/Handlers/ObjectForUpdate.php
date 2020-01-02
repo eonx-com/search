@@ -9,57 +9,6 @@ namespace LoyaltyCorp\Search\DataTransferObjects\Handlers;
  *
  * The object is serialised into an async queue message to be actioned by a worker process.
  */
-final class ObjectForUpdate
+final class ObjectForUpdate extends ObjectForChange
 {
-    /**
-     * The class of the object that has changed.
-     *
-     * @phpstan-var class-string
-     *
-     * @var string
-     */
-    private $class;
-
-    /**
-     * An array of ids that represent the object, typically its primary key or a composite key.
-     *
-     * @var mixed[]
-     */
-    private $ids;
-
-    /**
-     * Constructor
-     *
-     * @phpstan-param class-string $class
-     *
-     * @param string $class
-     * @param mixed[] $ids
-     */
-    public function __construct(string $class, array $ids)
-    {
-        $this->class = $class;
-        $this->ids = $ids;
-    }
-
-    /**
-     * Returns the changed objects class.
-     *
-     * @phpstan-return class-string
-     *
-     * @return string
-     */
-    public function getClass(): string
-    {
-        return $this->class;
-    }
-
-    /**
-     * Returns the object's ids.
-     *
-     * @return mixed[]
-     */
-    public function getIds(): array
-    {
-        return $this->ids;
-    }
 }

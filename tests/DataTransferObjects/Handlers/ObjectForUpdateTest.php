@@ -8,6 +8,7 @@ use stdClass;
 use Tests\LoyaltyCorp\Search\TestCase;
 
 /**
+ * @covers \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange
  * @covers \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate
  */
 class ObjectForUpdateTest extends TestCase

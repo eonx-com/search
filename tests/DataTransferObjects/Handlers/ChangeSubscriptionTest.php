@@ -27,7 +27,7 @@ class ChangeSubscriptionTest extends TestCase
          *
          * @param \EonX\EasyEntityChange\DataTransferObjects\ChangedEntity $update
          *
-         * @return \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate[]
+         * @return \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange[]
          */
         $func = static function (ChangedEntity $update): array {
             return [];

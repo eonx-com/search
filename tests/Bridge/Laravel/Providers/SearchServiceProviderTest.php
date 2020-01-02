@@ -27,13 +27,13 @@ use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Indexer\MappingHelperInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
-use LoyaltyCorp\Search\Interfaces\ManagerInterface;
+use LoyaltyCorp\Search\Interfaces\UpdateProcessorInterface;
 use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
 use LoyaltyCorp\Search\Interfaces\RequestProxyFactoryInterface;
 use LoyaltyCorp\Search\Interfaces\ResponseFactoryInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 use LoyaltyCorp\Search\Interfaces\Workers\EntityUpdateWorkerInterface;
-use LoyaltyCorp\Search\Manager;
+use LoyaltyCorp\Search\UpdateProcessor;
 use LoyaltyCorp\Search\Populator;
 use LoyaltyCorp\Search\RequestProxyFactory;
 use LoyaltyCorp\Search\ResponseFactory;
@@ -71,16 +71,16 @@ final class SearchServiceProviderTest extends TestCase
             ClientInterface::class => Client::class,
             ClientBulkResponseHelperInterface::class => ClientBulkResponseHelper::class,
             EntityManagerHelperInterface::class => EntityManagerHelper::class,
+            EntityUpdateListener::class => EntityUpdateListener::class,
+            EntityUpdateWorkerInterface::class => EntityUpdateWorker::class,
             IndexNameTransformerInterface::class => DefaultIndexNameTransformer::class,
             IndexerInterface::class => Indexer::class,
-            ManagerInterface::class => Manager::class,
             MappingHelperInterface::class => AccessTokenMappingHelper::class,
             PopulatorInterface::class => Populator::class,
             RegisteredSearchHandlerInterface::class => RegisteredSearchHandler::class,
             RequestProxyFactoryInterface::class => RequestProxyFactory::class,
             ResponseFactoryInterface::class => ResponseFactory::class,
-            EntityUpdateListener::class => EntityUpdateListener::class,
-            EntityUpdateWorkerInterface::class => EntityUpdateWorker::class,
+            UpdateProcessorInterface::class => UpdateProcessor::class,
         ];
 
         foreach ($services as $abstract => $concrete) {

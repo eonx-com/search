@@ -14,8 +14,18 @@ final class UpdateProcessorStub extends BaseStub implements UpdateProcessorInter
     /**
      * {@inheritdoc}
      */
-    public function process(string $indexSuffix, array $objects): void
+    public function process(string $indexSuffix, array $updates): void
     {
         $this->saveCalls(__FUNCTION__, \get_defined_vars());
+    }
+
+    /**
+     * Returns calls to process().
+     *
+     * @return mixed[]
+     */
+    public function getProcessCalls(): array
+    {
+        return $this->getCalls(__FUNCTION__);
     }
 }

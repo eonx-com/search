@@ -5,7 +5,7 @@ namespace Tests\LoyaltyCorp\Search\Stubs\Handlers;
 
 use Eonx\TestUtils\Stubs\BaseStub;
 use LoyaltyCorp\Search\DataTransferObjects\DocumentAction;
-use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate;
+use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange;
 use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 
 /**
@@ -104,7 +104,7 @@ class TransformableHandlerStub extends BaseStub implements TransformableSearchHa
     /**
      * {@inheritdoc}
      */
-    public function transform(ObjectForUpdate $object): ?DocumentAction
+    public function transform(ObjectForChange $object): ?DocumentAction
     {
         $this->saveCalls(__FUNCTION__, \get_defined_vars());
 

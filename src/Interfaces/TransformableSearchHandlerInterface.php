@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace LoyaltyCorp\Search\Interfaces;
 
 use LoyaltyCorp\Search\DataTransferObjects\DocumentAction;
+use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange;
 
 interface TransformableSearchHandlerInterface extends SearchHandlerInterface
 {
@@ -16,13 +17,6 @@ interface TransformableSearchHandlerInterface extends SearchHandlerInterface
     public function getFillIterable(): iterable;
 
     /**
-     * Get the class this search handler will support.
-     *
-     * @return string[] Fully Qualified Class Names that implement the Search Handler interface
-     */
-    public function getHandledClasses(): array;
-
-    /**
      * Returns a unique string to identify the handler. This function is intentionally not static
      * as there can be more than one instance of a handler defined that needs to be uniquely
      * identified.
@@ -32,12 +26,21 @@ interface TransformableSearchHandlerInterface extends SearchHandlerInterface
     public function getHandlerKey(): string;
 
     /**
+     * Returns an array of ChangeSubscription objects that indicate what this handler
+     * would like to be subscribed to, and how to transform that data when passed into
+     * the getSearchId() and transform() methods.
+     *
+     * @return \LoyaltyCorp\Search\DataTransferObjects\Handlers\ChangeSubscription[]
+     */
+    public function getSubscriptions(): array;
+
+    /**
      * Transforms objects supplied into serialized search arrays that
      * should be indexed.
      *
-     * @param mixed $object
+     * @param \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange $object
      *
      * @return \LoyaltyCorp\Search\DataTransferObjects\DocumentAction|null
      */
-    public function transform($object): ?DocumentAction;
+    public function transform(ObjectForChange $object): ?DocumentAction;
 }

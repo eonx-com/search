@@ -6,6 +6,9 @@ namespace Tests\LoyaltyCorp\Search\Stubs\Workers;
 use Eonx\TestUtils\Stubs\BaseStub;
 use LoyaltyCorp\Search\Interfaces\Workers\EntityUpdateWorkerInterface;
 
+/**
+ * @coversNothing
+ */
 class EntityUpdateWorkerStub extends BaseStub implements EntityUpdateWorkerInterface
 {
     /**

@@ -13,7 +13,7 @@ interface UpdateProcessorInterface
      * Handles updates for changes.
      *
      * @param string $indexSuffix
-     * @param \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange[] $updates
+     * @param \LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange[] $updates
      *
      * @return void
      */

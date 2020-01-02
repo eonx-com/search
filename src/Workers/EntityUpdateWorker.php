@@ -3,46 +3,158 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Workers;
 
-use EoneoPay\Externals\ORM\Interfaces\EntityManagerInterface;
-use LoyaltyCorp\Search\Interfaces\ManagerInterface;
+use EonX\EasyEntityChange\DataTransferObjects\ChangedEntity;
+use EonX\EasyEntityChange\DataTransferObjects\DeletedEntity;
+use EonX\EasyEntityChange\DataTransferObjects\UpdatedEntity;
+use LoyaltyCorp\Search\DataTransferObjects\Handlers\ChangeSubscription;
+use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForDelete;
+use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate;
+use LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerChangeSubscription;
+use LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange;
+use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
+use LoyaltyCorp\Search\Interfaces\UpdateProcessorInterface;
 use LoyaltyCorp\Search\Interfaces\Workers\EntityUpdateWorkerInterface;
 
 final class EntityUpdateWorker implements EntityUpdateWorkerInterface
 {
     /**
-     * @var \EoneoPay\Externals\ORM\Interfaces\EntityManagerInterface
+     * @var \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface
      */
-    private $entityManager;
+    private $registeredHandlers;
 
     /**
-     * @var \LoyaltyCorp\Search\Interfaces\ManagerInterface
+     * @var \LoyaltyCorp\Search\Interfaces\UpdateProcessorInterface
      */
-    private $searchManager;
+    private $updateProcessor;
 
     /**
      * Constructor.
      *
-     * @param \EoneoPay\Externals\ORM\Interfaces\EntityManagerInterface $entityManager
-     * @param \LoyaltyCorp\Search\Interfaces\ManagerInterface $searchManager
+     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface $registeredHandlers
+     * @param \LoyaltyCorp\Search\Interfaces\UpdateProcessorInterface $updateProcessor
      */
     public function __construct(
-        EntityManagerInterface $entityManager,
-        ManagerInterface $searchManager
+        RegisteredSearchHandlerInterface $registeredHandlers,
+        UpdateProcessorInterface $updateProcessor
     ) {
-        $this->entityManager = $entityManager;
-        $this->searchManager = $searchManager;
+        $this->registeredHandlers = $registeredHandlers;
+        $this->updateProcessor = $updateProcessor;
     }
 
     /**
-     * {@inheritdoc}
+     * Handles entity change event and updates ES indexes.
+     *
+     * @param \EonX\EasyEntityChange\DataTransferObjects\ChangedEntity[] $changes
+     *
+     * @return void
      */
     public function handle(array $changes): void
     {
-        foreach ($changes as $change) {
-            $entity = $this->entityManager->getRepository($change->getClass())
-                ->findOneBy($change->getIds());
-
-            $this->searchManager->handleUpdates($change->getClass(), '', [$entity]);
+        // If we have no updates, dont bother initialising anything and return early.
+        if (\count($changes) === 0) {
+            return;
         }
+
+        $updates = $this->gatherUpdates($changes);
+
+        // If we didnt generate any updates, return instead of calling the update processor.
+        if (\count($updates) === 0) {
+            return;
+        }
+
+        // Process the updates into the primary index aliases.
+        $this->updateProcessor->process('', $updates);
+    }
+
+    /**
+     * Takes a change subscription and a ChangedEntity and turns it into an array of ObjectForUpdate
+     * DTOs.
+     *
+     * @param \LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerChangeSubscription $subscription
+     * @param \EonX\EasyEntityChange\DataTransferObjects\ChangedEntity $update
+     *
+     * @return \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange[]
+     */
+    private function buildUpdates(HandlerChangeSubscription $subscription, ChangedEntity $update): array
+    {
+        $transform = $subscription->getSubscription()->getTransform();
+
+        // If we didnt get a callable in the subscription it means that the handler is
+        // fine to receive the objects as is.
+        if (\is_callable($transform) === false) {
+            $classToBuild = $update instanceof DeletedEntity === true
+                ? ObjectForDelete::class
+                : ObjectForUpdate::class;
+
+            return [
+                new $classToBuild(
+                    $update->getClass(),
+                    $update->getIds()
+                )
+            ];
+        }
+
+        // Otherwise, we need to call the transform callable with the update so it can
+        // be converted into updates.
+        return $transform($update);
+    }
+
+    /**
+     * Iterates over all updated objects and builds SearchUpdate objects.
+     *
+     * @param \EonX\EasyEntityChange\DataTransferObjects\ChangedEntity[] $changes
+     *
+     * @return \LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange[]
+     */
+    private function gatherUpdates(array $changes): array
+    {
+        $subscribedUpdates = [];
+
+        // Retrieves all subscriptions grouped by their subscribing classes
+        $subscriptions = $this->registeredHandlers->getSubscriptionsGroupedByClass();
+
+        foreach ($changes as $update) {
+            /** @var \LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerChangeSubscription[] $classSubscriptions */
+            $classSubscriptions = $subscriptions[$update->getClass()] ?? [];
+
+            foreach ($classSubscriptions as $subscription) {
+                // If the subscription has no intersection of properties with the update there
+                // is nothing further to do.
+                if ($this->shouldNotify($subscription->getSubscription(), $update) === false) {
+                    continue;
+                }
+
+                $objectForUpdates = $this->buildUpdates($subscription, $update);
+
+                foreach ($objectForUpdates as $forUpdate) {
+                    $subscribedUpdates[] = new HandlerObjectForChange(
+                        $subscription->getHandlerKey(),
+                        $forUpdate
+                    );
+                }
+            }
+        }
+
+        return $subscribedUpdates;
+    }
+
+    /**
+     * Checks if the subscription should be notified of the change. A subscription will be notified
+     * if there is any intersection of changed properties with the subscribed properties array.
+     *
+     * @param \LoyaltyCorp\Search\DataTransferObjects\Handlers\ChangeSubscription $subscription
+     * @param \EonX\EasyEntityChange\DataTransferObjects\ChangedEntity $change
+     *
+     * @return bool
+     */
+    private function shouldNotify(ChangeSubscription $subscription, ChangedEntity $change): bool
+    {
+        if ($change instanceof UpdatedEntity === true) {
+            $intersection = \array_intersect($subscription->getProperties(), $change->getChangedProperties());
+
+            return \count($intersection) > 0;
+        }
+
+        return true;
     }
 }

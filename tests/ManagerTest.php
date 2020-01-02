@@ -31,7 +31,11 @@ final class ManagerTest extends TestCase
     public function testHandleDeletesFunctionality(): void
     {
         $stub = new ClientStub();
-        $handlers = new RegisteredSearchHandlerStub([new TransformableHandlerStub()]);
+        $handlers = new RegisteredSearchHandlerStub([
+            'getTransformableHandlers' => [
+                new TransformableHandlerStub()
+            ]
+        ]);
         $manager = $this->getManager($handlers, $this->createClient($stub));
 
         // Test method passes through to elasticsearch
@@ -62,7 +66,11 @@ final class ManagerTest extends TestCase
         $handler = new TransformableHandlerStub(null, [
             'getHandledClasses' => [[stdClass::class]]
         ]);
-        $handlers = new RegisteredSearchHandlerStub([$handler]);
+        $handlers = new RegisteredSearchHandlerStub([
+            'getTransformableHandlers' => [
+                $handler
+            ]
+        ]);
         $manager = $this->getManager($handlers, null, $populator);
 
         $objects = [
@@ -96,7 +104,11 @@ final class ManagerTest extends TestCase
     {
         $populator = new PopulatorStub();
 
-        $handlers = new RegisteredSearchHandlerStub([new TransformableHandlerStub()]);
+        $handlers = new RegisteredSearchHandlerStub([
+            'getTransformableHandlers' => [
+                new TransformableHandlerStub()
+            ]
+        ]);
         $manager = $this->getManager($handlers, null, $populator);
 
         // Test an unsupported class doesn't do anything
@@ -112,7 +124,12 @@ final class ManagerTest extends TestCase
     public function testHandleUpdatesWhenNoTransformationsOccur(): void
     {
         $stub = new ClientStub();
-        $handlers = new RegisteredSearchHandlerStub([new TransformableHandlerStub()]);
+
+        $handlers = new RegisteredSearchHandlerStub([
+            'getTransformableHandlers' => [
+                new TransformableHandlerStub()
+            ]
+        ]);
         $manager = $this->getManager($handlers, $this->createClient($stub));
 
         // Tests whats going to happen when handleUpdates is called with objects that result

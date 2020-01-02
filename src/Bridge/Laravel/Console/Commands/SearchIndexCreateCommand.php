@@ -46,7 +46,7 @@ final class SearchIndexCreateCommand extends Command
         $allSearchHandlers = $this->searchHandlers->getAll();
         $totalHandlers = \count($allSearchHandlers);
 
-        foreach ($this->searchHandlers->getAll() as $iteration => $searchHandler) {
+        foreach ($allSearchHandlers as $iteration => $searchHandler) {
             $this->output->write(
                 \sprintf(
                     '[%d/%d] Creating index for \'%s\'... ',

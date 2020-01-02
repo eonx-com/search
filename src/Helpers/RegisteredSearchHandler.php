@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Helpers;
 
+use LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerChangeSubscription;
 use LoyaltyCorp\Search\Exceptions\DuplicateSearchHandlerKeyException;
 use LoyaltyCorp\Search\Exceptions\HandlerDoesntExistException;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
@@ -10,6 +11,13 @@ use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 
 final class RegisteredSearchHandler implements RegisteredSearchHandlerInterface
 {
+    /**
+     * @phpstan-var array<string, array<\LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerChangeSubscription>>
+     *
+     * @var \LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerChangeSubscription[]|null
+     */
+    private $groupedSubscriptions;
+
     /**
      * @var \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface[]|null
      */
@@ -36,6 +44,30 @@ final class RegisteredSearchHandler implements RegisteredSearchHandlerInterface
     public function getAll(): array
     {
         return $this->searchHandlers;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSubscriptionsGroupedByClass(): array
+    {
+        // If we havent previously calculated the grouped subscriptions, calculate and save the result.
+        if (\is_array($this->groupedSubscriptions) === false) {
+            foreach ($this->getTransformableHandlers() as $handler) {
+                foreach ($handler->getSubscriptions() as $subscription) {
+                    if (\is_array($this->groupedSubscriptions[$subscription->getClass()]) === false) {
+                        $subscriptions[$subscription->getClass()] = [];
+                    }
+
+                    $this->groupedSubscriptions[$subscription->getClass()][] = new HandlerChangeSubscription(
+                        $handler->getHandlerKey(),
+                        $subscription
+                    );
+                }
+            }
+        }
+
+        return $this->groupedSubscriptions;
     }
 
     /**

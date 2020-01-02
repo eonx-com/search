@@ -15,6 +15,15 @@ interface RegisteredSearchHandlerInterface
     public function getAll(): array;
 
     /**
+     * Groups all search handler's subscriptions into an array grouped by the subscribing class.
+     *
+     * @phpstan-return array<string, array<\LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerChangeSubscription>>
+     *
+     * @return \LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerChangeSubscription[]
+     */
+    public function getSubscriptionsGroupedByClass(): array;
+
+    /**
      * Retrieves a handler by its key.
      *
      * @param string $key

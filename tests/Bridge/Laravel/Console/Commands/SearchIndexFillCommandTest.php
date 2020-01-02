@@ -32,7 +32,13 @@ final class SearchIndexFillCommandTest extends SearchIndexCommandTestCase
         $otherHandler = new TransformableHandlerStub('other');
         $handlers = [$handlerStub, $otherHandler];
 
-        $command = $this->createInstance($populator, new RegisteredSearchHandlerStub($handlers));
+        $registeredHandlers = new RegisteredSearchHandlerStub([
+            'getTransformableHandlers' => [
+                $handlers
+            ]
+        ]);
+
+        $command = $this->createInstance($populator, $registeredHandlers);
         $this->bootstrapCommand($command);
 
         $expectedCalls  = [

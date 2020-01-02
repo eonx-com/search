@@ -3,36 +3,39 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Stubs\Helpers;
 
-use LoyaltyCorp\Search\Exceptions\HandlerDoesntExistException;
+use Eonx\TestUtils\Stubs\BaseStub;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 
 /**
  * @coversNothing
  */
-final class RegisteredSearchHandlerStub implements RegisteredSearchHandlerInterface
+final class RegisteredSearchHandlerStub extends BaseStub implements RegisteredSearchHandlerInterface
 {
-    /**
-     * @var \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[]
-     */
-    private $searchHandlers;
-
-    /**
-     * RegisteredSearchHandlers constructor.
-     *
-     * @param \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[] $searchHandlers
-     */
-    public function __construct(array $searchHandlers)
-    {
-        $this->searchHandlers = $searchHandlers;
-    }
-
     /**
      * {@inheritdoc}
      */
     public function getAll(): array
     {
-        return $this->searchHandlers;
+        return $this->returnOrThrowResponse(__FUNCTION__);
+    }
+
+    /**
+     * Returns calls to getTransformableHandlersByKey.
+     *
+     * @return mixed[]
+     */
+    public function getGetTransformableHandlersByKeyCalls(): array
+    {
+        return $this->getCalls(__FUNCTION__);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSubscriptionsGroupedByClass(): array
+    {
+        return $this->returnOrThrowResponse(__FUNCTION__);
     }
 
     /**
@@ -40,17 +43,9 @@ final class RegisteredSearchHandlerStub implements RegisteredSearchHandlerInterf
      */
     public function getTransformableHandlerByKey(string $key): TransformableSearchHandlerInterface
     {
-        foreach ($this->searchHandlers as $handler) {
-            if ($handler instanceof TransformableSearchHandlerInterface === false) {
-                continue;
-            }
+        $this->saveCalls(__FUNCTION__, \get_defined_vars());
 
-            if ($handler->getHandlerKey() === $key) {
-                return $handler;
-            }
-        }
-
-        throw new HandlerDoesntExistException('');
+        return $this->returnOrThrowResponse(__FUNCTION__);
     }
 
     /**
@@ -58,14 +53,6 @@ final class RegisteredSearchHandlerStub implements RegisteredSearchHandlerInterf
      */
     public function getTransformableHandlers(): array
     {
-        $entityHandlers = [];
-
-        foreach ($this->searchHandlers as $handler) {
-            if ($handler instanceof TransformableSearchHandlerInterface === true) {
-                $entityHandlers[] = $handler;
-            }
-        }
-
-        return $entityHandlers;
+        return $this->returnOrThrowResponse(__FUNCTION__);
     }
 }

@@ -33,7 +33,14 @@ final class SearchIndexLiveCommandTest extends SearchIndexCommandTestCase
     {
         $indexer = new IndexerStub();
         $handlers = [new TransformableHandlerStub()];
-        $command = $this->createInstance($indexer, new RegisteredSearchHandlerStub($handlers));
+
+        $registeredHandlers = new RegisteredSearchHandlerStub([
+            'getAll' => [
+                $handlers
+            ]
+        ]);
+
+        $command = $this->createInstance($indexer, $registeredHandlers);
         $output = new BufferedOutput();
         $this->bootstrapCommand($command, null, $output, ['dry-run']);
 
@@ -53,7 +60,14 @@ final class SearchIndexLiveCommandTest extends SearchIndexCommandTestCase
     {
         $indexer = new IndexerStub();
         $handlers = [new TransformableHandlerStub()];
-        $command = $this->createInstance($indexer, new RegisteredSearchHandlerStub($handlers));
+
+        $registeredHandlers = new RegisteredSearchHandlerStub([
+            'getAll' => [
+                $handlers
+            ]
+        ]);
+
+        $command = $this->createInstance($indexer, $registeredHandlers);
         $output = new BufferedOutput();
         $this->bootstrapCommand(
             $command,
@@ -80,7 +94,14 @@ final class SearchIndexLiveCommandTest extends SearchIndexCommandTestCase
     {
         $indexer = new IndexerStub();
         $handlers = [new TransformableHandlerStub()];
-        $command = $this->createInstance($indexer, new RegisteredSearchHandlerStub($handlers));
+
+        $registeredHandlers = new RegisteredSearchHandlerStub([
+            'getAll' => [
+                $handlers
+            ]
+        ]);
+
+        $command = $this->createInstance($indexer, $registeredHandlers);
         $this->bootstrapCommand($command, null, null, ['dry-run']);
 
         $command->handle();

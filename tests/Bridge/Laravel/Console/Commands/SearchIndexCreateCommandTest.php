@@ -33,8 +33,14 @@ final class SearchIndexCreateCommandTest extends SearchIndexCommandTestCase
             new TransformableHandlerStub('other')
         ];
 
+        $registeredHandlers = new RegisteredSearchHandlerStub([
+            'getAll' => [
+                $handlers
+            ]
+        ]);
+
         // Two search handlers registered should result in 2 'created' calls
-        $command = $this->createInstance($indexer, new RegisteredSearchHandlerStub($handlers));
+        $command = $this->createInstance($indexer, $registeredHandlers);
         $this->bootstrapCommand($command);
 
         $command->handle();

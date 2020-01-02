@@ -28,13 +28,20 @@ final class SearchIndexCleanCommandTest extends SearchIndexCommandTestCase
     public function testIndexerHandlesAllTaggedSearchHandlers(): void
     {
         $indexer = new IndexerStub();
+
         $handlers = [
             new TransformableHandlerStub(),
             new TransformableHandlerStub('other')
         ];
 
+        $registeredHandlers = new RegisteredSearchHandlerStub([
+            'getAll' => [
+                $handlers
+            ]
+        ]);
+
         // Two search handlers registered should result in 2 indices passed to clean method
-        $command = $this->createInstance($indexer, new RegisteredSearchHandlerStub($handlers));
+        $command = $this->createInstance($indexer, $registeredHandlers);
         $this->bootstrapCommand($command);
 
         $command->handle();

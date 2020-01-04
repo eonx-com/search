@@ -289,7 +289,7 @@ final class ClientTest extends TestCase
     /**
      * Test exception thrown by all public functions.
      *
-     * @phpstorm-param class-string<Throwable> $exception
+     * @phpstan-param class-string<\Throwable> $exception
      *
      * @param string $method
      * @param mixed[] $arguments

@@ -49,7 +49,7 @@ final class RegisteredSearchHandler implements RegisteredSearchHandlerInterface
         // If we havent previously calculated the grouped subscriptions, calculate and save the result.
         foreach ($this->getTransformableHandlers() as $handler) {
             foreach ($handler->getSubscriptions() as $subscription) {
-                if (\is_array($groupedSubscriptions[$subscription->getClass()]) === false) {
+                if (\is_array($groupedSubscriptions[$subscription->getClass()] ?? null) === false) {
                     $groupedSubscriptions[$subscription->getClass()] = [];
                 }
 

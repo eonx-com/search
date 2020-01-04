@@ -9,8 +9,8 @@ use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 use LoyaltyCorp\Search\Populator;
 use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
-use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\LegacyClientStub;
 
 /**
  * @covers \LoyaltyCorp\Search\Populator
@@ -45,7 +45,7 @@ final class PopulatorTest extends TestCase
 
         $handler = new TransformableHandlerStub($objects, null, null, null, $objects);
 
-        $client = new ClientStub();
+        $client = new LegacyClientStub();
         $populator = $this->getPopulator($client);
 
         $populator->populate($handler, '_suffix', 1);
@@ -65,7 +65,7 @@ final class PopulatorTest extends TestCase
 
         $handler = new TransformableHandlerStub($objects, null, null, null, $objects);
 
-        $client = new ClientStub();
+        $client = new LegacyClientStub();
         $populator = $this->getPopulator($client);
 
         $populator->populate($handler, '_suffix', 1);
@@ -97,7 +97,7 @@ final class PopulatorTest extends TestCase
 
         $handler = new TransformableHandlerStub($objects, null, null, null, $objects);
 
-        $client = new ClientStub();
+        $client = new LegacyClientStub();
         $populator = $this->getPopulator($client);
 
         $populator->populate($handler, '_suffix', 2);
@@ -134,7 +134,7 @@ final class PopulatorTest extends TestCase
 
         $handler = new TransformableHandlerStub($objects, null, null, null, $objects);
 
-        $client = new ClientStub();
+        $client = new LegacyClientStub();
         $populator = $this->getPopulator($client);
 
         $populator->populate($handler, '_suffix', 2);
@@ -163,7 +163,7 @@ final class PopulatorTest extends TestCase
 
         $handler = new TransformableHandlerStub($objects, null, null, null, $objects);
 
-        $client = new ClientStub();
+        $client = new LegacyClientStub();
         $populator = $this->getPopulator($client);
 
         $populator->populate($handler, '_suffix', 2);
@@ -184,7 +184,7 @@ final class PopulatorTest extends TestCase
         ?IndexNameTransformerInterface $nameTransformer = null
     ): Populator {
         return new Populator(
-            $client ?? new ClientStub(),
+            $client ?? new LegacyClientStub(),
             $nameTransformer ?? new DefaultIndexNameTransformer()
         );
     }

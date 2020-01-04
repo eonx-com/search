@@ -40,9 +40,9 @@ use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use LoyaltyCorp\Search\UpdateProcessor;
 use LoyaltyCorp\Search\Workers\EntityUpdateWorker;
 use stdClass;
-use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NonDoctrineHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\LegacyClientStub;
 use Tests\LoyaltyCorp\Search\TestCase;
 
 /**
@@ -100,7 +100,7 @@ final class SearchServiceProviderTest extends TestCase
     public function testDoctrineEntityManagerResolutionThrowsException(): void
     {
         $application = $this->createApplication();
-        $application->singleton('registry', ClientStub::class);
+        $application->singleton('registry', LegacyClientStub::class);
 
         (new SearchServiceProvider($application))->register();
 

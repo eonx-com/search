@@ -7,8 +7,8 @@ use Doctrine\ORM\EntityManagerInterface as DoctrineEntityManagerInterface;
 use EoneoPay\Externals\Logger\Interfaces\LoggerInterface;
 use EoneoPay\Externals\Logger\Logger;
 use EoneoPay\Externals\ORM\Interfaces\EntityManagerInterface as EoneoPayEntityManagerInterface;
+use Eonx\TestUtils\TestCases\UnitTestCase;
 use Illuminate\Contracts\Foundation\Application;
-use PHPUnit\Framework\TestCase as BaseTestCase;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Doctrine\EntityManagerStub as DoctrineEntityManagerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Doctrine\RegistryStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\EoneoPay\Externals\ORM\EntityManagerStub as EoneoPayEntityManagerStub;
@@ -19,7 +19,7 @@ use Tests\LoyaltyCorp\Search\Stubs\Vendor\Illuminate\Contracts\Foundation\Applic
  *
  * @coversNothing
  */
-abstract class TestCase extends BaseTestCase
+abstract class TestCase extends UnitTestCase
 {
     /**
      * Create configured application instance for service provider testing.

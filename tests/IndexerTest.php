@@ -10,8 +10,8 @@ use LoyaltyCorp\Search\Indexer\AccessTokenMappingHelper;
 use LoyaltyCorp\Search\Indexer\IndexSwapResult;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
-use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\LegacyClientStub;
 
 /**
  * @covers \LoyaltyCorp\Search\Indexer
@@ -30,7 +30,7 @@ final class IndexerTest extends TestCase
      */
     public function testAliasGetsCreated(): void
     {
-        $elasticClient = new ClientStub();
+        $elasticClient = new LegacyClientStub();
         $indexer = $this->createInstance($elasticClient);
 
         $expectedAlias = 'valid_new';
@@ -71,7 +71,7 @@ final class IndexerTest extends TestCase
      */
     public function testCleaningHandlesMultipleHandlers(): void
     {
-        $client = new ClientStub(
+        $client = new LegacyClientStub(
             null,
             null,
             [
@@ -99,7 +99,7 @@ final class IndexerTest extends TestCase
      */
     public function testCleaningIndicesDoesNotRemoveUnrelatedIndices(): void
     {
-        $client = new ClientStub(
+        $client = new LegacyClientStub(
             null,
             null,
             // unrelated-index and irrelevant-index should not be touched, because they are unrelated to search handlers
@@ -120,7 +120,7 @@ final class IndexerTest extends TestCase
      */
     public function testCleaningIndicesRespectsDryOption(): void
     {
-        $client = new ClientStub(
+        $client = new LegacyClientStub(
             null,
             null,
             [['name' => 'unrelated-index'], ['name' => 'irrelevant-index'], ['name' => 'valid-123']]
@@ -139,7 +139,7 @@ final class IndexerTest extends TestCase
      */
     public function testCleaningIndicesRespectsIndicesFromAliases(): void
     {
-        $client = new ClientStub(
+        $client = new LegacyClientStub(
             null,
             null,
             [['name' => 'unrelated-index'], ['name' => 'valid-unused']],
@@ -160,7 +160,7 @@ final class IndexerTest extends TestCase
      */
     public function testIndexSwapWithNoSwap(): void
     {
-        $elasticClient = new ClientStub(
+        $elasticClient = new LegacyClientStub(
             true,
             null,
             null,
@@ -184,7 +184,7 @@ final class IndexerTest extends TestCase
      */
     public function testIndexSwapperDryRun(): void
     {
-        $elasticClient = new ClientStub(
+        $elasticClient = new LegacyClientStub(
             true,
             null,
             null,
@@ -205,7 +205,7 @@ final class IndexerTest extends TestCase
      */
     public function testIndexSwapperRemovesNewAlias(): void
     {
-        $elasticClient = new ClientStub(
+        $elasticClient = new LegacyClientStub(
             true,
             null,
             null,
@@ -226,7 +226,7 @@ final class IndexerTest extends TestCase
      */
     public function testIndexSwapperSwapsAlias(): void
     {
-        $elasticClient = new ClientStub(
+        $elasticClient = new LegacyClientStub(
             true,
             null,
             null,
@@ -251,7 +251,7 @@ final class IndexerTest extends TestCase
         $this->expectException(AliasNotFoundException::class);
         $this->expectExceptionMessage('Could not find expected alias \'valid_new\'');
 
-        $elasticClient = new ClientStub(true);
+        $elasticClient = new LegacyClientStub(true);
         $indexer = $this->createInstance($elasticClient);
 
         $indexer->indexSwap([new TransformableHandlerStub()]);
@@ -266,7 +266,7 @@ final class IndexerTest extends TestCase
      */
     public function testTemporaryAliasDeleted(): void
     {
-        $elasticClient = new ClientStub(true);
+        $elasticClient = new LegacyClientStub(true);
         $indexer = $this->createInstance($elasticClient);
         $expected = ['valid_new'];
 
@@ -287,7 +287,7 @@ final class IndexerTest extends TestCase
         ?ClientInterface $client = null
     ): Indexer {
         return new Indexer(
-            $client ?? new ClientStub(),
+            $client ?? new LegacyClientStub(),
             new AccessTokenMappingHelper(),
             new DefaultIndexNameTransformer()
         );

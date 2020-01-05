@@ -9,10 +9,10 @@ use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange;
 interface TransformableSearchHandlerInterface extends SearchHandlerInterface
 {
     /**
-     * Returns an iterable that will be used to fill the index when doing a full
-     * index fill.
+     * Returns an iterable that contains ObjectForChange DTOs that will be sent into the job queue
+     * for reindexing or filling the index.
      *
-     * @return iterable|mixed[]
+     * @return \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange[]
      */
     public function getFillIterable(): iterable;
 

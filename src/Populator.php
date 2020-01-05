@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace LoyaltyCorp\Search;
 
 use LoyaltyCorp\Search\DataTransferObjects\DocumentAction;
+use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange;
 use LoyaltyCorp\Search\DataTransferObjects\IndexAction;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
@@ -88,7 +89,7 @@ final class Populator implements PopulatorInterface
      * @param \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface $handler
      * @param int $batchSize
      *
-     * @return mixed[]
+     * @return \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange[][]
      */
     private function getBatchedIterable(TransformableSearchHandlerInterface $handler, int $batchSize): iterable
     {

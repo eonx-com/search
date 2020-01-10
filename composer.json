@@ -18,7 +18,7 @@
     "illuminate/console": "^5.8|^6.0"
   },
   "require-dev": {
-    "eonx-com/easy-entity-change": "^1.0",
+    "eonx-com/easy-entity-change": "^2.0",
     "eonx-com/multitenancy": "^1.0",
     "eonx-com/standards": "^0.3",
     "eonx-com/test-utils": "^0.0.2",

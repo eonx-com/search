@@ -19,7 +19,7 @@ final class IndexAction
     private $index;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \LoyaltyCorp\Search\DataTransferObjects\DocumentAction $documentAction
      * @param string $index

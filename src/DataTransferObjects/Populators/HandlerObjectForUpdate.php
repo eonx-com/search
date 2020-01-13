@@ -23,7 +23,7 @@ final class HandlerObjectForUpdate
     private $objectForUpdate;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param string $handlerKey
      * @param \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate $objectForUpdate

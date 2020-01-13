@@ -90,7 +90,7 @@ final class EntityUpdateWorker implements EntityUpdateWorkerInterface
                 new $classToBuild(
                     $update->getClass(),
                     $update->getIds()
-                )
+                ),
             ];
         }
 

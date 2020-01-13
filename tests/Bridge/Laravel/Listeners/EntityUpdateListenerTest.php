@@ -32,7 +32,7 @@ final class EntityUpdateListenerTest extends TestCase
         );
 
         $expectedCalls = [
-            ['changes' => [$updatedEntity]]
+            ['changes' => [$updatedEntity]],
         ];
 
         $listener->handle(new EntityChangeEvent([

@@ -25,7 +25,7 @@ final class HandlerObjectForChange
     private $objectForChange;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param string $handlerKey
      * @param \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange $objectForChange

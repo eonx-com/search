@@ -11,7 +11,7 @@ use Tests\LoyaltyCorp\Search\TestCase;
 /**
  * @covers \LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerChangeSubscription
  */
-class HandlerChangeSubscriptionTest extends TestCase
+final class HandlerChangeSubscriptionTest extends TestCase
 {
     /**
      * Tests the methods.

@@ -36,8 +36,8 @@ final class SearchIndexLiveCommandTest extends SearchIndexCommandTestCase
 
         $registeredHandlers = new RegisteredSearchHandlerStub([
             'getAll' => [
-                $handlers
-            ]
+                $handlers,
+            ],
         ]);
 
         $command = $this->createInstance($indexer, $registeredHandlers);
@@ -63,8 +63,8 @@ final class SearchIndexLiveCommandTest extends SearchIndexCommandTestCase
 
         $registeredHandlers = new RegisteredSearchHandlerStub([
             'getAll' => [
-                $handlers
-            ]
+                $handlers,
+            ],
         ]);
 
         $command = $this->createInstance($indexer, $registeredHandlers);
@@ -97,8 +97,8 @@ final class SearchIndexLiveCommandTest extends SearchIndexCommandTestCase
 
         $registeredHandlers = new RegisteredSearchHandlerStub([
             'getAll' => [
-                $handlers
-            ]
+                $handlers,
+            ],
         ]);
 
         $command = $this->createInstance($indexer, $registeredHandlers);

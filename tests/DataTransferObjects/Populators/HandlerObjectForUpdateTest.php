@@ -11,7 +11,7 @@ use Tests\LoyaltyCorp\Search\TestCase;
 /**
  * @covers \LoyaltyCorp\Search\DataTransferObjects\Populators\HandlerObjectForUpdate
  */
-class HandlerObjectForUpdateTest extends TestCase
+final class HandlerObjectForUpdateTest extends TestCase
 {
     /**
      * Tests the methods.

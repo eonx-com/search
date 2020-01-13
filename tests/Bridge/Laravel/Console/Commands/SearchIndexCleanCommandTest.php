@@ -31,13 +31,13 @@ final class SearchIndexCleanCommandTest extends SearchIndexCommandTestCase
 
         $handlers = [
             new TransformableHandlerStub(),
-            new TransformableHandlerStub('other')
+            new TransformableHandlerStub('other'),
         ];
 
         $registeredHandlers = new RegisteredSearchHandlerStub([
             'getAll' => [
-                $handlers
-            ]
+                $handlers,
+            ],
         ]);
 
         // Two search handlers registered should result in 2 indices passed to clean method

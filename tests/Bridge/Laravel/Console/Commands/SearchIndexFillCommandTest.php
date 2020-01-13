@@ -34,8 +34,8 @@ final class SearchIndexFillCommandTest extends SearchIndexCommandTestCase
 
         $registeredHandlers = new RegisteredSearchHandlerStub([
             'getTransformableHandlers' => [
-                $handlers
-            ]
+                $handlers,
+            ],
         ]);
 
         $command = $this->createInstance($populator, $registeredHandlers);

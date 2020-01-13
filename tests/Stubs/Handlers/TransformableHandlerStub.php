@@ -11,7 +11,7 @@ use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 /**
  * @coversNothing
  */
-class TransformableHandlerStub extends BaseStub implements TransformableSearchHandlerInterface
+final class TransformableHandlerStub extends BaseStub implements TransformableSearchHandlerInterface
 {
     /**
      * @var string
@@ -19,9 +19,9 @@ class TransformableHandlerStub extends BaseStub implements TransformableSearchHa
     private $indexName;
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param null|string $indexName
+     * @param string|null $indexName
      * @param mixed[]|null $responses
      */
     public function __construct(?string $indexName = null, ?array $responses = null)
@@ -92,7 +92,7 @@ class TransformableHandlerStub extends BaseStub implements TransformableSearchHa
     }
 
     /**
-     * Returns calls to transform()
+     * Returns calls to transform().
      *
      * @return mixed[]
      */

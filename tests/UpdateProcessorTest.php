@@ -16,7 +16,7 @@ use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub;
 /**
  * @covers \LoyaltyCorp\Search\UpdateProcessor
  */
-class UpdateProcessorTest extends TestCase
+final class UpdateProcessorTest extends TestCase
 {
     /**
      * Tests the processor does nothing when there are no updates.
@@ -47,12 +47,12 @@ class UpdateProcessorTest extends TestCase
     {
         $client = new ClientStub();
         $handler = new TransformableHandlerStub('index', [
-            'transform' => [null]
+            'transform' => [null],
         ]);
         $registeredHandlers = new RegisteredSearchHandlerStub([
             'getTransformableHandlerByKey' => [
-                $handler
-            ]
+                $handler,
+            ],
         ]);
 
         $processor = new UpdateProcessor(
@@ -87,12 +87,12 @@ class UpdateProcessorTest extends TestCase
 
         $client = new ClientStub();
         $handler = new TransformableHandlerStub('index', [
-            'transform' => [$action]
+            'transform' => [$action],
         ]);
         $registeredHandlers = new RegisteredSearchHandlerStub([
             'getTransformableHandlerByKey' => [
-                $handler
-            ]
+                $handler,
+            ],
         ]);
 
         $processor = new UpdateProcessor(
@@ -135,16 +135,16 @@ class UpdateProcessorTest extends TestCase
 
         $client = new ClientStub();
         $handler = new TransformableHandlerStub('index', [
-            'transform' => [$action]
+            'transform' => [$action],
         ]);
         $handler2 = new TransformableHandlerStub('index2', [
-            'transform' => [$action2]
+            'transform' => [$action2],
         ]);
         $registeredHandlers = new RegisteredSearchHandlerStub([
             'getTransformableHandlerByKey' => [
                 $handler,
-                $handler2
-            ]
+                $handler2,
+            ],
         ]);
 
         $processor = new UpdateProcessor(

@@ -26,7 +26,7 @@ final class HandlerChangeSubscription
     private $subscription;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param string $handlerKey
      * @param \LoyaltyCorp\Search\DataTransferObjects\Handlers\ChangeSubscription $subscription

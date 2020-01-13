@@ -51,30 +51,30 @@ final class RegisteredSearchHandlerTest extends TestCase
             ],
             EntityStub::class => [
                 new HandlerChangeSubscription('handler2', $subscription3),
-            ]
+            ],
         ];
 
         $handler1 = new TransformableHandlerStub('', [
             'getHandlerKey' => [
                 'handler1',
-                'handler1'
+                'handler1',
             ],
             'getSubscriptions' => [
-                [$subscription1, $subscription2]
-            ]
+                [$subscription1, $subscription2],
+            ],
         ]);
         $handler2 = new TransformableHandlerStub('', [
             'getHandlerKey' => [
-                'handler2'
+                'handler2',
             ],
             'getSubscriptions' => [
-                [$subscription3]
-            ]
+                [$subscription3],
+            ],
         ]);
 
         $registered = $this->createInstance([
             $handler1,
-            $handler2
+            $handler2,
         ]);
 
         $result = $registered->getSubscriptionsGroupedByClass();

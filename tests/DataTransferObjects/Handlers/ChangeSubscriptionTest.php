@@ -13,7 +13,7 @@ use Tests\LoyaltyCorp\Search\TestCase;
  *
  * @SuppressWarnings(PHPMD)
  */
-class ChangeSubscriptionTest extends TestCase
+final class ChangeSubscriptionTest extends TestCase
 {
     /**
      * Tests the methods.

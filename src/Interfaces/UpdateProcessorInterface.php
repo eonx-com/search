@@ -5,7 +5,7 @@ namespace LoyaltyCorp\Search\Interfaces;
 
 /**
  * This processor will process arrays of ObjectForUpdate and ObjectForDelete DTOs and call the original
- * handlers that generated the DTOs to transform them into
+ * handlers that generated the DTOs to transform them into.
  */
 interface UpdateProcessorInterface
 {

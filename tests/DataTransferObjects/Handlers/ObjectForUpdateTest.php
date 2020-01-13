@@ -11,7 +11,7 @@ use Tests\LoyaltyCorp\Search\TestCase;
  * @covers \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange
  * @covers \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate
  */
-class ObjectForUpdateTest extends TestCase
+final class ObjectForUpdateTest extends TestCase
 {
     /**
      * Tests the methods.

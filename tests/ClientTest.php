@@ -96,7 +96,7 @@ final class ClientTest extends TestCase
         $client = $this->createInstance($stub);
 
         $client->bulk([
-            new IndexAction(new DocumentUpdate('1', 'document'), 'index')
+            new IndexAction(new DocumentUpdate('1', 'document'), 'index'),
         ]);
 
         // If call was successful there should be no return/exception
@@ -116,7 +116,7 @@ final class ClientTest extends TestCase
         $expected = ['body' => [['delete' => ['_index' => 'index', '_type' => 'doc', '_id' => '1']]]];
 
         $client->bulk([
-            new IndexAction(new DocumentDelete('1'), 'index')
+            new IndexAction(new DocumentDelete('1'), 'index'),
         ]);
 
         self::assertSame($expected, $stub->getBulkParameters());
@@ -246,7 +246,7 @@ final class ClientTest extends TestCase
         $this->expectExceptionMessage('At least one record returned an error during bulk update');
 
         $client->bulk([
-            new IndexAction(new DocumentUpdate('1', 'document'), 'my_index')
+            new IndexAction(new DocumentUpdate('1', 'document'), 'my_index'),
         ]);
     }
 
@@ -279,7 +279,7 @@ final class ClientTest extends TestCase
         $client = $this->createInstance($stub);
 
         $client->bulk([
-            new IndexAction(new DocumentUpdate('1', 'document'), 'my_index')
+            new IndexAction(new DocumentUpdate('1', 'document'), 'my_index'),
         ]);
 
         // No exception should be thrown since the error is on create and we've called update

@@ -43,7 +43,7 @@ final class EntityUpdateWorkerTest extends TestCase
                                 stdClass::class,
                                 ['interesting']
                             )
-                        )
+                        ),
                     ],
                 ],
             ],
@@ -59,9 +59,9 @@ final class EntityUpdateWorkerTest extends TestCase
                             stdClass::class,
                             ['id' => 7]
                         )
-                    )
-                ]
-            ]
+                    ),
+                ],
+            ],
         ];
 
         $updateProcessor = new UpdateProcessorStub();
@@ -69,7 +69,7 @@ final class EntityUpdateWorkerTest extends TestCase
         $worker = $this->createWorker($updateProcessor, $searchHandlers);
 
         $worker->handle([
-            new DeletedEntity(stdClass::class, ['id' => 7], [])
+            new DeletedEntity(stdClass::class, ['id' => 7], []),
         ]);
 
         self::assertEquals($expectedProcess, $updateProcessor->getProcessCalls());
@@ -92,7 +92,7 @@ final class EntityUpdateWorkerTest extends TestCase
                                 stdClass::class,
                                 ['interesting']
                             )
-                        )
+                        ),
                     ],
                 ],
             ],
@@ -103,7 +103,7 @@ final class EntityUpdateWorkerTest extends TestCase
         $worker = $this->createWorker($updateProcessor, $searchHandlers);
 
         $worker->handle([
-            new UpdatedEntity(['not-interesting'], stdClass::class, [])
+            new UpdatedEntity(['not-interesting'], stdClass::class, []),
         ]);
 
         self::assertSame([], $updateProcessor->getProcessCalls());
@@ -126,7 +126,7 @@ final class EntityUpdateWorkerTest extends TestCase
                                 stdClass::class,
                                 ['interesting']
                             )
-                        )
+                        ),
                     ],
                 ],
             ],
@@ -142,9 +142,9 @@ final class EntityUpdateWorkerTest extends TestCase
                             stdClass::class,
                             ['id' => 7]
                         )
-                    )
-                ]
-            ]
+                    ),
+                ],
+            ],
         ];
 
         $updateProcessor = new UpdateProcessorStub();
@@ -152,7 +152,7 @@ final class EntityUpdateWorkerTest extends TestCase
         $worker = $this->createWorker($updateProcessor, $searchHandlers);
 
         $worker->handle([
-            new UpdatedEntity(['interesting'], stdClass::class, ['id' => 7])
+            new UpdatedEntity(['interesting'], stdClass::class, ['id' => 7]),
         ]);
 
         self::assertEquals($expectedProcess, $updateProcessor->getProcessCalls());
@@ -180,7 +180,7 @@ final class EntityUpdateWorkerTest extends TestCase
                     stdClass::class,
                     // Return the same class of object, but a related id instead of the id we got.
                     ['id' => $originalId ** 2]
-                )
+                ),
             ];
         };
 
@@ -195,7 +195,7 @@ final class EntityUpdateWorkerTest extends TestCase
                                 ['interesting'],
                                 $transform
                             )
-                        )
+                        ),
                     ],
                 ],
             ],
@@ -211,9 +211,9 @@ final class EntityUpdateWorkerTest extends TestCase
                             stdClass::class,
                             ['id' => 49]
                         )
-                    )
-                ]
-            ]
+                    ),
+                ],
+            ],
         ];
 
         $updateProcessor = new UpdateProcessorStub();
@@ -221,7 +221,7 @@ final class EntityUpdateWorkerTest extends TestCase
         $worker = $this->createWorker($updateProcessor, $searchHandlers);
 
         $worker->handle([
-            new UpdatedEntity(['interesting'], stdClass::class, ['id' => 7])
+            new UpdatedEntity(['interesting'], stdClass::class, ['id' => 7]),
         ]);
 
         self::assertEquals($expectedProcess, $updateProcessor->getProcessCalls());
@@ -253,8 +253,8 @@ final class EntityUpdateWorkerTest extends TestCase
         $searchHandlers = new RegisteredSearchHandlerStub([
             'getSubscriptionsGroupedByClass' => [
                 // Return no subscriptions
-                []
-            ]
+                [],
+            ],
         ]);
 
         $updateProcessor = new UpdateProcessorStub();
@@ -262,7 +262,7 @@ final class EntityUpdateWorkerTest extends TestCase
         $worker = $this->createWorker($updateProcessor, $searchHandlers);
 
         $worker->handle([
-            new UpdatedEntity([], stdClass::class, [])
+            new UpdatedEntity([], stdClass::class, []),
         ]);
 
         self::assertSame([], $updateProcessor->getProcessCalls());

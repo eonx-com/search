@@ -9,7 +9,7 @@ use LoyaltyCorp\Search\Interfaces\Workers\EntityUpdateWorkerInterface;
 /**
  * @coversNothing
  */
-class EntityUpdateWorkerStub extends BaseStub implements EntityUpdateWorkerInterface
+final class EntityUpdateWorkerStub extends BaseStub implements EntityUpdateWorkerInterface
 {
     /**
      * Returns calls to handle().

@@ -228,6 +228,52 @@ final class EntityUpdateWorkerTest extends TestCase
     }
 
     /**
+     * Tests that nothing happens when the subscription doesnt contain an intersection of property changes.
+     *
+     * @return void
+     */
+    public function testHandlesMatchingSubscriptionNullProperties(): void
+    {
+        $searchHandlers = new RegisteredSearchHandlerStub([
+            'getSubscriptionsGroupedByClass' => [
+                [
+                    stdClass::class => [
+                        new HandlerChangeSubscription(
+                            'handler',
+                            new ChangeSubscription(stdClass::class)
+                        ),
+                    ],
+                ],
+            ],
+        ]);
+
+        $expectedProcess = [
+            [
+                'indexSuffix' => '',
+                'updates' => [
+                    new HandlerObjectForChange(
+                        'handler',
+                        new ObjectForUpdate(
+                            stdClass::class,
+                            ['id' => 7]
+                        )
+                    ),
+                ],
+            ],
+        ];
+
+        $updateProcessor = new UpdateProcessorStub();
+
+        $worker = $this->createWorker($updateProcessor, $searchHandlers);
+
+        $worker->handle([
+            new UpdatedEntity(['interesting'], stdClass::class, ['id' => 7]),
+        ]);
+
+        self::assertEquals($expectedProcess, $updateProcessor->getProcessCalls());
+    }
+
+    /**
      * Tests that nothing happens when the changes array is empty.
      *
      * @return void

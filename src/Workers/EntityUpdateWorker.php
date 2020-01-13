@@ -149,6 +149,12 @@ final class EntityUpdateWorker implements EntityUpdateWorkerInterface
      */
     private function shouldNotify(ChangeSubscription $subscription, ChangedEntity $change): bool
     {
+        // If the properties property on the subscription is null, we always notify
+        // of a change.
+        if ($subscription->getProperties() === null) {
+            return true;
+        }
+
         if ($change instanceof UpdatedEntity === true) {
             $intersection = \array_intersect($subscription->getProperties(), $change->getChangedProperties());
 

@@ -30,7 +30,7 @@ final class ChangeSubscription
     /**
      * An array of properties we would like to react to.
      *
-     * @var string[]
+     * @var string[]|null
      */
     private $properties;
 
@@ -56,11 +56,11 @@ final class ChangeSubscription
      * @phpstan-param callable(\EonX\EasyEntityChange\DataTransferObjects\ChangedEntity): array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange> $transform
      *
      * @param string $class
-     * @param string[] $properties
+     * @param string[]|null $properties
      * @param callable|null $transform
      * phpcs:enable
      */
-    public function __construct(string $class, array $properties, ?callable $transform = null)
+    public function __construct(string $class, ?array $properties = null, ?callable $transform = null)
     {
         $this->class = $class;
         $this->properties = $properties;
@@ -82,9 +82,9 @@ final class ChangeSubscription
     /**
      * Return properties.
      *
-     * @return string[]
+     * @return string[]|null
      */
-    public function getProperties(): array
+    public function getProperties(): ?array
     {
         return $this->properties;
     }

@@ -77,47 +77,7 @@ final class ClientStub extends BaseStub implements ClientInterface
      */
     public function getBulkCalls(): array
     {
-        return $this->getCalls(__FUNCTION__);
-    }
-
-    /**
-     * Returns calls to createAlias().
-     *
-     * @return mixed[]
-     */
-    public function getCreateAliasCalls(): array
-    {
-        return $this->getCalls(__FUNCTION__);
-    }
-
-    /**
-     * Returns calls to createIndex().
-     *
-     * @return mixed[]
-     */
-    public function getCreateIndexCalls(): array
-    {
-        return $this->getCalls(__FUNCTION__);
-    }
-
-    /**
-     * Returns calls to deleteAlias().
-     *
-     * @return mixed[]
-     */
-    public function getDeleteAliasCalls(): array
-    {
-        return $this->getCalls(__FUNCTION__);
-    }
-
-    /**
-     * Returns calls to deleteIndex().
-     *
-     * @return mixed[]
-     */
-    public function getDeleteIndexCalls(): array
-    {
-        return $this->getCalls(__FUNCTION__);
+        return $this->getCalls('bulk');
     }
 
     /**
@@ -134,16 +94,6 @@ final class ClientStub extends BaseStub implements ClientInterface
     public function getIndices(?string $name = null): array
     {
         return $this->returnOrThrowResponse(__FUNCTION__);
-    }
-
-    /**
-     * Returns calls to moveAlias().
-     *
-     * @return mixed[]
-     */
-    public function getMoveAliasCalls(): array
-    {
-        return $this->getCalls(__FUNCTION__);
     }
 
     /**

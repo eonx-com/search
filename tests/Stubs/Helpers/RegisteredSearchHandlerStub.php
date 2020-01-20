@@ -21,16 +21,6 @@ final class RegisteredSearchHandlerStub extends BaseStub implements RegisteredSe
     }
 
     /**
-     * Returns calls to getTransformableHandlersByKey.
-     *
-     * @return mixed[]
-     */
-    public function getGetTransformableHandlersByKeyCalls(): array
-    {
-        return $this->getCalls(__FUNCTION__);
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getSubscriptionsGroupedByClass(): array

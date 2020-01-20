@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f7ae95b2499e32c51be14b48f59d04d2",
+    "content-hash": "5e7b2a54def31ddc1c710576e8f2000c",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -3208,16 +3208,16 @@
         },
         {
             "name": "eonx-com/test-utils",
-            "version": "0.0.2",
+            "version": "v0.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/eonx-com/test-utils.git",
-                "reference": "08eba5649b21ca3ebf6ec7845659b18c5922a27e"
+                "reference": "8234332937075783ccef33c074d329d7abf27b45"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/eonx-com/test-utils/zipball/08eba5649b21ca3ebf6ec7845659b18c5922a27e",
-                "reference": "08eba5649b21ca3ebf6ec7845659b18c5922a27e",
+                "url": "https://api.github.com/repos/eonx-com/test-utils/zipball/8234332937075783ccef33c074d329d7abf27b45",
+                "reference": "8234332937075783ccef33c074d329d7abf27b45",
                 "shasum": ""
             },
             "require": {
@@ -3253,7 +3253,7 @@
                 "BSD-3-Clause"
             ],
             "description": "A collection of PHP test utils, assertions stubs and test cases",
-            "time": "2019-12-30T05:34:12+00:00"
+            "time": "2020-01-09T22:19:46+00:00"
         },
         {
             "name": "eonx-com/webhooks",

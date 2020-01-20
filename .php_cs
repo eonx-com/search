@@ -69,7 +69,7 @@ return PhpCsFixer\Config::create()
         'explicit_string_variable' => true,
 
         // Enforce all classes are final or abstract
-        'final_class' => true,
+        //'final_class' => true,
 
         // Replaces some core function calls to statics
         'function_to_constant' => true,

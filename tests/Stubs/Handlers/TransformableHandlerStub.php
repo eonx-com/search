@@ -11,7 +11,7 @@ use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 /**
  * @coversNothing
  */
-final class TransformableHandlerStub extends BaseStub implements TransformableSearchHandlerInterface
+class TransformableHandlerStub extends BaseStub implements TransformableSearchHandlerInterface
 {
     /**
      * @var string
@@ -89,16 +89,6 @@ final class TransformableHandlerStub extends BaseStub implements TransformableSe
     public function getSubscriptions(): array
     {
         return $this->returnOrThrowResponse(__FUNCTION__);
-    }
-
-    /**
-     * Returns calls to transform().
-     *
-     * @return mixed[]
-     */
-    public function getTransformCalls(): array
-    {
-        return $this->getCalls(__FUNCTION__);
     }
 
     /**

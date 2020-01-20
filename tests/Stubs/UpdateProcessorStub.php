@@ -26,6 +26,6 @@ final class UpdateProcessorStub extends BaseStub implements UpdateProcessorInter
      */
     public function getProcessCalls(): array
     {
-        return $this->getCalls(__FUNCTION__);
+        return $this->getCalls('process');
     }
 }

@@ -16,7 +16,7 @@ use Tests\LoyaltyCorp\Search\TestCase;
 final class EntityUpdateListenerTest extends TestCase
 {
     /**
-     * Test handle.
+     * Tests that the listener calls the worker with changes..
      *
      * @return void
      */
@@ -39,6 +39,6 @@ final class EntityUpdateListenerTest extends TestCase
             $updatedEntity,
         ]));
 
-        self::assertSame($expectedCalls, $worker->getHandleCalls());
+        self::assertSame($expectedCalls, $worker->getCalls('handle'));
     }
 }

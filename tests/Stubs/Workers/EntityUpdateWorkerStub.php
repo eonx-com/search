@@ -12,16 +12,6 @@ use LoyaltyCorp\Search\Interfaces\Workers\EntityUpdateWorkerInterface;
 final class EntityUpdateWorkerStub extends BaseStub implements EntityUpdateWorkerInterface
 {
     /**
-     * Returns calls to handle().
-     *
-     * @return mixed[]
-     */
-    public function getHandleCalls(): array
-    {
-        return $this->getCalls(__FUNCTION__);
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function handle(array $changes): void

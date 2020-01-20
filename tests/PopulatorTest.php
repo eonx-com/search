@@ -39,10 +39,10 @@ final class PopulatorTest extends TestCase
 
         $expected = [
             [
-                'actions' => [new IndexAction($documentUpdate1, 'valid_suffix')]
+                'actions' => [new IndexAction($documentUpdate1, 'valid_suffix')],
             ],
             [
-                'actions' => [new IndexAction($documentUpdate2, 'valid_suffix')]
+                'actions' => [new IndexAction($documentUpdate2, 'valid_suffix')],
             ],
         ];
 
@@ -50,8 +50,8 @@ final class PopulatorTest extends TestCase
             'getFillIterable' => [$objects],
             'transform' => [
                 $documentUpdate1,
-                $documentUpdate2
-            ]
+                $documentUpdate2,
+            ],
         ]);
 
         $client = new ClientStub();
@@ -80,8 +80,8 @@ final class PopulatorTest extends TestCase
             'getFillIterable' => [$objects],
             'transform' => [
                 null,
-                null
-            ]
+                null,
+            ],
         ]);
 
         $client = new ClientStub();
@@ -93,7 +93,7 @@ final class PopulatorTest extends TestCase
     }
 
     /**
-     * Tests the populator when the iterator is empty
+     * Tests the populator when the iterator is empty.
      *
      * @return void
      */
@@ -132,8 +132,8 @@ final class PopulatorTest extends TestCase
             [
                 'actions' => [
                     new IndexAction($documentUpdate1, 'valid_suffix'),
-                    new IndexAction($documentUpdate2, 'valid_suffix')
-                ]
+                    new IndexAction($documentUpdate2, 'valid_suffix'),
+                ],
             ],
         ];
 
@@ -141,8 +141,8 @@ final class PopulatorTest extends TestCase
             'getFillIterable' => [$objects],
             'transform' => [
                 $documentUpdate1,
-                $documentUpdate2
-            ]
+                $documentUpdate2,
+            ],
         ]);
 
         $client = new ClientStub();
@@ -174,7 +174,7 @@ final class PopulatorTest extends TestCase
             [
                 'actions' => [
                     new IndexAction($documentUpdate1, 'valid_suffix'),
-                    new IndexAction($documentUpdate2, 'valid_suffix')
+                    new IndexAction($documentUpdate2, 'valid_suffix'),
                 ],
             ],
             [
@@ -189,8 +189,8 @@ final class PopulatorTest extends TestCase
             'transform' => [
                 $documentUpdate1,
                 $documentUpdate2,
-                $documentUpdate3
-            ]
+                $documentUpdate3,
+            ],
         ]);
 
         $client = new ClientStub();
@@ -226,7 +226,7 @@ final class PopulatorTest extends TestCase
             'getFillIterable' => [$objects],
             'transform' => [
                 $documentUpdate1,
-            ]
+            ],
         ]);
 
         $client = new ClientStub();

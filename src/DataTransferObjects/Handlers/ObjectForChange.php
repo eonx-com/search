@@ -28,7 +28,7 @@ abstract class ObjectForChange
     private $ids;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @phpstan-param class-string $class
      *

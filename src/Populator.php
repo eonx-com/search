@@ -3,22 +3,15 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search;
 
-use LoyaltyCorp\Search\DataTransferObjects\DocumentUpdate;
-use LoyaltyCorp\Search\Indexer\AccessTokenMappingHelper;
-use LoyaltyCorp\Search\Interfaces\Access\AccessPopulatorInterface;
+use LoyaltyCorp\Search\DataTransferObjects\DocumentAction;
+use LoyaltyCorp\Search\DataTransferObjects\IndexAction;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
-use LoyaltyCorp\Search\Interfaces\CustomAccessHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
 use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 
 final class Populator implements PopulatorInterface
 {
-    /**
-     * @var \LoyaltyCorp\Search\Interfaces\Access\AccessPopulatorInterface
-     */
-    private $accessPopulator;
-
     /**
      * @var \LoyaltyCorp\Search\Interfaces\ClientInterface
      */
@@ -32,16 +25,13 @@ final class Populator implements PopulatorInterface
     /**
      * Constructor.
      *
-     * @param \LoyaltyCorp\Search\Interfaces\Access\AccessPopulatorInterface $accessPopulator
      * @param \LoyaltyCorp\Search\Interfaces\ClientInterface $client
      * @param \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface $nameTransformer
      */
     public function __construct(
-        AccessPopulatorInterface $accessPopulator,
         ClientInterface $client,
         IndexNameTransformerInterface $nameTransformer
     ) {
-        $this->accessPopulator = $accessPopulator;
         $this->client = $client;
         $this->nameTransformer = $nameTransformer;
     }
@@ -69,43 +59,27 @@ final class Populator implements PopulatorInterface
         string $indexSuffix,
         iterable $objects
     ): void {
-        $updates = [];
+        $actions = [];
 
         foreach ($objects as $object) {
-            $searchId = $handler->getSearchId($object);
-            // If the handler didnt return an identifier, there is nothing to index.
-            if ($searchId === null) {
+            $update = $handler->transform($object);
+
+            // The handler didnt return an action to perform.
+            if (($update instanceof DocumentAction) === false) {
                 continue;
             }
 
-            $transformed = $handler->transform($object);
-            // If the handler didnt transform the document there is nothing to index.
-            if ($transformed === null) {
-                continue;
-            }
+            $index = $this->nameTransformer->transformIndexName($handler, $object) . $indexSuffix;
 
-            $index = $this->nameTransformer->transformIndexName($handler, $object);
-
-            // If the handler is not doing its own security, add access tokens to the document.
-            if ($handler instanceof CustomAccessHandlerInterface === false) {
-                $accessTokens = $this->accessPopulator->getAccessTokens($object);
-
-                $transformed[AccessTokenMappingHelper::ACCESS_TOKEN_PROPERTY] = $accessTokens;
-            }
-
-            $updates[] = new DocumentUpdate(
-                $index . $indexSuffix,
-                (string)$searchId,
-                $transformed
-            );
+            $actions[] = new IndexAction($update, $index);
         }
 
         // If there were no updates generated we have nothing to update.
-        if (\count($updates) === 0) {
+        if (\count($actions) === 0) {
             return;
         }
 
-        $this->client->bulkUpdate($updates);
+        $this->client->bulk($actions);
     }
 
     /**
@@ -114,7 +88,7 @@ final class Populator implements PopulatorInterface
      * @param \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface $handler
      * @param int $batchSize
      *
-     * @return mixed[]
+     * @return \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange[][]
      */
     private function getBatchedIterable(TransformableSearchHandlerInterface $handler, int $batchSize): iterable
     {

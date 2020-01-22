@@ -3,39 +3,44 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Interfaces;
 
+use LoyaltyCorp\Search\DataTransferObjects\DocumentAction;
+use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange;
+
 interface TransformableSearchHandlerInterface extends SearchHandlerInterface
 {
     /**
-     * Returns an iterable that will be used to fill the index when doing a full
-     * index fill.
+     * Returns an iterable that contains ObjectForChange DTOs that will be sent into the job queue
+     * for reindexing or filling the index.
      *
-     * @return iterable|mixed[]
+     * @return \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange[]
      */
     public function getFillIterable(): iterable;
 
     /**
-     * Get the class this search handler will support.
+     * Returns a unique string to identify the handler. This function is intentionally not static
+     * as there can be more than one instance of a handler defined that needs to be uniquely
+     * identified.
      *
-     * @return string[] Fully Qualified Class Names that implement the Search Handler interface
+     * @return string
      */
-    public function getHandledClasses(): array;
+    public function getHandlerKey(): string;
 
     /**
-     * Returns the identifier used externally for the transformed object.
+     * Returns an array of ChangeSubscription objects that indicate what this handler
+     * would like to be subscribed to, and how to transform that data when passed into
+     * the getSearchId() and transform() methods.
      *
-     * @param object $object
-     *
-     * @return mixed|null
+     * @return \LoyaltyCorp\Search\DataTransferObjects\Handlers\ChangeSubscription[]
      */
-    public function getSearchId(object $object);
+    public function getSubscriptions(): array;
 
     /**
      * Transforms objects supplied into serialized search arrays that
      * should be indexed.
      *
-     * @param mixed $object
+     * @param \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange $object
      *
-     * @return mixed[]|null
+     * @return \LoyaltyCorp\Search\DataTransferObjects\DocumentAction|null
      */
-    public function transform($object): ?array;
+    public function transform(ObjectForChange $object): ?DocumentAction;
 }

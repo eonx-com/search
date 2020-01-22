@@ -3,10 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Bridge\Laravel\Providers;
 
-use LoyaltyCorp\EasyEntityChange\Events\EntityChangeEvent;
-use LoyaltyCorp\EasyEntityChange\Events\EntityDeleteDataEvent;
-use LoyaltyCorp\Search\Bridge\Laravel\Listeners\EntityDeleteDataListener;
-use LoyaltyCorp\Search\Bridge\Laravel\Listeners\EntityDeleteListener;
+use EonX\EasyEntityChange\Events\EntityChangeEvent;
 use LoyaltyCorp\Search\Bridge\Laravel\Listeners\EntityUpdateListener;
 use LoyaltyCorp\Search\Bridge\Laravel\Providers\SearchEventServiceProvider;
 use Tests\LoyaltyCorp\Search\TestCase;
@@ -29,11 +26,7 @@ final class SearchEventServiceProviderTest extends TestCase
 
         $listen = [
             EntityChangeEvent::class => [
-                EntityDeleteListener::class,
                 EntityUpdateListener::class,
-            ],
-            EntityDeleteDataEvent::class => [
-                EntityDeleteDataListener::class,
             ],
         ];
 

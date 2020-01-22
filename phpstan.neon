@@ -16,8 +16,5 @@ parameters:
             message: '#Method (.*) return type has no value type specified in iterable type (.*)\.#'
             path: tests/Stubs/Vendor
         -
-            message: '#Method (.*) has parameter (.*) with no typehint specified\.#'
-            path: tests/Stubs/Vendor
-        -
             message: '#Method (.*) has parameter (.*) with no value type specified in iterable type (.*)\.#'
             path: tests/Stubs/Vendor

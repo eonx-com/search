@@ -10,8 +10,8 @@ use LoyaltyCorp\Search\Indexer\AccessTokenMappingHelper;
 use LoyaltyCorp\Search\Indexer\IndexSwapResult;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
-use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\LegacyClientStub;
 
 /**
  * @covers \LoyaltyCorp\Search\Indexer
@@ -30,7 +30,7 @@ final class IndexerTest extends TestCase
      */
     public function testAliasGetsCreated(): void
     {
-        $elasticClient = new ClientStub();
+        $elasticClient = new LegacyClientStub();
         $indexer = $this->createInstance($elasticClient);
 
         $expectedAlias = 'valid_new';
@@ -56,7 +56,9 @@ final class IndexerTest extends TestCase
         ];
 
         $now = new DateTime('2019-01-02T03:04:05');
-        $indexer->create(new TransformableSearchHandlerStub(), $now);
+        $handler = new TransformableHandlerStub();
+
+        $indexer->create($handler, $now);
 
         self::assertSame([$expectedAlias], $elasticClient->getCreatedAliases());
         self::assertSame([$expectedIndexCreate], $elasticClient->getCreatedIndices());
@@ -69,7 +71,7 @@ final class IndexerTest extends TestCase
      */
     public function testCleaningHandlesMultipleHandlers(): void
     {
-        $client = new ClientStub(
+        $client = new LegacyClientStub(
             null,
             null,
             [
@@ -83,8 +85,8 @@ final class IndexerTest extends TestCase
         $indexer = $this->createInstance($client);
 
         $indexer->clean([
-            new TransformableSearchHandlerStub(),
-            new TransformableSearchHandlerStub(null, 'other-index'),
+            new TransformableHandlerStub(),
+            new TransformableHandlerStub('other-index'),
         ]);
 
         self::assertSame($expected, $client->getDeletedIndices());
@@ -97,7 +99,7 @@ final class IndexerTest extends TestCase
      */
     public function testCleaningIndicesDoesNotRemoveUnrelatedIndices(): void
     {
-        $client = new ClientStub(
+        $client = new LegacyClientStub(
             null,
             null,
             // unrelated-index and irrelevant-index should not be touched, because they are unrelated to search handlers
@@ -106,7 +108,7 @@ final class IndexerTest extends TestCase
         $indexer = $this->createInstance($client);
         $expected = ['valid-123'];
 
-        $indexer->clean([new TransformableSearchHandlerStub()]);
+        $indexer->clean([new TransformableHandlerStub()]);
 
         self::assertSame($expected, $client->getDeletedIndices());
     }
@@ -118,14 +120,14 @@ final class IndexerTest extends TestCase
      */
     public function testCleaningIndicesRespectsDryOption(): void
     {
-        $client = new ClientStub(
+        $client = new LegacyClientStub(
             null,
             null,
             [['name' => 'unrelated-index'], ['name' => 'irrelevant-index'], ['name' => 'valid-123']]
         );
         $indexer = $this->createInstance($client);
 
-        $indexer->clean([new TransformableSearchHandlerStub()], true);
+        $indexer->clean([new TransformableHandlerStub()], true);
 
         self::assertSame([], $client->getDeletedIndices());
     }
@@ -137,7 +139,7 @@ final class IndexerTest extends TestCase
      */
     public function testCleaningIndicesRespectsIndicesFromAliases(): void
     {
-        $client = new ClientStub(
+        $client = new LegacyClientStub(
             null,
             null,
             [['name' => 'unrelated-index'], ['name' => 'valid-unused']],
@@ -146,7 +148,7 @@ final class IndexerTest extends TestCase
         $indexer = $this->createInstance($client);
         $expected = ['valid-unused'];
 
-        $indexer->clean([new TransformableSearchHandlerStub()]);
+        $indexer->clean([new TransformableHandlerStub()]);
 
         self::assertSame($expected, $client->getDeletedIndices());
     }
@@ -158,7 +160,7 @@ final class IndexerTest extends TestCase
      */
     public function testIndexSwapWithNoSwap(): void
     {
-        $elasticClient = new ClientStub(
+        $elasticClient = new LegacyClientStub(
             true,
             null,
             null,
@@ -168,7 +170,7 @@ final class IndexerTest extends TestCase
         $indexer = $this->createInstance($elasticClient);
 
         $result = $indexer->indexSwap(
-            [new TransformableSearchHandlerStub()],
+            [new TransformableHandlerStub()],
             true
         );
 
@@ -182,7 +184,7 @@ final class IndexerTest extends TestCase
      */
     public function testIndexSwapperDryRun(): void
     {
-        $elasticClient = new ClientStub(
+        $elasticClient = new LegacyClientStub(
             true,
             null,
             null,
@@ -191,7 +193,7 @@ final class IndexerTest extends TestCase
         $indexer = $this->createInstance($elasticClient);
         $expected = ['valid_new'];
 
-        $indexer->indexSwap([new TransformableSearchHandlerStub()]);
+        $indexer->indexSwap([new TransformableHandlerStub()]);
 
         self::assertSame($expected, $elasticClient->getDeletedAliases());
     }
@@ -203,7 +205,7 @@ final class IndexerTest extends TestCase
      */
     public function testIndexSwapperRemovesNewAlias(): void
     {
-        $elasticClient = new ClientStub(
+        $elasticClient = new LegacyClientStub(
             true,
             null,
             null,
@@ -211,7 +213,7 @@ final class IndexerTest extends TestCase
         );
         $indexer = $this->createInstance($elasticClient);
 
-        $indexer->indexSwap([new TransformableSearchHandlerStub()], true);
+        $indexer->indexSwap([new TransformableHandlerStub()], true);
 
         self::assertSame([], $elasticClient->getSwappedAliases());
         self::assertSame([], $elasticClient->getDeletedAliases());
@@ -224,7 +226,7 @@ final class IndexerTest extends TestCase
      */
     public function testIndexSwapperSwapsAlias(): void
     {
-        $elasticClient = new ClientStub(
+        $elasticClient = new LegacyClientStub(
             true,
             null,
             null,
@@ -234,7 +236,7 @@ final class IndexerTest extends TestCase
         // alias => index
         $expected = ['valid' => 'valid_201900502'];
 
-        $indexer->indexSwap([new TransformableSearchHandlerStub()]);
+        $indexer->indexSwap([new TransformableHandlerStub()]);
 
         self::assertSame($expected, $elasticClient->getSwappedAliases());
     }
@@ -249,10 +251,10 @@ final class IndexerTest extends TestCase
         $this->expectException(AliasNotFoundException::class);
         $this->expectExceptionMessage('Could not find expected alias \'valid_new\'');
 
-        $elasticClient = new ClientStub(true);
+        $elasticClient = new LegacyClientStub(true);
         $indexer = $this->createInstance($elasticClient);
 
-        $indexer->indexSwap([new TransformableSearchHandlerStub()]);
+        $indexer->indexSwap([new TransformableHandlerStub()]);
     }
 
     /**
@@ -264,11 +266,11 @@ final class IndexerTest extends TestCase
      */
     public function testTemporaryAliasDeleted(): void
     {
-        $elasticClient = new ClientStub(true);
+        $elasticClient = new LegacyClientStub(true);
         $indexer = $this->createInstance($elasticClient);
         $expected = ['valid_new'];
 
-        $indexer->create(new TransformableSearchHandlerStub());
+        $indexer->create(new TransformableHandlerStub());
 
         // No deleted aliases because *_new was not existing already
         self::assertSame($expected, $elasticClient->getDeletedAliases());
@@ -285,7 +287,7 @@ final class IndexerTest extends TestCase
         ?ClientInterface $client = null
     ): Indexer {
         return new Indexer(
-            $client ?? new ClientStub(),
+            $client ?? new LegacyClientStub(),
             new AccessTokenMappingHelper(),
             new DefaultIndexNameTransformer()
         );

@@ -7,9 +7,9 @@ use Doctrine\ORM\EntityManagerInterface as DoctrineEntityManagerInterface;
 use EoneoPay\Externals\Logger\Interfaces\LoggerInterface;
 use EoneoPay\Externals\Logger\Logger;
 use EoneoPay\Externals\ORM\Interfaces\EntityManagerInterface as EoneoPayEntityManagerInterface;
+use Eonx\TestUtils\Stubs\Vendor\Doctrine\ORM\EntityManagerStub;
+use Eonx\TestUtils\TestCases\UnitTestCase;
 use Illuminate\Contracts\Foundation\Application;
-use PHPUnit\Framework\TestCase as BaseTestCase;
-use Tests\LoyaltyCorp\Search\Stubs\Vendor\Doctrine\EntityManagerStub as DoctrineEntityManagerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Doctrine\RegistryStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\EoneoPay\Externals\ORM\EntityManagerStub as EoneoPayEntityManagerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Illuminate\Contracts\Foundation\ApplicationStub;
@@ -19,7 +19,7 @@ use Tests\LoyaltyCorp\Search\Stubs\Vendor\Illuminate\Contracts\Foundation\Applic
  *
  * @coversNothing
  */
-abstract class TestCase extends BaseTestCase
+abstract class TestCase extends UnitTestCase
 {
     /**
      * Create configured application instance for service provider testing.
@@ -36,8 +36,8 @@ abstract class TestCase extends BaseTestCase
         });
 
         // Bind Doctrine EntityManager to container so app->make on interface works
-        $application->singleton(DoctrineEntityManagerInterface::class, static function (): DoctrineEntityManagerStub {
-            return new DoctrineEntityManagerStub();
+        $application->singleton(DoctrineEntityManagerInterface::class, static function (): EntityManagerStub {
+            return new EntityManagerStub();
         });
 
         // Bind eoneopay EntityManager to container so app->make on interface works

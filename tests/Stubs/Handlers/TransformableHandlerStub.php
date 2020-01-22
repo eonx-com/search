@@ -3,20 +3,49 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Stubs\Handlers;
 
+use Eonx\TestUtils\Stubs\BaseStub;
+use LoyaltyCorp\Search\DataTransferObjects\DocumentAction;
+use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange;
 use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
-use Tests\LoyaltyCorp\Search\Stubs\Entities\EntityStub;
 
 /**
  * @coversNothing
  */
-final class TransformableHandlerStub implements TransformableSearchHandlerInterface
+class TransformableHandlerStub extends BaseStub implements TransformableSearchHandlerInterface
 {
+    /**
+     * @var string
+     */
+    private $indexName;
+
+    /**
+     * Constructor.
+     *
+     * @param string|null $indexName
+     * @param mixed[]|null $responses
+     */
+    public function __construct(?string $indexName = null, ?array $responses = null)
+    {
+        parent::__construct($responses);
+
+        $this->indexName = $indexName ?? 'valid';
+    }
+
     /**
      * {@inheritdoc}
      */
     public static function getMappings(): array
     {
-        return [];
+        return [
+            'doc' => [
+                'dynamic' => 'strict',
+                'properties' => [
+                    'createdAt' => [
+                        'type' => 'date',
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -24,7 +53,10 @@ final class TransformableHandlerStub implements TransformableSearchHandlerInterf
      */
     public static function getSettings(): array
     {
-        return [];
+        return [
+            'number_of_replicas' => 1,
+            'number_of_shards' => 1,
+        ];
     }
 
     /**
@@ -32,15 +64,15 @@ final class TransformableHandlerStub implements TransformableSearchHandlerInterf
      */
     public function getFillIterable(): iterable
     {
-        return [];
+        return $this->returnOrThrowResponse(__FUNCTION__);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getHandledClasses(): array
+    public function getHandlerKey(): string
     {
-        return [EntityStub::class];
+        return $this->returnOrThrowResponse(__FUNCTION__);
     }
 
     /**
@@ -48,22 +80,24 @@ final class TransformableHandlerStub implements TransformableSearchHandlerInterf
      */
     public function getIndexName(): string
     {
-        return 'entity_stub';
+        return $this->indexName;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getSearchId(object $object)
+    public function getSubscriptions(): array
     {
-        return \method_exists($object, 'getSearchId') ? $object->getSearchId() : null;
+        return $this->returnOrThrowResponse(__FUNCTION__);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function transform($object = null): ?array
+    public function transform(ObjectForChange $object): ?DocumentAction
     {
-        return [];
+        $this->saveCalls(__FUNCTION__, \get_defined_vars());
+
+        return $this->returnOrThrowResponse(__FUNCTION__);
     }
 }

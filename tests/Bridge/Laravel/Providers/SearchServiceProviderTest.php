@@ -11,7 +11,6 @@ use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\ClientInterface as GuzzleClientInterface;
 use Illuminate\Contracts\Foundation\Application;
 use LoyaltyCorp\Search\Access\AnonymousAccessPopulator;
-use LoyaltyCorp\Search\Bridge\Laravel\Listeners\EntityDeleteDataListener;
 use LoyaltyCorp\Search\Bridge\Laravel\Listeners\EntityUpdateListener;
 use LoyaltyCorp\Search\Bridge\Laravel\Providers\SearchServiceProvider;
 use LoyaltyCorp\Search\Client;
@@ -28,21 +27,22 @@ use LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Indexer\MappingHelperInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
-use LoyaltyCorp\Search\Interfaces\ManagerInterface;
 use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
 use LoyaltyCorp\Search\Interfaces\RequestProxyFactoryInterface;
 use LoyaltyCorp\Search\Interfaces\ResponseFactoryInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
-use LoyaltyCorp\Search\Manager;
+use LoyaltyCorp\Search\Interfaces\UpdateProcessorInterface;
+use LoyaltyCorp\Search\Interfaces\Workers\EntityUpdateWorkerInterface;
 use LoyaltyCorp\Search\Populator;
 use LoyaltyCorp\Search\RequestProxyFactory;
 use LoyaltyCorp\Search\ResponseFactory;
 use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
-use LoyaltyCorp\Search\Workers\EntityDeleteWorker;
-use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
+use LoyaltyCorp\Search\UpdateProcessor;
+use LoyaltyCorp\Search\Workers\EntityUpdateWorker;
+use stdClass;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NonDoctrineHandlerStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NotSearchableStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\LegacyClientStub;
 use Tests\LoyaltyCorp\Search\TestCase;
 
 /**
@@ -71,17 +71,16 @@ final class SearchServiceProviderTest extends TestCase
             ClientInterface::class => Client::class,
             ClientBulkResponseHelperInterface::class => ClientBulkResponseHelper::class,
             EntityManagerHelperInterface::class => EntityManagerHelper::class,
+            EntityUpdateListener::class => EntityUpdateListener::class,
+            EntityUpdateWorkerInterface::class => EntityUpdateWorker::class,
             IndexNameTransformerInterface::class => DefaultIndexNameTransformer::class,
             IndexerInterface::class => Indexer::class,
-            ManagerInterface::class => Manager::class,
             MappingHelperInterface::class => AccessTokenMappingHelper::class,
             PopulatorInterface::class => Populator::class,
             RegisteredSearchHandlerInterface::class => RegisteredSearchHandler::class,
             RequestProxyFactoryInterface::class => RequestProxyFactory::class,
             ResponseFactoryInterface::class => ResponseFactory::class,
-            EntityDeleteDataListener::class => EntityDeleteDataListener::class,
-            EntityDeleteWorker::class => EntityDeleteWorker::class,
-            EntityUpdateListener::class => EntityUpdateListener::class,
+            UpdateProcessorInterface::class => UpdateProcessor::class,
         ];
 
         foreach ($services as $abstract => $concrete) {
@@ -101,7 +100,7 @@ final class SearchServiceProviderTest extends TestCase
     public function testDoctrineEntityManagerResolutionThrowsException(): void
     {
         $application = $this->createApplication();
-        $application->singleton('registry', ClientStub::class);
+        $application->singleton('registry', LegacyClientStub::class);
 
         (new SearchServiceProvider($application))->register();
 
@@ -124,11 +123,11 @@ final class SearchServiceProviderTest extends TestCase
 
         // Tag handler for service provider
         $application->tag(
-            [TransformableSearchHandlerStub::class, NotSearchableStub::class, NonDoctrineHandlerStub::class],
+            [TransformableHandlerStub::class, stdClass::class, NonDoctrineHandlerStub::class],
             ['search_handler']
         );
-        // The only available handler is when using get should beHandlerStub
-        $expected = [new TransformableSearchHandlerStub(), new NonDoctrineHandlerStub()];
+
+        $expected = [new TransformableHandlerStub(), new NonDoctrineHandlerStub()];
 
         $serviceProvider = new SearchServiceProvider($application);
         $serviceProvider->register();

@@ -10,7 +10,7 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\BufferedOutput;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\IndexerStub;
 use Tests\LoyaltyCorp\Search\TestCases\SearchIndexCommandTestCase;
@@ -32,8 +32,15 @@ final class SearchIndexLiveCommandTest extends SearchIndexCommandTestCase
     public function testDryRunModeIsNotDefault(): void
     {
         $indexer = new IndexerStub();
-        $handlers = [new TransformableSearchHandlerStub()];
-        $command = $this->createInstance($indexer, new RegisteredSearchHandlerStub($handlers));
+        $handlers = [new TransformableHandlerStub()];
+
+        $registeredHandlers = new RegisteredSearchHandlerStub([
+            'getAll' => [
+                $handlers,
+            ],
+        ]);
+
+        $command = $this->createInstance($indexer, $registeredHandlers);
         $output = new BufferedOutput();
         $this->bootstrapCommand($command, null, $output, ['dry-run']);
 
@@ -52,8 +59,15 @@ final class SearchIndexLiveCommandTest extends SearchIndexCommandTestCase
     public function testDryRunModeOutputsMessage(): void
     {
         $indexer = new IndexerStub();
-        $handlers = [new TransformableSearchHandlerStub()];
-        $command = $this->createInstance($indexer, new RegisteredSearchHandlerStub($handlers));
+        $handlers = [new TransformableHandlerStub()];
+
+        $registeredHandlers = new RegisteredSearchHandlerStub([
+            'getAll' => [
+                $handlers,
+            ],
+        ]);
+
+        $command = $this->createInstance($indexer, $registeredHandlers);
         $output = new BufferedOutput();
         $this->bootstrapCommand(
             $command,
@@ -79,8 +93,15 @@ final class SearchIndexLiveCommandTest extends SearchIndexCommandTestCase
     public function testSearchHandlersPassedToIndexSwapMethod(): void
     {
         $indexer = new IndexerStub();
-        $handlers = [new TransformableSearchHandlerStub()];
-        $command = $this->createInstance($indexer, new RegisteredSearchHandlerStub($handlers));
+        $handlers = [new TransformableHandlerStub()];
+
+        $registeredHandlers = new RegisteredSearchHandlerStub([
+            'getAll' => [
+                $handlers,
+            ],
+        ]);
+
+        $command = $this->createInstance($indexer, $registeredHandlers);
         $this->bootstrapCommand($command, null, null, ['dry-run']);
 
         $command->handle();

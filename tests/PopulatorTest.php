@@ -3,18 +3,17 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search;
 
-use LoyaltyCorp\Search\Access\AnonymousAccessPopulator;
 use LoyaltyCorp\Search\DataTransferObjects\DocumentUpdate;
+use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate;
+use LoyaltyCorp\Search\DataTransferObjects\IndexAction;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 use LoyaltyCorp\Search\Populator;
 use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
+use stdClass;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NoDocumentBodyStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NoSearchIdStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\NotSearchableStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\Searches\SearchableStub;
-use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableSearchHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\LegacyClientStub;
 
 /**
  * @covers \LoyaltyCorp\Search\Populator
@@ -30,195 +29,212 @@ final class PopulatorTest extends TestCase
      */
     public function testBigBatch(): void
     {
-        $objects = [
-            new SearchableStub('search1'),
-            new SearchableStub('search2'),
-        ];
+        $update1 = new ObjectForUpdate(stdClass::class, ['id' => 'search1']);
+        $update2 = new ObjectForUpdate(stdClass::class, ['id' => 'search2']);
+
+        $objects = [$update1, $update2];
+
+        $documentUpdate1 = new DocumentUpdate('search1', 'document');
+        $documentUpdate2 = new DocumentUpdate('search2', 'document');
 
         $expected = [
             [
-                new DocumentUpdate(
-                    'valid_suffix',
-                    'search1',
-                    ['search' => 'body', '_access_tokens' => ['anonymous']]
-                ),
+                'actions' => [new IndexAction($documentUpdate1, 'valid_suffix')],
             ],
             [
-                new DocumentUpdate(
-                    'valid_suffix',
-                    'search2',
-                    ['search' => 'body', '_access_tokens' => ['anonymous']]
-                ),
+                'actions' => [new IndexAction($documentUpdate2, 'valid_suffix')],
             ],
         ];
 
-        $handler = new TransformableSearchHandlerStub($objects);
+        $handler = new TransformableHandlerStub('valid', [
+            'getFillIterable' => [$objects],
+            'transform' => [
+                $documentUpdate1,
+                $documentUpdate2,
+            ],
+        ]);
 
         $client = new ClientStub();
         $populator = $this->getPopulator($client);
 
         $populator->populate($handler, '_suffix', 1);
 
-        self::assertEquals($expected, $client->getUpdatedIndices());
+        self::assertEquals($expected, $client->getCalls('bulk'));
     }
 
     /**
-     * Tests when the handler has an empty iterable.
+     * Tests the populator when there is more than one batch.
      *
      * @return void
      */
-    public function testEmptyIterable(): void
+    public function testSkippingUpdates(): void
     {
-        $objects = [];
+        $update1 = new ObjectForUpdate(stdClass::class, ['id' => 'search1']);
+        $update2 = new ObjectForUpdate(stdClass::class, ['id' => 'search2']);
+
+        $objects = [$update1, $update2];
 
         $expected = [];
 
-        $handler = new TransformableSearchHandlerStub($objects);
+        $handler = new TransformableHandlerStub('valid', [
+            'getFillIterable' => [$objects],
+            'transform' => [
+                null,
+                null,
+            ],
+        ]);
 
         $client = new ClientStub();
         $populator = $this->getPopulator($client);
 
         $populator->populate($handler, '_suffix', 1);
 
-        self::assertEquals($expected, $client->getUpdatedIndices());
+        self::assertEquals($expected, $client->getCalls('bulk'));
     }
 
     /**
-     * Tests the handler returning an iterable with less than batch size.
+     * Tests the populator when the iterator is empty.
+     *
+     * @return void
+     */
+    public function testEmptyIterator(): void
+    {
+        $expected = [];
+
+        $handler = new TransformableHandlerStub('valid', [
+            'getFillIterable' => [[]],
+        ]);
+
+        $client = new ClientStub();
+        $populator = $this->getPopulator($client);
+
+        $populator->populate($handler, '_suffix', 1);
+
+        self::assertEquals($expected, $client->getCalls('bulk'));
+    }
+
+    /**
+     * Tests the populator when there is more than one batch.
      *
      * @return void
      */
     public function testExactBatch(): void
     {
-        $objects = [
-            new SearchableStub('search1'),
-            new SearchableStub('search2'),
-        ];
+        $update1 = new ObjectForUpdate(stdClass::class, ['id' => 'search1']);
+        $update2 = new ObjectForUpdate(stdClass::class, ['id' => 'search2']);
+
+        $objects = [$update1, $update2];
+
+        $documentUpdate1 = new DocumentUpdate('search1', 'document');
+        $documentUpdate2 = new DocumentUpdate('search2', 'document');
 
         $expected = [
             [
-                new DocumentUpdate(
-                    'valid_suffix',
-                    'search1',
-                    ['search' => 'body', '_access_tokens' => ['anonymous']]
-                ),
-                new DocumentUpdate(
-                    'valid_suffix',
-                    'search2',
-                    ['search' => 'body', '_access_tokens' => ['anonymous']]
-                ),
+                'actions' => [
+                    new IndexAction($documentUpdate1, 'valid_suffix'),
+                    new IndexAction($documentUpdate2, 'valid_suffix'),
+                ],
             ],
         ];
 
-        $handler = new TransformableSearchHandlerStub($objects);
+        $handler = new TransformableHandlerStub('valid', [
+            'getFillIterable' => [$objects],
+            'transform' => [
+                $documentUpdate1,
+                $documentUpdate2,
+            ],
+        ]);
 
         $client = new ClientStub();
         $populator = $this->getPopulator($client);
 
         $populator->populate($handler, '_suffix', 2);
 
-        self::assertEquals($expected, $client->getUpdatedIndices());
+        self::assertEquals($expected, $client->getCalls('bulk'));
     }
 
     /**
-     * Tests the handler returning an iterable with less than batch size.
-     *
-     * @return void
-     */
-    public function testSkippedObjects(): void
-    {
-        $objects = [
-            new NotSearchableStub(),
-            new NoDocumentBodyStub(),
-            new NoSearchIdStub(),
-        ];
-
-        $expected = [];
-
-        $handler = new TransformableSearchHandlerStub($objects);
-
-        $client = new ClientStub();
-        $populator = $this->getPopulator($client);
-
-        $populator->populate($handler, '_suffix', 2);
-
-        self::assertEquals($expected, $client->getUpdatedIndices());
-    }
-
-    /**
-     * Tests the handler returning an iterable with extras over the batch size.
+     * Tests the populator when there is more than one batch.
      *
      * @return void
      */
     public function testOddBatch(): void
     {
-        $objects = [
-            new SearchableStub('search1'),
-            new SearchableStub('search2'),
-            new SearchableStub('search3'),
-        ];
+        $update1 = new ObjectForUpdate(stdClass::class, ['id' => 'search1']);
+        $update2 = new ObjectForUpdate(stdClass::class, ['id' => 'search2']);
+        $update3 = new ObjectForUpdate(stdClass::class, ['id' => 'search2']);
+
+        $objects = [$update1, $update2, $update3];
+
+        $documentUpdate1 = new DocumentUpdate('search1', 'document');
+        $documentUpdate2 = new DocumentUpdate('search2', 'document');
+        $documentUpdate3 = new DocumentUpdate('search3', 'document');
 
         $expected = [
             [
-                new DocumentUpdate(
-                    'valid_suffix',
-                    'search1',
-                    ['search' => 'body', '_access_tokens' => ['anonymous']]
-                ),
-                new DocumentUpdate(
-                    'valid_suffix',
-                    'search2',
-                    ['search' => 'body', '_access_tokens' => ['anonymous']]
-                ),
+                'actions' => [
+                    new IndexAction($documentUpdate1, 'valid_suffix'),
+                    new IndexAction($documentUpdate2, 'valid_suffix'),
+                ],
             ],
             [
-                new DocumentUpdate(
-                    'valid_suffix',
-                    'search3',
-                    ['search' => 'body', '_access_tokens' => ['anonymous']]
-                ),
+                'actions' => [
+                    new IndexAction($documentUpdate3, 'valid_suffix'),
+                ],
             ],
         ];
 
-        $handler = new TransformableSearchHandlerStub($objects);
+        $handler = new TransformableHandlerStub('valid', [
+            'getFillIterable' => [$objects],
+            'transform' => [
+                $documentUpdate1,
+                $documentUpdate2,
+                $documentUpdate3,
+            ],
+        ]);
 
         $client = new ClientStub();
         $populator = $this->getPopulator($client);
 
         $populator->populate($handler, '_suffix', 2);
 
-        self::assertEquals($expected, $client->getUpdatedIndices());
+        self::assertEquals($expected, $client->getCalls('bulk'));
     }
 
     /**
-     * Tests the handler returning an iterable with less than batch size.
+     * Tests the populator when there is more than one batch.
      *
      * @return void
      */
     public function testSmallBatch(): void
     {
-        $objects = [
-            new SearchableStub('search1'),
-        ];
+        $update1 = new ObjectForUpdate(stdClass::class, ['id' => 'search1']);
+
+        $objects = [$update1];
+
+        $documentUpdate1 = new DocumentUpdate('search1', 'document');
 
         $expected = [
             [
-                new DocumentUpdate(
-                    'valid_suffix',
-                    'search1',
-                    ['search' => 'body', '_access_tokens' => ['anonymous']]
-                ),
+                'actions' => [
+                    new IndexAction($documentUpdate1, 'valid_suffix'),
+                ],
             ],
         ];
 
-        $handler = new TransformableSearchHandlerStub($objects);
+        $handler = new TransformableHandlerStub('valid', [
+            'getFillIterable' => [$objects],
+            'transform' => [
+                $documentUpdate1,
+            ],
+        ]);
 
         $client = new ClientStub();
         $populator = $this->getPopulator($client);
 
         $populator->populate($handler, '_suffix', 2);
 
-        self::assertEquals($expected, $client->getUpdatedIndices());
+        self::assertEquals($expected, $client->getCalls('bulk'));
     }
 
     /**
@@ -234,8 +250,7 @@ final class PopulatorTest extends TestCase
         ?IndexNameTransformerInterface $nameTransformer = null
     ): Populator {
         return new Populator(
-            new AnonymousAccessPopulator(),
-            $client ?? new ClientStub(),
+            $client ?? new LegacyClientStub(),
             $nameTransformer ?? new DefaultIndexNameTransformer()
         );
     }

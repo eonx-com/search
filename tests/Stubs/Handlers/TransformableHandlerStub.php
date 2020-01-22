@@ -94,7 +94,7 @@ class TransformableHandlerStub extends BaseStub implements TransformableSearchHa
     /**
      * {@inheritdoc}
      */
-    public function transform(ObjectForChange $object): ?DocumentAction
+    public function transform(ObjectForChange $change): ?DocumentAction
     {
         $this->saveCalls(__FUNCTION__, \get_defined_vars());
 

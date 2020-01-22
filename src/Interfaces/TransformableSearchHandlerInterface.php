@@ -6,6 +6,9 @@ namespace LoyaltyCorp\Search\Interfaces;
 use LoyaltyCorp\Search\DataTransferObjects\DocumentAction;
 use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange;
 
+/**
+ * @template T
+ */
 interface TransformableSearchHandlerInterface extends SearchHandlerInterface
 {
     /**
@@ -35,12 +38,26 @@ interface TransformableSearchHandlerInterface extends SearchHandlerInterface
     public function getSubscriptions(): array;
 
     /**
+     * Prefills the ObjectForChange objects with references to the real object
+     * that they reference. This is an optional step, and will
+     *
+     * @phpstan-param array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange<T>>
+     *
+     * @param \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange[] $changes
+     *
+     * @return void
+     */
+    public function prefill(iterable $changes): void;
+
+    /**
      * Transforms objects supplied into serialized search arrays that
      * should be indexed.
      *
-     * @param \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange $object
+     * @phpstan-param array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange<T>>
+     *
+     * @param \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange $change
      *
      * @return \LoyaltyCorp\Search\DataTransferObjects\DocumentAction|null
      */
-    public function transform(ObjectForChange $object): ?DocumentAction;
+    public function transform(ObjectForChange $change): ?DocumentAction;
 }

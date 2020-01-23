@@ -33,7 +33,7 @@ abstract class ObjectForChange
      * If the object has been resolved during the search process this property will hold
      * a reference to the object that this change represents.
      *
-     * @phpstan-var T
+     * @phpstan-var T|null
      *
      * @var object|null
      */
@@ -49,7 +49,7 @@ abstract class ObjectForChange
      * @param mixed[] $ids
      * @param object|null $object
      */
-    public function __construct(string $class, array $ids, ?object $object = null)
+    public function __construct(string $class, array $ids, $object = null)
     {
         $this->class = $class;
         $this->ids = $ids;
@@ -85,7 +85,7 @@ abstract class ObjectForChange
      *
      * @return null|object
      */
-    public function getObject(): ?object
+    public function getObject()
     {
         return $this->object;
     }
@@ -99,7 +99,7 @@ abstract class ObjectForChange
      *
      * @return void
      */
-    public function setObject(object $object): void
+    public function setObject($object): void
     {
         $this->object = $object;
     }

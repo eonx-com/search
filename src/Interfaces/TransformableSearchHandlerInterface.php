@@ -15,6 +15,8 @@ interface TransformableSearchHandlerInterface extends SearchHandlerInterface
      * Returns an iterable that contains ObjectForChange DTOs that will be sent into the job queue
      * for reindexing or filling the index.
      *
+     * @phpstan-return array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange<T>>
+     *
      * @return \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange[]
      */
     public function getFillIterable(): iterable;
@@ -33,15 +35,17 @@ interface TransformableSearchHandlerInterface extends SearchHandlerInterface
      * would like to be subscribed to, and how to transform that data when passed into
      * the getSearchId() and transform() methods.
      *
+     * @phpstan-return array<int, \LoyaltyCorp\Search\DataTransferObjects\Handlers\ChangeSubscription<T>>
+     *
      * @return \LoyaltyCorp\Search\DataTransferObjects\Handlers\ChangeSubscription[]
      */
-    public function getSubscriptions(): array;
+    public function getSubscriptions(): iterable;
 
     /**
      * Prefills the ObjectForChange objects with references to the real object
      * that they reference. This is an optional step, and will
      *
-     * @phpstan-param array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange<T>>
+     * @phpstan-param array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange<T>> $changes
      *
      * @param \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange[] $changes
      *
@@ -53,7 +57,7 @@ interface TransformableSearchHandlerInterface extends SearchHandlerInterface
      * Transforms objects supplied into serialized search arrays that
      * should be indexed.
      *
-     * @phpstan-param array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange<T>>
+     * @phpstan-param \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange<T> $change
      *
      * @param \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange $change
      *

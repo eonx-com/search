@@ -20,12 +20,16 @@ final class HandlerObjectForChange
     private $handlerKey;
 
     /**
+     * @phpstan-var \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange<mixed>
+     *
      * @var \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange
      */
     private $objectForChange;
 
     /**
      * Constructor.
+     *
+     * @phpstan-param \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange<mixed> $objectForChange
      *
      * @param string $handlerKey
      * @param \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange $objectForChange
@@ -48,6 +52,8 @@ final class HandlerObjectForChange
 
     /**
      * Returns the change subscription.
+     *
+     * @phpstan-return \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange<mixed>
      *
      * @return \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange
      */

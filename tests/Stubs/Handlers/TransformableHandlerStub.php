@@ -10,6 +10,10 @@ use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 
 /**
  * @coversNothing
+ *
+ * @template T
+ *
+ * @implements TransformableSearchHandlerInterface<T>
  */
 class TransformableHandlerStub extends BaseStub implements TransformableSearchHandlerInterface
 {
@@ -89,6 +93,14 @@ class TransformableHandlerStub extends BaseStub implements TransformableSearchHa
     public function getSubscriptions(): array
     {
         return $this->returnOrThrowResponse(__FUNCTION__);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function prefill(iterable $changes): void
+    {
+        $this->saveCalls(__FUNCTION__, \get_defined_vars());
     }
 
     /**

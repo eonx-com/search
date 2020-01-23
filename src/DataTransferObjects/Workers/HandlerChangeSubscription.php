@@ -21,12 +21,16 @@ final class HandlerChangeSubscription
     private $handlerKey;
 
     /**
+     * @phpstan-var \LoyaltyCorp\Search\DataTransferObjects\Handlers\ChangeSubscription<mixed>
+     *
      * @var \LoyaltyCorp\Search\DataTransferObjects\Handlers\ChangeSubscription
      */
     private $subscription;
 
     /**
      * Constructor.
+     *
+     * @phpstan-param \LoyaltyCorp\Search\DataTransferObjects\Handlers\ChangeSubscription<mixed> $subscription
      *
      * @param string $handlerKey
      * @param \LoyaltyCorp\Search\DataTransferObjects\Handlers\ChangeSubscription $subscription
@@ -49,6 +53,8 @@ final class HandlerChangeSubscription
 
     /**
      * Returns the change subscription.
+     *
+     * @phpstan-return \LoyaltyCorp\Search\DataTransferObjects\Handlers\ChangeSubscription<mixed>
      *
      * @return \LoyaltyCorp\Search\DataTransferObjects\Handlers\ChangeSubscription
      */

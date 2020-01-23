@@ -8,6 +8,10 @@ namespace LoyaltyCorp\Search\DataTransferObjects\Handlers;
  * updated and which handler will receive the DTO.
  *
  * The object is serialised into an async queue message to be actioned by a worker process.
+ *
+ * @template T
+ *
+ * @extends ObjectForChange<T>
  */
 final class ObjectForUpdate extends ObjectForChange
 {

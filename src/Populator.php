@@ -85,8 +85,12 @@ final class Populator implements PopulatorInterface
     /**
      * Batches a search handler's iterable into batch sizes.
      *
+     * @phpstan-param \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface<mixed> $handler
+     *
      * @param \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface $handler
      * @param int $batchSize
+     *
+     * @phpstan-return array<array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange<mixed>>>
      *
      * @return \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange[][]
      */

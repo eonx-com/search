@@ -12,6 +12,8 @@ use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 final class RegisteredSearchHandler implements RegisteredSearchHandlerInterface
 {
     /**
+     * @phpstan-var array<\LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface<mixed>>
+     *
      * @var \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface[]|null
      */
     private $handlersByKey;
@@ -102,6 +104,8 @@ final class RegisteredSearchHandler implements RegisteredSearchHandlerInterface
 
     /**
      * Builds the search array for handlers by key.
+     *
+     * @phpstan-return array<\LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface<mixed>>
      *
      * @return \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface[]
      *

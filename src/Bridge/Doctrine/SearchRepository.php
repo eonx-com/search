@@ -15,9 +15,20 @@ use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate;
  * implementation into your base repository (or base SearchableRepository).
  *
  * @template T
+ *
+ * @implements \LoyaltyCorp\Search\Bridge\Doctrine\Interfaces\FillableRepositoryInterface<T>
  */
 class SearchRepository extends EntityRepository implements FillableRepositoryInterface
 {
+    /**
+     * Overridden so we can annotate what it actually is.
+     *
+     * @phpstan-var class-string
+     *
+     * @var string
+     */
+    protected $_entityName; // phpcs:ignore
+
     /**
      * {@inheritdoc}
      *

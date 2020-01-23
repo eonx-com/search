@@ -7,6 +7,13 @@ use LoyaltyCorp\Search\Bridge\Doctrine\DoctrineSearchHandler;
 use LoyaltyCorp\Search\DataTransferObjects\DocumentAction;
 use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange;
 
+/**
+ * @coversNothing
+ *
+ * @template T
+ *
+ * @extends \LoyaltyCorp\Search\Bridge\Doctrine\DoctrineSearchHandler<T>
+ */
 class DoctrineSearchHandlerStub extends DoctrineSearchHandler
 {
     /**

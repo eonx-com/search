@@ -22,7 +22,7 @@ interface FillableRepositoryInterface
      * Prefills changes with their entities. The method will call setObject() on each
      * ObjectForChange that it can preload an object for.
      *
-     * @phpstan-param array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange<T>>
+     * @phpstan-param array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange<T>> $changes
      *
      * @param \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange[] $changes
      *

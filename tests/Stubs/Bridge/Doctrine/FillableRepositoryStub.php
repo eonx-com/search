@@ -6,6 +6,13 @@ namespace Tests\LoyaltyCorp\Search\Stubs\Bridge\Doctrine;
 use Eonx\TestUtils\Stubs\BaseStub;
 use LoyaltyCorp\Search\Bridge\Doctrine\Interfaces\FillableRepositoryInterface;
 
+/**
+ * @coversNothing
+ *
+ * @template T
+ *
+ * @implements \LoyaltyCorp\Search\Bridge\Doctrine\Interfaces\FillableRepositoryInterface<T>
+ */
 class FillableRepositoryStub extends BaseStub implements FillableRepositoryInterface
 {
     /**

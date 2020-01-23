@@ -91,6 +91,8 @@ abstract class DoctrineSearchHandler implements TransformableSearchHandlerInterf
     /**
      * Retrieves a repository, or throw if it isnt a FillableRepositoryInterface
      *
+     * @phpstan-return \LoyaltyCorp\Search\Bridge\Doctrine\Interfaces\FillableRepositoryInterface<T>
+     *
      * @return \LoyaltyCorp\Search\Bridge\Doctrine\Interfaces\FillableRepositoryInterface
      */
     private function getRepository(): FillableRepositoryInterface
@@ -99,7 +101,7 @@ abstract class DoctrineSearchHandler implements TransformableSearchHandlerInterf
 
         if ($repository instanceof FillableRepositoryInterface === false) {
             throw new InvalidRepositoryException(
-                'A repository used for DoctrineSearchHandler must implement FillableRepositoryInterface'
+                'A repository used for DoctrineSearchHandler must implement FillableRepositoryInterface.'
             );
         }
 

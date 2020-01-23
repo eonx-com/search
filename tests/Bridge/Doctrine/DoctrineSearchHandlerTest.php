@@ -5,6 +5,7 @@ namespace Tests\LoyaltyCorp\Search\Bridge\Doctrine;
 
 use Eonx\TestUtils\Stubs\Vendor\Doctrine\ORM\EntityManagerStub;
 use LoyaltyCorp\Search\Bridge\Doctrine\Exceptions\InvalidRepositoryException;
+use LoyaltyCorp\Search\DataTransferObjects\Handlers\ChangeSubscription;
 use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate;
 use stdClass;
 use Tests\LoyaltyCorp\Search\Stubs\Bridge\Doctrine\DoctrineSearchHandlerStub;
@@ -18,6 +19,38 @@ use Traversable;
  */
 class DoctrineSearchHandlerTest extends TestCase
 {
+    /**
+     * Tests that the function throws when it receives a repository that doesnt
+     * implement FillableRepositoryInterface.
+     *
+     * @return void
+     */
+    public function testGetFillIterableBadRepository(): void
+    {
+        $entityManager = new EntityManagerStub([
+            'getRepository' => [
+                new stdClass()
+            ]
+        ]);
+
+        $handler = new DoctrineSearchHandlerStub(
+            EntityStub::class,
+            $entityManager
+        );
+
+        $this->expectException(InvalidRepositoryException::class);
+        $this->expectExceptionMessage(
+            'A repository used for DoctrineSearchHandler must implement FillableRepositoryInterface.'
+        );
+
+        $iterable = $handler->getFillIterable();
+
+        // Trigger the generator
+        if ($iterable instanceof \Traversable) {
+            \iterator_to_array($iterable);
+        }
+    }
+
     /**
      * Tests that the fill iterable function returns the result of the
      * repository getFillIterable() method instead of working it out
@@ -54,6 +87,31 @@ class DoctrineSearchHandlerTest extends TestCase
     }
 
     /**
+     * Tests that get subscriptions returns a basic subscription by default.
+     *
+     * @return void
+     */
+    public function testGetSubscriptions(): void
+    {
+        $handler = new DoctrineSearchHandlerStub(
+            EntityStub::class,
+            new EntityManagerStub()
+        );
+
+        $expected = [
+            new ChangeSubscription(EntityStub::class)
+        ];
+
+        $subscriptions = $handler->getSubscriptions();
+
+        $result = $subscriptions instanceof \Traversable
+            ? \iterator_to_array($subscriptions)
+            : $subscriptions;
+
+        self::assertEquals($expected, $result);
+    }
+
+    /**
      * Tests that prefill calls the repository.
      *
      * @return void
@@ -80,37 +138,5 @@ class DoctrineSearchHandlerTest extends TestCase
         $handler->prefill($updates);
 
         self::assertSame([['changes' => $updates]], $fillableRepository->getCalls('prefillSearch'));
-    }
-
-    /**
-     * Tests that the function throws when it receives a repository that doesnt
-     * implement FillableRepositoryInterface.
-     *
-     * @return void
-     */
-    public function testGetFillIterableBadRepository(): void
-    {
-        $entityManager = new EntityManagerStub([
-            'getRepository' => [
-                new stdClass()
-            ]
-        ]);
-
-        $handler = new DoctrineSearchHandlerStub(
-            EntityStub::class,
-            $entityManager
-        );
-
-        $this->expectException(InvalidRepositoryException::class);
-        $this->expectExceptionMessage(
-            'A repository used for DoctrineSearchHandler must implement FillableRepositoryInterface.'
-        );
-
-        $iterable = $handler->getFillIterable();
-
-        // Trigger the generator
-        if ($iterable instanceof \Traversable) {
-            \iterator_to_array($iterable);
-        }
     }
 }

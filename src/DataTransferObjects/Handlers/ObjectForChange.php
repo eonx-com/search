@@ -85,7 +85,7 @@ abstract class ObjectForChange
      *
      * @return null|object
      */
-    public function getObject()
+    public function getObject() // phpcs:ignore
     {
         return $this->object;
     }
@@ -99,7 +99,7 @@ abstract class ObjectForChange
      *
      * @return void
      */
-    public function setObject($object): void
+    public function setObject($object): void // phpcs:ignore
     {
         $this->object = $object;
     }

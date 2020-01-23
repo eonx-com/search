@@ -43,7 +43,8 @@ interface TransformableSearchHandlerInterface extends SearchHandlerInterface
 
     /**
      * Prefills the ObjectForChange objects with references to the real object
-     * that they reference. This is an optional step, and will
+     * that they reference. This is an optional step - if not performed the
+     * transform method will need to query for the object it wants to update.
      *
      * @phpstan-param array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange<T>> $changes
      *

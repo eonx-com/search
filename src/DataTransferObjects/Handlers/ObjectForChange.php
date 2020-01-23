@@ -49,7 +49,7 @@ abstract class ObjectForChange
      * @param mixed[] $ids
      * @param object|null $object
      */
-    public function __construct(string $class, array $ids, $object = null)
+    public function __construct(string $class, array $ids, $object = null) // phpcs:ignore
     {
         $this->class = $class;
         $this->ids = $ids;

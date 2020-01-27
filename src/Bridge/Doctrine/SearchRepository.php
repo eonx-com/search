@@ -17,6 +17,8 @@ use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate;
  * @template T
  *
  * @implements \LoyaltyCorp\Search\Bridge\Doctrine\Interfaces\FillableRepositoryInterface<T>
+ *
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  */
 class SearchRepository extends EntityRepository implements FillableRepositoryInterface
 {

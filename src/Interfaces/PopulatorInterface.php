@@ -25,7 +25,7 @@ interface PopulatorInterface
      *
      * @param \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface $handler
      * @param string $indexSuffix
-     * @param \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange[] $objects
+     * @param object[] $objects
      *
      * @return void
      */

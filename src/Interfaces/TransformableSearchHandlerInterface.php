@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace LoyaltyCorp\Search\Interfaces;
 
 use LoyaltyCorp\Search\DataTransferObjects\DocumentAction;
-use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange;
 
 interface TransformableSearchHandlerInterface extends SearchHandlerInterface
 {
@@ -35,12 +34,21 @@ interface TransformableSearchHandlerInterface extends SearchHandlerInterface
     public function getSubscriptions(): array;
 
     /**
+     * Retrieves all objects at once.
+     *
+     * @param \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange[] $changes
+     *
+     * @return object[]
+     */
+    public function retrieveObjects(array $changes): array;
+
+    /**
      * Transforms objects supplied into serialized search arrays that
      * should be indexed.
      *
-     * @param \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange $object
+     * @param object $object
      *
      * @return \LoyaltyCorp\Search\DataTransferObjects\DocumentAction|null
      */
-    public function transform(ObjectForChange $object): ?DocumentAction;
+    public function transform(object $object): ?DocumentAction;
 }

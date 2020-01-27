@@ -49,8 +49,10 @@ final class UpdateProcessor implements UpdateProcessorInterface
             // Build the appropriate index name for the actions to occur in.
             $index = $handler->getIndexName() . $indexSuffix;
 
-            foreach ($changes as $change) {
-                $documentAction = $handler->transform($change);
+            $objects = $handler->retrieveObjects($changes);
+
+            foreach ($objects as $object) {
+                $documentAction = $handler->transform($object);
 
                 // No action was generated.
                 if ($documentAction instanceof DocumentAction === false) {

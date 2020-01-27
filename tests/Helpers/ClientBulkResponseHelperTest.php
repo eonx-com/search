@@ -58,11 +58,11 @@ final class ClientBulkResponseHelperTest extends TestCase
                         'status' => 400,
                         'error' => [
                         'type' => 'strict_dynamic_mapping_exception',
-                            'reason' => 'mapping set to strict, dynamic introduction of [name] within [payment_source.metadata] is not allowed' // phpcs:ignore
-                        ]
-                    ]
-                ]
-            ]
+                            'reason' => 'mapping set to strict, dynamic introduction of [name] within [payment_source.metadata] is not allowed', // phpcs:ignore
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $this->expectException(BulkFailureException::class);

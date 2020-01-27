@@ -39,6 +39,43 @@ final class ClientBulkResponseHelperTest extends TestCase
     }
 
     /**
+     * Test bulk failures with an actual failure response from Elasticsearch.
+     *
+     * @return void
+     */
+    public function testBulkFailures(): void
+    {
+        $bulkResponseHelper = $this->createInstance();
+
+        $response = [
+            'took' => 0,
+            'errors' => true,
+            'items' => [
+                [
+                    'index' => [
+                    '_index' => 'subscriptions_133e6cd4-cfcd-11e9-9ccc-06d3b5ba179c_20191121121030',
+                        '_type' => 'doc',
+                        '_id' => 'PFB363UWVN',
+                        'status' => 400,
+                        'error' => [
+                        'type' => 'strict_dynamic_mapping_exception',
+                            'reason' => 'mapping set to strict, dynamic introduction of [name] within [payment_source.metadata] is not allowed' // phpcs:ignore
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $this->expectException(BulkFailureException::class);
+        $this->expectExceptionMessage('At least one record returned an error during bulk index');
+
+        $bulkResponseHelper->checkBulkResponsesForErrors(
+            $response,
+            'index'
+        );
+    }
+
+    /**
      * Ensure the checking in bulk results allows succession if there is no errors and a promise is used.
      *
      * @return void

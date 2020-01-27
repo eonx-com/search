@@ -83,7 +83,7 @@ abstract class ObjectForChange
      *
      * @phpstan-return T|null
      *
-     * @return null|object
+     * @return object|null
      */
     public function getObject() // phpcs:ignore
     {

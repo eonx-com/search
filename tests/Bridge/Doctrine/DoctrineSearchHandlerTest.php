@@ -29,8 +29,8 @@ class DoctrineSearchHandlerTest extends TestCase
     {
         $entityManager = new EntityManagerStub([
             'getRepository' => [
-                new stdClass()
-            ]
+                new stdClass(),
+            ],
         ]);
 
         $handler = new DoctrineSearchHandlerStub(
@@ -66,10 +66,10 @@ class DoctrineSearchHandlerTest extends TestCase
             'getRepository' => [
                 new FillableRepositoryStub([
                     'getFillIterable' => [
-                        [$update]
-                    ]
-                ])
-            ]
+                        [$update],
+                    ],
+                ]),
+            ],
         ]);
 
         $handler = new DoctrineSearchHandlerStub(
@@ -99,7 +99,7 @@ class DoctrineSearchHandlerTest extends TestCase
         );
 
         $expected = [
-            new ChangeSubscription(EntityStub::class)
+            new ChangeSubscription(EntityStub::class),
         ];
 
         $subscriptions = $handler->getSubscriptions();
@@ -121,8 +121,8 @@ class DoctrineSearchHandlerTest extends TestCase
         $fillableRepository = new FillableRepositoryStub();
         $entityManager = new EntityManagerStub([
             'getRepository' => [
-                $fillableRepository
-            ]
+                $fillableRepository,
+            ],
         ]);
 
         $updates = [

@@ -38,7 +38,7 @@ abstract class DoctrineSearchHandler implements TransformableSearchHandlerInterf
     private $entityManager;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @phpstan-param class-string<T> $entityClass
      *
@@ -89,7 +89,7 @@ abstract class DoctrineSearchHandler implements TransformableSearchHandlerInterf
     }
 
     /**
-     * Retrieves a repository, or throw if it isnt a FillableRepositoryInterface
+     * Retrieves a repository, or throw if it isnt a FillableRepositoryInterface.
      *
      * @phpstan-return \LoyaltyCorp\Search\Bridge\Doctrine\Interfaces\FillableRepositoryInterface<T>
      *

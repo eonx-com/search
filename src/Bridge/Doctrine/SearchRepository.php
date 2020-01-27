@@ -57,7 +57,7 @@ class SearchRepository extends EntityRepository implements FillableRepositoryInt
         foreach ($builder->getQuery()->iterate() as $result) {
             // For each result, create an ObjectForUpdate object.
             yield new ObjectForUpdate($this->_entityName, [
-                $field => $result[$index][$field]
+                $field => $result[$index][$field],
             ]);
         }
     }

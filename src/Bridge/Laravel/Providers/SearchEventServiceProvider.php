@@ -5,7 +5,9 @@ namespace LoyaltyCorp\Search\Bridge\Laravel\Providers;
 
 use EonX\EasyEntityChange\Events\EntityChangeEvent;
 use Laravel\Lumen\Providers\EventServiceProvider;
+use LoyaltyCorp\Search\Bridge\Laravel\Listeners\BatchOfUpdatesListener;
 use LoyaltyCorp\Search\Bridge\Laravel\Listeners\EntityUpdateListener;
+use LoyaltyCorp\Search\Events\BatchOfUpdates;
 
 final class SearchEventServiceProvider extends EventServiceProvider
 {
@@ -19,6 +21,9 @@ final class SearchEventServiceProvider extends EventServiceProvider
             EntityChangeEvent::class => [
                 EntityUpdateListener::class,
             ],
+            BatchOfUpdates::class => [
+                BatchOfUpdatesListener::class,
+            ]
         ];
 
         parent::__construct($app);

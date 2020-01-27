@@ -39,6 +39,7 @@ use LoyaltyCorp\Search\ResponseFactory;
 use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use LoyaltyCorp\Search\UpdateProcessor;
 use LoyaltyCorp\Search\Workers\EntityUpdateWorker;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) High coupling required to ensure all services are bound
@@ -117,6 +118,12 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
         $this->app->singleton(UpdateProcessorInterface::class, UpdateProcessor::class);
 
         // Bind workers
-        $this->app->singleton(EntityUpdateWorkerInterface::class, EntityUpdateWorker::class);
+        $this->app->singleton(EntityUpdateWorkerInterface::class, static function (Container $app) {
+            return new EntityUpdateWorker(
+                $app->make(RegisteredSearchHandlerInterface::class),
+                $app->make(EventDispatcherInterface::class),
+                \env('ELASTICSEARCH_UPDATES_BATCH_SIZE', 100)
+            );
+        });
     }
 }

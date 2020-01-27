@@ -11,34 +11,43 @@ use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForDelete;
 use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate;
 use LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerChangeSubscription;
 use LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange;
+use LoyaltyCorp\Search\Events\BatchOfUpdates;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
-use LoyaltyCorp\Search\Interfaces\UpdateProcessorInterface;
 use LoyaltyCorp\Search\Interfaces\Workers\EntityUpdateWorkerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 final class EntityUpdateWorker implements EntityUpdateWorkerInterface
 {
+    /**
+     * @var int
+     */
+    private $batchSize;
+
+    /**
+     * @var \Psr\EventDispatcher\EventDispatcherInterface
+     */
+    private $dispatcher;
+
     /**
      * @var \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface
      */
     private $registeredHandlers;
 
     /**
-     * @var \LoyaltyCorp\Search\Interfaces\UpdateProcessorInterface
-     */
-    private $updateProcessor;
-
-    /**
      * Constructor.
      *
      * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface $registeredHandlers
-     * @param \LoyaltyCorp\Search\Interfaces\UpdateProcessorInterface $updateProcessor
+     * @param \Psr\EventDispatcher\EventDispatcherInterface $dispatcher
+     * @param int $batchSize
      */
     public function __construct(
         RegisteredSearchHandlerInterface $registeredHandlers,
-        UpdateProcessorInterface $updateProcessor
+        EventDispatcherInterface $dispatcher,
+        int $batchSize
     ) {
         $this->registeredHandlers = $registeredHandlers;
-        $this->updateProcessor = $updateProcessor;
+        $this->dispatcher = $dispatcher;
+        $this->batchSize = $batchSize;
     }
 
     /**
@@ -62,8 +71,11 @@ final class EntityUpdateWorker implements EntityUpdateWorkerInterface
             return;
         }
 
-        // Process the updates into the primary index aliases.
-        $this->updateProcessor->process('', $updates);
+        $batches = \array_chunk($updates, $this->batchSize);
+
+        foreach ($batches as $batch) {
+            $this->dispatcher->dispatch(new BatchOfUpdates($batch));
+        }
     }
 
     /**

@@ -28,12 +28,16 @@ interface RegisteredSearchHandlerInterface
      *
      * @param string $key
      *
+     * @phpstan-return \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface<mixed>
+     *
      * @return \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface
      */
     public function getTransformableHandlerByKey(string $key): TransformableSearchHandlerInterface;
 
     /**
      * Get search handlers that support object transformations.
+     *
+     * @phpstan-return array<\LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface<mixed>>
      *
      * @return \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface[]
      */

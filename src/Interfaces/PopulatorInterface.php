@@ -8,6 +8,8 @@ interface PopulatorInterface
     /**
      * Populates a handler's index with the handlers fill iterable.
      *
+     * @phpstan-param \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface<mixed> $handler
+     *
      * @param \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface $handler
      * @param string $indexSuffix
      * @param int $batchSize
@@ -22,6 +24,9 @@ interface PopulatorInterface
 
     /**
      * Populates a handler's index with an array of objects.
+     *
+     * @phpstan-param \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface<mixed> $handler
+     * @phpstan-param array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange<mixed>> $objects
      *
      * @param \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface $handler
      * @param string $indexSuffix

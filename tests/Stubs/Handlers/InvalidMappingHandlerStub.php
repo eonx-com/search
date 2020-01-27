@@ -5,6 +5,10 @@ namespace Tests\LoyaltyCorp\Search\Stubs\Handlers;
 
 /**
  * @coversNothing
+ *
+ * @template T
+ *
+ * @extends TransformableHandlerStub<T>
  */
 final class InvalidMappingHandlerStub extends TransformableHandlerStub
 {

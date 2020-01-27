@@ -7,6 +7,10 @@ use LoyaltyCorp\Search\Interfaces\CustomAccessHandlerInterface;
 
 /**
  * @coversNothing
+ *
+ * @template T
+ *
+ * @extends TransformableHandlerStub<T>
  */
 final class CustomAccessHandlerStub extends TransformableHandlerStub implements CustomAccessHandlerInterface
 {

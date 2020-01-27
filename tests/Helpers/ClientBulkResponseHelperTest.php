@@ -27,8 +27,7 @@ final class ClientBulkResponseHelperTest extends TestCase
             [
                 'errors' => true,
                 'items' => [['update' => ['_id' => 'nice-id']], ['delete' => []]],
-            ],
-            'update'
+            ]
         );
 
         /**
@@ -53,7 +52,7 @@ final class ClientBulkResponseHelperTest extends TestCase
             'items' => [
                 [
                     'index' => [
-                    '_index' => 'subscriptions_133e6cd4-cfcd-11e9-9ccc-06d3b5ba179c_20191121121030',
+                        '_index' => 'subscriptions_133e6cd4-cfcd-11e9-9ccc-06d3b5ba179c_20191121121030',
                         '_type' => 'doc',
                         '_id' => 'PFB363UWVN',
                         'status' => 400,
@@ -67,12 +66,9 @@ final class ClientBulkResponseHelperTest extends TestCase
         ];
 
         $this->expectException(BulkFailureException::class);
-        $this->expectExceptionMessage('At least one record returned an error during bulk index');
+        $this->expectExceptionMessage('At least one record returned an error during bulk request.');
 
-        $bulkResponseHelper->checkBulkResponsesForErrors(
-            $response,
-            'index'
-        );
+        $bulkResponseHelper->checkBulkResponsesForErrors($response);
     }
 
     /**
@@ -89,10 +85,7 @@ final class ClientBulkResponseHelperTest extends TestCase
 
         $bulkResponseHelper = $this->createInstance();
 
-        $bulkResponseHelper->checkBulkResponsesForErrors(
-            $array,
-            'update'
-        );
+        $bulkResponseHelper->checkBulkResponsesForErrors($array);
 
         /**
          * The method under test returns void
@@ -108,16 +101,16 @@ final class ClientBulkResponseHelperTest extends TestCase
      */
     public function testCheckingResponseForErrorsThrowsExceptionOnError(): void
     {
-        $this->expectException(BulkFailureException::class);
-        $this->expectExceptionMessage('At least one record returned an error during bulk update');
         $bulkResponseHelper = $this->createInstance();
+
+        $this->expectException(BulkFailureException::class);
+        $this->expectExceptionMessage('At least one record returned an error during bulk request.');
 
         $bulkResponseHelper->checkBulkResponsesForErrors(
             [
                 'errors' => true,
                 'items' => [['update' => ['error' => 'big error']]],
-            ],
-            'update'
+            ]
         );
     }
 
@@ -128,14 +121,12 @@ final class ClientBulkResponseHelperTest extends TestCase
      */
     public function testExceptionThrownWhenResponseFormatInvalid(): void
     {
-        $this->expectException(BulkFailureException::class);
-        $this->expectExceptionMessage('Invalid response received from bulk update');
         $bulkResponseHelper = $this->createInstance();
 
-        $bulkResponseHelper->checkBulkResponsesForErrors(
-            false,
-            'update'
-        );
+        $this->expectException(BulkFailureException::class);
+        $this->expectExceptionMessage('Invalid response received from bulk request.');
+
+        $bulkResponseHelper->checkBulkResponsesForErrors(false);
     }
 
     /**

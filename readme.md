@@ -269,28 +269,44 @@ class TransactionHandler implements TransformableSearchHandlerInterface
     }
 
     /**
+     * This function will prefill the ObjectForChange with actual entities, which is done in a batch
+     * instead of singularly looking up entities.
+     *
+     * {@inheritdoc}
+     */
+    public function prefill(iterable $changes): void
+    {
+        // This is a contrived example, but an example implementation for this method
+        // can be seen in the abstract DoctrineSearchHandler and SearchRepository
+        // classes of this library.
+        foreach ($changes as $change) {
+            $change->setObject($this->lookupObject($change));
+        }
+    }
+
+    /**
      * This method takes an ObjectForChange and returns a DocumentAction.
      *
      * Its primary purpose is to either decide that a document should be deleted or updated.
      *
      * {@inheritdoc}
      */
-    public function transform(ObjectForChange $object): ?DocumentAction
+    public function transform(ObjectForChange $change): ?DocumentAction
     {
-        if ($object instanceof ObjectForDelete === true) {
-            return new DocumentDelete($object->getMetadata()['searchId'] ?? '');
+        if ($change instanceof ObjectForDelete === true) {
+            return new DocumentDelete($change->getMetadata()['searchId'] ?? '');
         }
 
         // If we didnt get an Update or Delete we dont know what the system wants, lets not do
         // anything.
-        if ($object instanceof ObjectForUpdate === false) {
+        if ($change instanceof ObjectForUpdate === false) {
             return null;
         }
 
-        $transaction = $this->lookupObject($object);
+        $transaction = $change->getObject() ?? $this->lookupObject($change);
 
         return new DocumentUpdate(
-            $object->getMetadata()['searchId'] ?? '',
+            $change->getMetadata()['searchId'] ?? '',
             [
                 'id' => $transaction->getId(),
                 'created_at' => $transaction->getCreatedAt(),
@@ -300,7 +316,8 @@ class TransactionHandler implements TransformableSearchHandlerInterface
     }
 
     /**
-     * Looks up the object in the database.
+     * Looks up the object in the database, otherwise throwing when the
+     * object couldnt be found.
      *
      * @return Transaction
      */

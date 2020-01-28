@@ -46,6 +46,9 @@ final class UpdateProcessor implements UpdateProcessorInterface
         foreach ($grouped as $handlerKey => $changes) {
             $handler = $this->registeredHandlers->getTransformableHandlerByKey($handlerKey);
 
+            // Prefill any $changes with entities.
+            $handler->prefill($changes);
+
             // Build the appropriate index name for the actions to occur in.
             $index = $handler->getIndexName() . $indexSuffix;
 
@@ -75,9 +78,9 @@ final class UpdateProcessor implements UpdateProcessorInterface
      * Groups the incoming HandlerObjectForChange DTOs into a multidimensional array of
      * ObjectForChange DTOs grouped by their handler keys.
      *
-     * @phpstan-return array<string, array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange>>
-     *
      * @param \LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange[] $updates
+     *
+     * @phpstan-return array<string, array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange<mixed>>>
      *
      * @return \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange[][]
      */

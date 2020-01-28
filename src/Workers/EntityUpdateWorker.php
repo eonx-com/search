@@ -73,6 +73,8 @@ final class EntityUpdateWorker implements EntityUpdateWorkerInterface
      * @param \LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerChangeSubscription $subscription
      * @param \EonX\EasyEntityChange\DataTransferObjects\ChangedEntity $update
      *
+     * @phpstan-return array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange<mixed>>
+     *
      * @return \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange[]
      */
     private function buildUpdates(HandlerChangeSubscription $subscription, ChangedEntity $update): array
@@ -141,6 +143,8 @@ final class EntityUpdateWorker implements EntityUpdateWorkerInterface
     /**
      * Checks if the subscription should be notified of the change. A subscription will be notified
      * if there is any intersection of changed properties with the subscribed properties array.
+     *
+     * @phpstan-param \LoyaltyCorp\Search\DataTransferObjects\Handlers\ChangeSubscription<mixed> $subscription
      *
      * @param \LoyaltyCorp\Search\DataTransferObjects\Handlers\ChangeSubscription $subscription
      * @param \EonX\EasyEntityChange\DataTransferObjects\ChangedEntity $change

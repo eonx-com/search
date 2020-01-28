@@ -15,13 +15,15 @@ namespace LoyaltyCorp\Search\DataTransferObjects\Handlers;
  * A transformation callback can be optionally provided that will receive the ChangedEntity DTO
  * that matches the class/properties and is expected to return an array of ObjectForChange DTOs
  * that will be passed into the SearchHandler's retrieveObjects method.
+ *
+ * @template T
  */
 final class ChangeSubscription
 {
     /**
      * The class that we are listening for changes to.
      *
-     * @phpstan-var class-string
+     * @phpstan-var class-string<T>
      *
      * @var string
      */
@@ -40,7 +42,7 @@ final class ChangeSubscription
      *
      * phpcs:disable
      *
-     * @phpstan-var null|callable(\EonX\EasyEntityChange\DataTransferObjects\ChangedEntity): array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange>
+     * @phpstan-var null|callable(\EonX\EasyEntityChange\DataTransferObjects\ChangedEntity): array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange<T>>
      *
      * @var callable|null
      *
@@ -52,8 +54,8 @@ final class ChangeSubscription
      * Constructor.
      *
      * phpcs:disable
-     * @phpstan-param class-string $class
-     * @phpstan-param callable(\EonX\EasyEntityChange\DataTransferObjects\ChangedEntity): array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange> $transform
+     * @phpstan-param class-string<T> $class
+     * @phpstan-param callable(\EonX\EasyEntityChange\DataTransferObjects\ChangedEntity): array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange<T>> $transform
      *
      * @param string $class
      * @param string[]|null $properties
@@ -70,7 +72,7 @@ final class ChangeSubscription
     /**
      * Return class.
      *
-     * @phpstan-return class-string
+     * @phpstan-return class-string<T>
      *
      * @return string
      */
@@ -94,7 +96,7 @@ final class ChangeSubscription
      *
      * phpcs:disable
      *
-     * @phpstan-return null|callable(\EonX\EasyEntityChange\DataTransferObjects\ChangedEntity): array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange>
+     * @phpstan-return null|callable(\EonX\EasyEntityChange\DataTransferObjects\ChangedEntity): array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange<T>>
      *
      * @return callable|null
      *

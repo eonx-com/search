@@ -25,7 +25,11 @@ final class ObjectForUpdateTest extends TestCase
             ['id']
         );
 
+        $object = new stdClass();
+        $subscription->setObject($object);
+
         self::assertSame(stdClass::class, $subscription->getClass());
         self::assertSame(['id'], $subscription->getIds());
+        self::assertSame($object, $subscription->getObject());
     }
 }

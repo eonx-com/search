@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5e7b2a54def31ddc1c710576e8f2000c",
+    "content-hash": "0a1e845d48a4d7d5270f33d7b1835008",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -966,16 +966,16 @@
         },
         {
             "name": "eonx-com/externals",
-            "version": "v1.3.1",
+            "version": "v1.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/eonx-com/externals.git",
-                "reference": "87f9f461e949d1e9e32a799f53a451aac926c1ae"
+                "reference": "91e3a6d6f642cac10379e3fdb6c56324c7362ece"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/eonx-com/externals/zipball/87f9f461e949d1e9e32a799f53a451aac926c1ae",
-                "reference": "87f9f461e949d1e9e32a799f53a451aac926c1ae",
+                "url": "https://api.github.com/repos/eonx-com/externals/zipball/91e3a6d6f642cac10379e3fdb6c56324c7362ece",
+                "reference": "91e3a6d6f642cac10379e3fdb6c56324c7362ece",
                 "shasum": ""
             },
             "require": {
@@ -1009,9 +1009,9 @@
                 "nicoswd/php-gpg": "^1.7",
                 "paragonie/hidden-string": "^1.0",
                 "phpmd/phpmd": "^2.6",
-                "phpstan/phpstan": "^0.11",
-                "phpstan/phpstan-phpunit": "^0.11.0",
-                "phpstan/phpstan-strict-rules": "^0.11.0",
+                "phpstan/phpstan": "^0.12",
+                "phpstan/phpstan-phpunit": "^0.12",
+                "phpstan/phpstan-strict-rules": "^0.12",
                 "phpunit/phpunit": "^8.0",
                 "roave/security-advisories": "dev-master",
                 "sebastian/phpcpd": "^4.0",
@@ -1058,7 +1058,7 @@
             "keywords": [
                 "external"
             ],
-            "time": "2020-01-08T23:48:52+00:00"
+            "time": "2020-01-24T02:12:40+00:00"
         },
         {
             "name": "eonx-com/utils",
@@ -1365,6 +1365,7 @@
                 }
             ],
             "description": "Provides a simple API and specification that abstracts away the details of HTTP into a single PHP function.",
+            "abandoned": true,
             "time": "2018-07-31T13:22:33+00:00"
         },
         {
@@ -1415,6 +1416,7 @@
                 "Guzzle",
                 "stream"
             ],
+            "abandoned": true,
             "time": "2014-10-12T19:18:40+00:00"
         },
         {
@@ -2862,16 +2864,16 @@
         },
         {
             "name": "eonx-com/easy-entity-change",
-            "version": "v2.0.0",
+            "version": "v2.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/eonx-com/easy-entity-change.git",
-                "reference": "1fd15de345de7012b70d28e24874dc83021c4a8e"
+                "reference": "07377898c6da267beddd618a516672262fdd56c9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/eonx-com/easy-entity-change/zipball/1fd15de345de7012b70d28e24874dc83021c4a8e",
-                "reference": "1fd15de345de7012b70d28e24874dc83021c4a8e",
+                "url": "https://api.github.com/repos/eonx-com/easy-entity-change/zipball/07377898c6da267beddd618a516672262fdd56c9",
+                "reference": "07377898c6da267beddd618a516672262fdd56c9",
                 "shasum": ""
             },
             "require": {
@@ -2894,7 +2896,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.1-dev"
+                    "dev-master": "2.1-dev"
                 }
             },
             "autoload": {
@@ -2907,7 +2909,7 @@
                 "MIT"
             ],
             "description": "Provides an easy way to hook up logic in your entities lifecycle",
-            "time": "2020-01-09T00:34:32+00:00"
+            "time": "2020-01-15T13:06:29+00:00"
         },
         {
             "name": "eonx-com/flowconfig-wrapper",
@@ -3148,30 +3150,27 @@
         },
         {
             "name": "eonx-com/standards",
-            "version": "v0.3.0",
+            "version": "v0.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/eonx-com/standards.git",
-                "reference": "2665eb88886ce3d734d74a23586a8685edbe5a19"
+                "reference": "57cd574d00cf00872ecf90562d2ba1538e3b0076"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/eonx-com/standards/zipball/2665eb88886ce3d734d74a23586a8685edbe5a19",
-                "reference": "2665eb88886ce3d734d74a23586a8685edbe5a19",
+                "url": "https://api.github.com/repos/eonx-com/standards/zipball/57cd574d00cf00872ecf90562d2ba1538e3b0076",
+                "reference": "57cd574d00cf00872ecf90562d2ba1538e3b0076",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.1",
                 "slevomat/coding-standard": "~4.0"
             },
-            "conflict": {
-                "phpstan/phpstan": "<0.12"
-            },
             "replace": {
                 "eoneopay/standards": "*"
             },
             "require-dev": {
-                "phpstan/phpstan": "^0.12",
+                "phpstan/phpstan": "^0.11.13",
                 "phpunit/phpunit": "^7.0",
                 "squizlabs/php_codesniffer": "^3.0"
             },
@@ -3204,7 +3203,7 @@
                 "eoneopay",
                 "standards"
             ],
-            "time": "2019-12-05T03:40:11+00:00"
+            "time": "2020-01-14T02:53:45+00:00"
         },
         {
             "name": "eonx-com/test-utils",
@@ -5697,16 +5696,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.4",
+            "version": "0.12.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "100a25ba8561223f6bf5a5ff4204f951c0ec007c"
+                "reference": "62a552602b7586d82826231f2fd4cbfe39fe0b1d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/100a25ba8561223f6bf5a5ff4204f951c0ec007c",
-                "reference": "100a25ba8561223f6bf5a5ff4204f951c0ec007c",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/62a552602b7586d82826231f2fd4cbfe39fe0b1d",
+                "reference": "62a552602b7586d82826231f2fd4cbfe39fe0b1d",
                 "shasum": ""
             },
             "require": {
@@ -5732,7 +5731,7 @@
                 "MIT"
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
-            "time": "2020-01-06T06:38:17+00:00"
+            "time": "2020-01-26T23:36:48+00:00"
         },
         {
             "name": "phpstan/phpstan-phpunit",
@@ -6274,12 +6273,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "67ac6ea8f4a078c3c9b7aec5d7ae70f098c37389"
+                "reference": "0be9764a52f59d0882ab51d5b68b03bfb8dd8a5f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/67ac6ea8f4a078c3c9b7aec5d7ae70f098c37389",
-                "reference": "67ac6ea8f4a078c3c9b7aec5d7ae70f098c37389",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/0be9764a52f59d0882ab51d5b68b03bfb8dd8a5f",
+                "reference": "0be9764a52f59d0882ab51d5b68b03bfb8dd8a5f",
                 "shasum": ""
             },
             "conflict": {
@@ -6392,12 +6391,13 @@
                 "spoonity/tcpdf": "<6.2.22",
                 "squizlabs/php_codesniffer": ">=1,<2.8.1|>=3,<3.0.1",
                 "stormpath/sdk": ">=0,<9.9.99",
-                "studio-42/elfinder": "<2.1.48",
+                "studio-42/elfinder": "<2.1.49",
                 "swiftmailer/swiftmailer": ">=4,<5.4.5",
                 "sylius/admin-bundle": ">=1,<1.0.17|>=1.1,<1.1.9|>=1.2,<1.2.2",
                 "sylius/grid": ">=1,<1.1.19|>=1.2,<1.2.18|>=1.3,<1.3.13|>=1.4,<1.4.5|>=1.5,<1.5.1",
                 "sylius/grid-bundle": ">=1,<1.1.19|>=1.2,<1.2.18|>=1.3,<1.3.13|>=1.4,<1.4.5|>=1.5,<1.5.1",
-                "sylius/sylius": ">=1,<1.1.18|>=1.2,<1.2.17|>=1.3,<1.3.12|>=1.4,<1.4.4",
+                "sylius/resource-bundle": ">=1,<1.3.13|>=1.4,<1.4.6|>=1.5,<1.5|>=1.6,<1.6.3",
+                "sylius/sylius": ">=1,<1.3.12|>=1.4,<1.4.4",
                 "symfony/cache": ">=3.1,<3.4.35|>=4,<4.2.12|>=4.3,<4.3.8",
                 "symfony/dependency-injection": ">=2,<2.0.17|>=2.7,<2.7.51|>=2.8,<2.8.50|>=3,<3.4.26|>=4,<4.1.12|>=4.2,<4.2.7",
                 "symfony/form": ">=2.3,<2.3.35|>=2.4,<2.6.12|>=2.7,<2.7.50|>=2.8,<2.8.49|>=3,<3.4.20|>=4,<4.0.15|>=4.1,<4.1.9|>=4.2,<4.2.1",
@@ -6483,10 +6483,15 @@
                     "name": "Marco Pivetta",
                     "email": "ocramius@gmail.com",
                     "role": "maintainer"
+                },
+                {
+                    "name": "Ilya Tribusean",
+                    "email": "slash3b@gmail.com",
+                    "role": "maintainer"
                 }
             ],
             "description": "Prevents installation of composer packages with known security vulnerabilities: no API, simply require it",
-            "time": "2020-01-06T19:16:46+00:00"
+            "time": "2020-01-27T13:37:59+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",

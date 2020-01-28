@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Bridge\Laravel\Providers;
 
+use EoneoPay\Externals\Bridge\Laravel\EventDispatcher;
+use EoneoPay\Externals\EventDispatcher\Interfaces\EventDispatcherInterface;
 use EoneoPay\Externals\HttpClient\Client as HttpClient;
 use EoneoPay\Externals\HttpClient\ExceptionHandler;
 use EoneoPay\Externals\HttpClient\Interfaces\ClientInterface as HttpClientInterface;
@@ -73,6 +75,7 @@ final class SearchServiceProviderTest extends TestCase
             EntityManagerHelperInterface::class => EntityManagerHelper::class,
             EntityUpdateListener::class => EntityUpdateListener::class,
             EntityUpdateWorkerInterface::class => EntityUpdateWorker::class,
+            EventDispatcherInterface::class => EventDispatcher::class,
             IndexNameTransformerInterface::class => DefaultIndexNameTransformer::class,
             IndexerInterface::class => Indexer::class,
             MappingHelperInterface::class => AccessTokenMappingHelper::class,

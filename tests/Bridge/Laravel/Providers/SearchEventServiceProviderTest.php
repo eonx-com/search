@@ -4,8 +4,10 @@ declare(strict_types=1);
 namespace Tests\LoyaltyCorp\Search\Bridge\Laravel\Providers;
 
 use EonX\EasyEntityChange\Events\EntityChangeEvent;
+use LoyaltyCorp\Search\Bridge\Laravel\Listeners\BatchOfUpdatesListener;
 use LoyaltyCorp\Search\Bridge\Laravel\Listeners\EntityUpdateListener;
 use LoyaltyCorp\Search\Bridge\Laravel\Providers\SearchEventServiceProvider;
+use LoyaltyCorp\Search\Events\BatchOfUpdates;
 use Tests\LoyaltyCorp\Search\TestCase;
 
 /**
@@ -28,6 +30,9 @@ final class SearchEventServiceProviderTest extends TestCase
             EntityChangeEvent::class => [
                 EntityUpdateListener::class,
             ],
+            BatchOfUpdates::class => [
+                BatchOfUpdatesListener::class,
+            ]
         ];
 
         self::assertSame($listen, $serviceProvider->listens());

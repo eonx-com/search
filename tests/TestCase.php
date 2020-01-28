@@ -9,7 +9,9 @@ use EoneoPay\Externals\Logger\Logger;
 use EoneoPay\Externals\ORM\Interfaces\EntityManagerInterface as EoneoPayEntityManagerInterface;
 use Eonx\TestUtils\Stubs\Vendor\Doctrine\ORM\EntityManagerStub;
 use Eonx\TestUtils\TestCases\UnitTestCase;
+use Illuminate\Contracts\Events\Dispatcher as IlluminateDispatcherInterface;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Events\Dispatcher as IlluminateDispatcher;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Doctrine\RegistryStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\EoneoPay\Externals\ORM\EntityManagerStub as EoneoPayEntityManagerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Illuminate\Contracts\Foundation\ApplicationStub;
@@ -44,6 +46,14 @@ abstract class TestCase extends UnitTestCase
         $application->singleton(EoneoPayEntityManagerInterface::class, static function (): EoneoPayEntityManagerStub {
             return new EoneoPayEntityManagerStub();
         });
+
+        // Bind illuminate Dispatcher to container so app->make on interface works
+        $application->singleton(
+            IlluminateDispatcherInterface::class,
+            static function (): IlluminateDispatcherInterface {
+                return new IlluminateDispatcher();
+            }
+        );
 
         $application->singleton('registry', RegistryStub::class);
 

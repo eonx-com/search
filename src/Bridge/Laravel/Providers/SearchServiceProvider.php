@@ -6,6 +6,8 @@ namespace LoyaltyCorp\Search\Bridge\Laravel\Providers;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface as DoctrineEntityManagerInterface;
 use Elasticsearch\ClientBuilder;
+use EoneoPay\Externals\Bridge\Laravel\EventDispatcher;
+use EoneoPay\Externals\EventDispatcher\Interfaces\EventDispatcherInterface;
 use EoneoPay\Externals\Logger\Interfaces\LoggerInterface;
 use EoneoPay\Externals\ORM\Interfaces\EntityManagerInterface as EoneoPayEntityManagerInterface;
 use Illuminate\Contracts\Container\Container;
@@ -39,7 +41,6 @@ use LoyaltyCorp\Search\ResponseFactory;
 use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use LoyaltyCorp\Search\UpdateProcessor;
 use LoyaltyCorp\Search\Workers\EntityUpdateWorker;
-use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) High coupling required to ensure all services are bound
@@ -89,6 +90,7 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
 
             throw new BindingResolutionException('Could not resolve Entity Manager from application container');
         });
+        $this->app->singleton(EventDispatcherInterface::class, EventDispatcher::class);
         $this->app->singleton(IndexNameTransformerInterface::class, DefaultIndexNameTransformer::class);
         $this->app->singleton(IndexerInterface::class, Indexer::class);
         $this->app->singleton(MappingHelperInterface::class, AccessTokenMappingHelper::class);

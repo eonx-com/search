@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Workers;
 
+use EoneoPay\Externals\EventDispatcher\Interfaces\EventDispatcherInterface;
 use EonX\EasyEntityChange\DataTransferObjects\ChangedEntity;
 use EonX\EasyEntityChange\DataTransferObjects\DeletedEntity;
 use EonX\EasyEntityChange\DataTransferObjects\UpdatedEntity;
@@ -14,7 +15,6 @@ use LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange;
 use LoyaltyCorp\Search\Events\BatchOfUpdates;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Workers\EntityUpdateWorkerInterface;
-use Psr\EventDispatcher\EventDispatcherInterface;
 
 final class EntityUpdateWorker implements EntityUpdateWorkerInterface
 {
@@ -24,7 +24,7 @@ final class EntityUpdateWorker implements EntityUpdateWorkerInterface
     private $batchSize;
 
     /**
-     * @var \Psr\EventDispatcher\EventDispatcherInterface
+     * @var \EoneoPay\Externals\EventDispatcher\Interfaces\EventDispatcherInterface
      */
     private $dispatcher;
 
@@ -37,7 +37,7 @@ final class EntityUpdateWorker implements EntityUpdateWorkerInterface
      * Constructor.
      *
      * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface $registeredHandlers
-     * @param \Psr\EventDispatcher\EventDispatcherInterface $dispatcher
+     * @param \EoneoPay\Externals\EventDispatcher\Interfaces\EventDispatcherInterface $dispatcher
      * @param int $batchSize
      */
     public function __construct(

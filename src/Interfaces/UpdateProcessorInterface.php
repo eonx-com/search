@@ -17,5 +17,5 @@ interface UpdateProcessorInterface
      *
      * @return void
      */
-    public function process(string $indexSuffix, array $updates): void;
+    public function process(string $indexSuffix, iterable $updates): void;
 }

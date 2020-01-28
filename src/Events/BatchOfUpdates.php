@@ -6,7 +6,7 @@ namespace LoyaltyCorp\Search\Events;
 final class BatchOfUpdates
 {
     /**
-     * @var array|\LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange[]
+     * @var \LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange[]|iterable
      */
     private $updates;
 
@@ -15,15 +15,15 @@ final class BatchOfUpdates
      *
      * @param \LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange[] $updates
      */
-    public function __construct(array $updates)
+    public function __construct(iterable $updates)
     {
         $this->updates = $updates;
     }
 
     /**
-     * @return array|\LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange[]
+     * @return \LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange[]|iterable
      */
-    public function getUpdates(): array
+    public function getUpdates(): iterable
     {
         return $this->updates;
     }

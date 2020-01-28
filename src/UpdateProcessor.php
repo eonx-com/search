@@ -38,7 +38,7 @@ final class UpdateProcessor implements UpdateProcessorInterface
     /**
      * {@inheritdoc}
      */
-    public function process(string $indexSuffix, array $updates): void
+    public function process(string $indexSuffix, iterable $updates): void
     {
         $grouped = $this->groupUpdatesByHandler($updates);
         $actions = [];
@@ -77,11 +77,11 @@ final class UpdateProcessor implements UpdateProcessorInterface
      *
      * @phpstan-return array<string, array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange>>
      *
-     * @param \LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange[] $updates
+     * @param \LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange[]|iterable $updates
      *
      * @return \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange[][]
      */
-    private function groupUpdatesByHandler(array $updates): array
+    private function groupUpdatesByHandler(iterable $updates): array
     {
         $grouped = [];
 

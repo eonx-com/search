@@ -79,7 +79,7 @@ final class Client implements ClientInterface
         }
 
         // Check responses for error
-        $this->bulkResponseHelper->checkBulkResponsesForErrors($responses, 'update');
+        $this->bulkResponseHelper->checkBulkResponsesForErrors($responses);
     }
 
     /**

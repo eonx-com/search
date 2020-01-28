@@ -243,47 +243,11 @@ final class ClientTest extends TestCase
 
         // Callable contains an error specifically for testing
         $this->expectException(BulkFailureException::class);
-        $this->expectExceptionMessage('At least one record returned an error during bulk update');
+        $this->expectExceptionMessage('At least one record returned an error during bulk request.');
 
         $client->bulk([
             new IndexAction(new DocumentUpdate('1', 'document'), 'my_index'),
         ]);
-    }
-
-    /**
-     * Test bulk() ignores error context if no errors for type were found.
-     *
-     * @return void
-     */
-    public function testErrorResolutionWithErrorsFromDifferentType(): void
-    {
-        $stub = new CallableResponseClientStub([
-            'errors' => true,
-            'items' => [
-                [
-                    'create' => [
-                        'error' => [
-                            'index' => 'my_index',
-                            'index_uuid' => 'maU4iW15SmyoZadsmRiNWw',
-                            'reason' => '[my_index][1]: version conflict, document already exists',
-                            'shard' => 3,
-                            'type' => 'version_conflict_engine_exception',
-                        ],
-                    ],
-                ],
-                [
-                    'update' => [],
-                ],
-            ],
-        ]);
-        $client = $this->createInstance($stub);
-
-        $client->bulk([
-            new IndexAction(new DocumentUpdate('1', 'document'), 'my_index'),
-        ]);
-
-        // No exception should be thrown since the error is on create and we've called update
-        $this->addToAssertionCount(1);
     }
 
     /**

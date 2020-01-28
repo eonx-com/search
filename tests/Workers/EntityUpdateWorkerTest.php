@@ -288,7 +288,7 @@ final class EntityUpdateWorkerTest extends TestCase
      *
      * @return void
      */
-    public function testHandlesMatchingSubscriptionNullProperties2(): void
+    public function testHandlesDispatchingByBatches(): void
     {
         $searchHandlers = new RegisteredSearchHandlerStub([
             'getSubscriptionsGroupedByClass' => [

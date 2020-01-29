@@ -33,7 +33,7 @@ final class DocumentUpdate extends DocumentAction
      */
     public static function getAction(): string
     {
-        return 'update';
+        return 'index';
     }
 
     /**

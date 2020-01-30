@@ -2914,16 +2914,16 @@
         },
         {
             "name": "eonx-com/easy-entity-change",
-            "version": "v2.0.3",
+            "version": "v2.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/eonx-com/easy-entity-change.git",
-                "reference": "07377898c6da267beddd618a516672262fdd56c9"
+                "reference": "4b67eb004e35fd12bfee7c988124c7d16c929f77"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/eonx-com/easy-entity-change/zipball/07377898c6da267beddd618a516672262fdd56c9",
-                "reference": "07377898c6da267beddd618a516672262fdd56c9",
+                "url": "https://api.github.com/repos/eonx-com/easy-entity-change/zipball/4b67eb004e35fd12bfee7c988124c7d16c929f77",
+                "reference": "4b67eb004e35fd12bfee7c988124c7d16c929f77",
                 "shasum": ""
             },
             "require": {
@@ -2938,7 +2938,7 @@
                 "phpstan/phpstan": "^0.12.3",
                 "phpstan/phpstan-phpunit": "^0.12.3",
                 "phpstan/phpstan-strict-rules": "^0.12.0",
-                "phpunit/phpunit": "^7.5",
+                "phpunit/phpunit": "^8.4",
                 "roave/security-advisories": "dev-master",
                 "sebastian/phpcpd": "^4.1",
                 "squizlabs/php_codesniffer": "^3.5"
@@ -2959,7 +2959,7 @@
                 "MIT"
             ],
             "description": "Provides an easy way to hook up logic in your entities lifecycle",
-            "time": "2020-01-15T13:06:29+00:00"
+            "time": "2020-01-28T22:08:53+00:00"
         },
         {
             "name": "eonx-com/flowconfig-wrapper",

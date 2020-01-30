@@ -226,10 +226,7 @@ class TransactionHandler implements TransformableSearchHandlerInterface
     {
         return [
             // React to any transaction changes.
-            new ChangeSubscription(
-                Transaction::class,
-                ['created_at', 'amount', 'status', /* all properties that are used by transform() */]
-            ),
+            new ChangeSubscription(Transaction::class),
 
             // React to any customer name changes.
             new ChangeSubscription(
@@ -247,6 +244,7 @@ class TransactionHandler implements TransformableSearchHandlerInterface
                     $builder->select('t.transactionId');
                     $builder->from(Transaction::class, 't');
 
+                    // Return any transactions that are not voided
                     $builder->where('t.status != :void');
                     $builder->setParameter('void', Transaction::VOIDED);
 

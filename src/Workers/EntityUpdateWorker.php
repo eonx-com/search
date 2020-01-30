@@ -89,7 +89,7 @@ final class EntityUpdateWorker implements EntityUpdateWorkerInterface
      *
      * @return \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange[]
      */
-    private function buildUpdates(HandlerChangeSubscription $subscription, ChangedEntity $update): array
+    private function buildUpdates(HandlerChangeSubscription $subscription, ChangedEntity $update): iterable
     {
         $transform = $subscription->getSubscription()->getTransform();
 

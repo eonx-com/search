@@ -14,9 +14,9 @@ final class ClientBulkResponseHelper implements ClientBulkResponseHelperInterfac
      *
      * @throws \LoyaltyCorp\Search\Exceptions\BulkFailureException If there is at least one record with an error
      */
-    public function checkBulkResponsesForErrors($response, string $type): void
+    public function checkBulkResponsesForErrors($response): void
     {
-        $responses = $this->extractBulkResponseItems($response, $type);
+        $responses = $this->extractBulkResponseItems($response);
 
         $errors = [];
 
@@ -26,16 +26,17 @@ final class ClientBulkResponseHelper implements ClientBulkResponseHelperInterfac
          * @see https://youtrack.jetbrains.com/issue/WI-37859 typehint required until PhpStorm recognises === check
          */
         foreach ($responses as $item) {
-            // If item isn't the right type or it's not an error, skip
-            if (isset($item[$type]) === false ||
-                \is_array($item[$type]) === false ||
-                isset($item[$type]['error']) === false ||
-                $item[$type]['error'] === false) {
-                continue;
-            }
+            foreach ($item as $action) {
+                $itemErrors = $action['error'] ?? false;
 
-            // Get error
-            $errors[] = $item[$type]['error'];
+                // The item had no errors
+                if ($itemErrors === false ||
+                    (\is_array($itemErrors) === true && \count($itemErrors) === 0)) {
+                    continue;
+                }
+
+                $errors[] = $itemErrors;
+            }
         }
 
         // If there are no errors, return
@@ -46,7 +47,7 @@ final class ClientBulkResponseHelper implements ClientBulkResponseHelperInterfac
         // Throw bulk exception
         throw new BulkFailureException(
             $errors,
-            \sprintf('At least one record returned an error during bulk %s', $type)
+            'At least one record returned an error during bulk request.'
         );
     }
 
@@ -66,11 +67,10 @@ final class ClientBulkResponseHelper implements ClientBulkResponseHelperInterfac
      * Extract items from bulk response.
      *
      * @param mixed $response The response from the bulk action
-     * @param string $type The bulk action that was performed
      *
      * @return mixed[]
      */
-    private function extractBulkResponseItems($response, string $type): array
+    private function extractBulkResponseItems($response): array
     {
         // If response is callable, wait until we have the final response
         if (($response instanceof FutureArrayInterface) === true) {
@@ -79,7 +79,7 @@ final class ClientBulkResponseHelper implements ClientBulkResponseHelperInterfac
 
         // If final response isn't an array, throw exception
         if (\is_array($response) === false) {
-            throw new BulkFailureException([], \sprintf('Invalid response received from bulk %s', $type));
+            throw new BulkFailureException([], 'Invalid response received from bulk request.');
         }
 
         // If the top level indicates no errors or items, return nothing

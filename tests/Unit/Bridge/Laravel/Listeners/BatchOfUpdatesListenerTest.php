@@ -25,7 +25,7 @@ final class BatchOfUpdatesListenerTest extends UnitTestCase
         $listener = new BatchOfUpdatesListener($updateProcessor);
 
         $expectedProcessCalls = [
-            ['indexSuffix' => '', 'updates' => []]
+            ['indexSuffix' => '', 'updates' => []],
         ];
 
         $listener->handle(new BatchOfUpdates([]));

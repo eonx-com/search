@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Unit\Bridge\Laravel\Providers;
 
-use EoneoPay\Externals\Bridge\Laravel\EventDispatcher;
 use Doctrine\ORM\EntityManagerInterface as DoctrineEntityManagerInterface;
+use EoneoPay\Externals\Bridge\Laravel\EventDispatcher;
 use EoneoPay\Externals\EventDispatcher\Interfaces\EventDispatcherInterface;
 use EoneoPay\Externals\HttpClient\Client as HttpClient;
 use EoneoPay\Externals\HttpClient\ExceptionHandler;

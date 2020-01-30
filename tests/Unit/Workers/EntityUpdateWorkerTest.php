@@ -18,7 +18,6 @@ use LoyaltyCorp\Search\Workers\EntityUpdateWorker;
 use stdClass;
 use Tests\LoyaltyCorp\Search\Stubs\EventDispatcherStub;
 use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub;
-use Tests\LoyaltyCorp\Search\Stubs\UpdateProcessorStub;
 use Tests\LoyaltyCorp\Search\TestCases\UnitTestCase;
 
 /**

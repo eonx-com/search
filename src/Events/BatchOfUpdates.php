@@ -6,7 +6,7 @@ namespace LoyaltyCorp\Search\Events;
 final class BatchOfUpdates
 {
     /**
-     * @var \LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange[]|iterable
+     * @var iterable|\LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange[]
      */
     private $updates;
 
@@ -21,7 +21,7 @@ final class BatchOfUpdates
     }
 
     /**
-     * @return \LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange[]|iterable
+     * @return iterable|\LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange[]
      */
     public function getUpdates(): iterable
     {

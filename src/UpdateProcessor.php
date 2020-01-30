@@ -78,7 +78,7 @@ final class UpdateProcessor implements UpdateProcessorInterface
      * Groups the incoming HandlerObjectForChange DTOs into a multidimensional array of
      * ObjectForChange DTOs grouped by their handler keys.
      *
-     * @param \LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange[]|iterable $updates
+     * @param iterable|\LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange[] $updates
      *
      * @phpstan-return array<string, array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange<mixed>>>
      *

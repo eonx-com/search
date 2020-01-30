@@ -23,7 +23,7 @@ final class SearchEventServiceProvider extends EventServiceProvider
             ],
             BatchOfUpdates::class => [
                 BatchOfUpdatesListener::class,
-            ]
+            ],
         ];
 
         parent::__construct($app);

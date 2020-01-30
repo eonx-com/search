@@ -33,7 +33,7 @@ final class SearchEventServiceProviderTest extends UnitTestCase
             ],
             BatchOfUpdates::class => [
                 BatchOfUpdatesListener::class,
-            ]
+            ],
         ];
 
         self::assertSame($listen, $serviceProvider->listens());

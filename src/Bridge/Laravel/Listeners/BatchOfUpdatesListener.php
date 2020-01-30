@@ -25,7 +25,11 @@ class BatchOfUpdatesListener implements ShouldQueue
     }
 
     /**
+     * Handles batch of updates.
+     *
      * @param \LoyaltyCorp\Search\Events\BatchOfUpdates $batchOfUpdates
+     *
+     * @return void
      */
     public function handle(BatchOfUpdates $batchOfUpdates): void
     {

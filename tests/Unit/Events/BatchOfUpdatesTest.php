@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Unit\Events;
 
@@ -12,6 +13,8 @@ final class BatchOfUpdatesTest extends UnitTestCase
 {
     /**
      * Test `getUpdates` returns iterable.
+     *
+     * @return void
      */
     public function testGetUpdates(): void
     {

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6f457a29c90e3ce8f745d3336e0d414f",
+    "content-hash": "97e0ded7ec45c3e4bc6723677f6630e3",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -3260,16 +3260,16 @@
         },
         {
             "name": "eonx-com/test-utils",
-            "version": "v0.0.5",
+            "version": "v0.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/eonx-com/test-utils.git",
-                "reference": "d141746959aa5dde05287ccd13618f82cc0eaae9"
+                "reference": "8983c6e72b401e711623ede7e03f63d9f7aa05a3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/eonx-com/test-utils/zipball/d141746959aa5dde05287ccd13618f82cc0eaae9",
-                "reference": "d141746959aa5dde05287ccd13618f82cc0eaae9",
+                "url": "https://api.github.com/repos/eonx-com/test-utils/zipball/8983c6e72b401e711623ede7e03f63d9f7aa05a3",
+                "reference": "8983c6e72b401e711623ede7e03f63d9f7aa05a3",
                 "shasum": ""
             },
             "require": {
@@ -3284,7 +3284,7 @@
                 "eonx-com/apiformats": "^1.0",
                 "eonx-com/requesthandlers": "^1.2",
                 "eonx-com/search": "^2.0",
-                "eonx-com/standards": "^0.2.2",
+                "eonx-com/standards": "^0.3",
                 "phpmd/phpmd": "^2.7",
                 "phpstan/phpstan": "^0.12.3",
                 "phpstan/phpstan-phpunit": "^0.12",
@@ -3310,7 +3310,7 @@
                 "BSD-3-Clause"
             ],
             "description": "A collection of PHP test utils, assertions stubs and test cases",
-            "time": "2020-01-28T23:21:48+00:00"
+            "time": "2020-01-30T02:37:01+00:00"
         },
         {
             "name": "eonx-com/webhooks",

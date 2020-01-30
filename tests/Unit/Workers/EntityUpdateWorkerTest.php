@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Unit\Workers;
 
+use EoneoPay\Externals\EventDispatcher\Interfaces\EventDispatcherInterface;
 use EonX\EasyEntityChange\DataTransferObjects\ChangedEntity;
 use EonX\EasyEntityChange\DataTransferObjects\DeletedEntity;
 use EonX\EasyEntityChange\DataTransferObjects\UpdatedEntity;
@@ -11,12 +12,12 @@ use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForDelete;
 use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate;
 use LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerChangeSubscription;
 use LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange;
+use LoyaltyCorp\Search\Events\BatchOfUpdates;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
-use LoyaltyCorp\Search\Interfaces\UpdateProcessorInterface;
 use LoyaltyCorp\Search\Workers\EntityUpdateWorker;
 use stdClass;
+use Tests\LoyaltyCorp\Search\Stubs\EventDispatcherStub;
 use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub;
-use Tests\LoyaltyCorp\Search\Stubs\UpdateProcessorStub;
 use Tests\LoyaltyCorp\Search\TestCases\UnitTestCase;
 
 /**
@@ -26,6 +27,11 @@ use Tests\LoyaltyCorp\Search\TestCases\UnitTestCase;
  */
 final class EntityUpdateWorkerTest extends UnitTestCase
 {
+    /**
+     * @var int
+     */
+    private const BATCH_SIZE = 2;
+
     /**
      * Tests that the worker ignores properties when deciding if a subscription should be notified.
      *
@@ -49,10 +55,9 @@ final class EntityUpdateWorkerTest extends UnitTestCase
             ],
         ]);
 
-        $expectedProcess = [
+        $expectedDispatch = [
             [
-                'indexSuffix' => '',
-                'updates' => [
+                'event' => new BatchOfUpdates([
                     new HandlerObjectForChange(
                         'handler',
                         new ObjectForDelete(
@@ -60,19 +65,21 @@ final class EntityUpdateWorkerTest extends UnitTestCase
                             ['id' => 7]
                         )
                     ),
-                ],
+                ]),
+                'payload' => null,
+                'halt' => null,
             ],
         ];
 
-        $updateProcessor = new UpdateProcessorStub();
+        $eventDispatcher = new EventDispatcherStub();
 
-        $worker = $this->createWorker($updateProcessor, $searchHandlers);
+        $worker = $this->createWorker($eventDispatcher, $searchHandlers);
 
         $worker->handle([
             new DeletedEntity(stdClass::class, ['id' => 7], []),
         ]);
 
-        self::assertEquals($expectedProcess, $updateProcessor->getProcessCalls());
+        self::assertEquals($expectedDispatch, $eventDispatcher->getDispatchCalls());
     }
 
     /**
@@ -98,15 +105,15 @@ final class EntityUpdateWorkerTest extends UnitTestCase
             ],
         ]);
 
-        $updateProcessor = new UpdateProcessorStub();
+        $eventDispatcher = new EventDispatcherStub();
 
-        $worker = $this->createWorker($updateProcessor, $searchHandlers);
+        $worker = $this->createWorker($eventDispatcher, $searchHandlers);
 
         $worker->handle([
             new UpdatedEntity(['not-interesting'], stdClass::class, []),
         ]);
 
-        self::assertSame([], $updateProcessor->getProcessCalls());
+        self::assertSame([], $eventDispatcher->getDispatchCalls());
     }
 
     /**
@@ -132,10 +139,9 @@ final class EntityUpdateWorkerTest extends UnitTestCase
             ],
         ]);
 
-        $expectedProcess = [
+        $expectedDispatch = [
             [
-                'indexSuffix' => '',
-                'updates' => [
+                'event' => new BatchOfUpdates([
                     new HandlerObjectForChange(
                         'handler',
                         new ObjectForUpdate(
@@ -143,19 +149,21 @@ final class EntityUpdateWorkerTest extends UnitTestCase
                             ['id' => 7]
                         )
                     ),
-                ],
+                ]),
+                'payload' => null,
+                'halt' => null,
             ],
         ];
 
-        $updateProcessor = new UpdateProcessorStub();
+        $eventDispatcher = new EventDispatcherStub();
 
-        $worker = $this->createWorker($updateProcessor, $searchHandlers);
+        $worker = $this->createWorker($eventDispatcher, $searchHandlers);
 
         $worker->handle([
             new UpdatedEntity(['interesting'], stdClass::class, ['id' => 7]),
         ]);
 
-        self::assertEquals($expectedProcess, $updateProcessor->getProcessCalls());
+        self::assertEquals($expectedDispatch, $eventDispatcher->getDispatchCalls());
     }
 
     /**
@@ -201,10 +209,9 @@ final class EntityUpdateWorkerTest extends UnitTestCase
             ],
         ]);
 
-        $expectedProcess = [
+        $expectedDispatch = [
             [
-                'indexSuffix' => '',
-                'updates' => [
+                'event' => new BatchOfUpdates([
                     new HandlerObjectForChange(
                         'handler',
                         new ObjectForUpdate(
@@ -212,19 +219,21 @@ final class EntityUpdateWorkerTest extends UnitTestCase
                             ['id' => 49]
                         )
                     ),
-                ],
+                ]),
+                'payload' => null,
+                'halt' => null,
             ],
         ];
 
-        $updateProcessor = new UpdateProcessorStub();
+        $eventDispatcher = new EventDispatcherStub();
 
-        $worker = $this->createWorker($updateProcessor, $searchHandlers);
+        $worker = $this->createWorker($eventDispatcher, $searchHandlers);
 
         $worker->handle([
             new UpdatedEntity(['interesting'], stdClass::class, ['id' => 7]),
         ]);
 
-        self::assertEquals($expectedProcess, $updateProcessor->getProcessCalls());
+        self::assertEquals($expectedDispatch, $eventDispatcher->getDispatchCalls());
     }
 
     /**
@@ -247,10 +256,9 @@ final class EntityUpdateWorkerTest extends UnitTestCase
             ],
         ]);
 
-        $expectedProcess = [
+        $expectedDispatch = [
             [
-                'indexSuffix' => '',
-                'updates' => [
+                'event' => new BatchOfUpdates([
                     new HandlerObjectForChange(
                         'handler',
                         new ObjectForUpdate(
@@ -258,19 +266,90 @@ final class EntityUpdateWorkerTest extends UnitTestCase
                             ['id' => 7]
                         )
                     ),
-                ],
+                ]),
+                'payload' => null,
+                'halt' => null,
             ],
         ];
 
-        $updateProcessor = new UpdateProcessorStub();
+        $eventDispatcher = new EventDispatcherStub();
 
-        $worker = $this->createWorker($updateProcessor, $searchHandlers);
+        $worker = $this->createWorker($eventDispatcher, $searchHandlers);
 
         $worker->handle([
             new UpdatedEntity(['interesting'], stdClass::class, ['id' => 7]),
         ]);
 
-        self::assertEquals($expectedProcess, $updateProcessor->getProcessCalls());
+        self::assertEquals($expectedDispatch, $eventDispatcher->getDispatchCalls());
+    }
+
+    /**
+     * Tests that HandlerObjectForChange array is dispatched by batches.
+     *
+     * @return void
+     */
+    public function testHandlesDispatchingByBatches(): void
+    {
+        $searchHandlers = new RegisteredSearchHandlerStub([
+            'getSubscriptionsGroupedByClass' => [
+                [
+                    stdClass::class => [
+                        new HandlerChangeSubscription(
+                            'handler',
+                            new ChangeSubscription(stdClass::class)
+                        ),
+                    ],
+                ],
+            ],
+        ]);
+
+        $expectedDispatch = [
+            [
+                'event' => new BatchOfUpdates([
+                    new HandlerObjectForChange(
+                        'handler',
+                        new ObjectForUpdate(
+                            stdClass::class,
+                            ['id' => 7]
+                        )
+                    ),
+                    new HandlerObjectForChange(
+                        'handler',
+                        new ObjectForUpdate(
+                            stdClass::class,
+                            ['id' => 8]
+                        )
+                    ),
+                ]),
+                'payload' => null,
+                'halt' => null,
+            ],
+            [
+                'event' => new BatchOfUpdates([
+                    new HandlerObjectForChange(
+                        'handler',
+                        new ObjectForUpdate(
+                            stdClass::class,
+                            ['id' => 9]
+                        )
+                    ),
+                ]),
+                'payload' => null,
+                'halt' => null,
+            ],
+        ];
+
+        $eventDispatcher = new EventDispatcherStub();
+
+        $worker = $this->createWorker($eventDispatcher, $searchHandlers);
+
+        $worker->handle([
+            new UpdatedEntity(['interesting'], stdClass::class, ['id' => 7]),
+            new UpdatedEntity(['interesting'], stdClass::class, ['id' => 8]),
+            new UpdatedEntity(['interesting'], stdClass::class, ['id' => 9]),
+        ]);
+
+        self::assertEquals($expectedDispatch, $eventDispatcher->getDispatchCalls());
     }
 
     /**
@@ -280,13 +359,13 @@ final class EntityUpdateWorkerTest extends UnitTestCase
      */
     public function testHandlesNoChanges(): void
     {
-        $updateProcessor = new UpdateProcessorStub();
+        $eventDispatcher = new EventDispatcherStub();
 
-        $worker = $this->createWorker($updateProcessor);
+        $worker = $this->createWorker($eventDispatcher);
 
         $worker->handle([]);
 
-        self::assertSame([], $updateProcessor->getProcessCalls());
+        self::assertSame([], $eventDispatcher->getDispatchCalls());
     }
 
     /**
@@ -303,32 +382,33 @@ final class EntityUpdateWorkerTest extends UnitTestCase
             ],
         ]);
 
-        $updateProcessor = new UpdateProcessorStub();
+        $eventDispatcher = new EventDispatcherStub();
 
-        $worker = $this->createWorker($updateProcessor, $searchHandlers);
+        $worker = $this->createWorker($eventDispatcher, $searchHandlers);
 
         $worker->handle([
             new UpdatedEntity([], stdClass::class, []),
         ]);
 
-        self::assertSame([], $updateProcessor->getProcessCalls());
+        self::assertSame([], $eventDispatcher->getDispatchCalls());
     }
 
     /**
      * Builds worker under test.
      *
-     * @param \LoyaltyCorp\Search\Interfaces\UpdateProcessorInterface $updateProcessor
+     * @param \EoneoPay\Externals\EventDispatcher\Interfaces\EventDispatcherInterface $eventDispatcher
      * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface|null $searchHandlers
      *
      * @return \LoyaltyCorp\Search\Workers\EntityUpdateWorker
      */
     private function createWorker(
-        UpdateProcessorInterface $updateProcessor,
+        EventDispatcherInterface $eventDispatcher,
         ?RegisteredSearchHandlerInterface $searchHandlers = null
     ): EntityUpdateWorker {
         return new EntityUpdateWorker(
             $searchHandlers ?? new RegisteredSearchHandlerStub(),
-            $updateProcessor ?? new UpdateProcessorStub()
+            $eventDispatcher ?? new EventDispatcherStub(),
+            self::BATCH_SIZE
         );
     }
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace LoyaltyCorp\Search\Bridge\Laravel\Providers;
 
 use Elasticsearch\ClientBuilder;
+use EoneoPay\Externals\Bridge\Laravel\EventDispatcher;
+use EoneoPay\Externals\EventDispatcher\Interfaces\EventDispatcherInterface;
 use EoneoPay\Externals\Logger\Interfaces\LoggerInterface;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Support\DeferrableProvider;
@@ -64,6 +66,7 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
             );
         });
         $this->app->singleton(ClientBulkResponseHelperInterface::class, ClientBulkResponseHelper::class);
+        $this->app->singleton(EventDispatcherInterface::class, EventDispatcher::class);
         $this->app->singleton(IndexNameTransformerInterface::class, DefaultIndexNameTransformer::class);
         $this->app->singleton(IndexerInterface::class, Indexer::class);
         $this->app->singleton(MappingHelperInterface::class, AccessTokenMappingHelper::class);
@@ -93,6 +96,12 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
         $this->app->singleton(UpdateProcessorInterface::class, UpdateProcessor::class);
 
         // Bind workers
-        $this->app->singleton(EntityUpdateWorkerInterface::class, EntityUpdateWorker::class);
+        $this->app->singleton(EntityUpdateWorkerInterface::class, static function (Container $app) {
+            return new EntityUpdateWorker(
+                $app->make(RegisteredSearchHandlerInterface::class),
+                $app->make(EventDispatcherInterface::class),
+                \env('ELASTICSEARCH_UPDATES_BATCH_SIZE', 100)
+            );
+        });
     }
 }

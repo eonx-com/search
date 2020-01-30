@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace Tests\LoyaltyCorp\Search\Unit\Bridge\Laravel\Providers;
 
 use Doctrine\ORM\EntityManagerInterface as DoctrineEntityManagerInterface;
+use EoneoPay\Externals\Bridge\Laravel\EventDispatcher;
+use EoneoPay\Externals\EventDispatcher\Interfaces\EventDispatcherInterface;
 use EoneoPay\Externals\HttpClient\Client as HttpClient;
 use EoneoPay\Externals\HttpClient\ExceptionHandler;
 use EoneoPay\Externals\HttpClient\Interfaces\ClientInterface as HttpClientInterface;
@@ -14,7 +16,9 @@ use EoneoPay\Externals\ORM\Interfaces\EntityManagerInterface as EoneoPayEntityMa
 use Eonx\TestUtils\Stubs\Vendor\Doctrine\ORM\EntityManagerStub;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\ClientInterface as GuzzleClientInterface;
+use Illuminate\Contracts\Events\Dispatcher as IlluminateDispatcherInterface;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Events\Dispatcher as IlluminateDispatcher;
 use LoyaltyCorp\Search\Access\AnonymousAccessPopulator;
 use LoyaltyCorp\Search\Bridge\Laravel\Listeners\EntityUpdateListener;
 use LoyaltyCorp\Search\Bridge\Laravel\Providers\SearchServiceProvider;
@@ -76,6 +80,7 @@ final class SearchServiceProviderTest extends UnitTestCase
             ClientBulkResponseHelperInterface::class => ClientBulkResponseHelper::class,
             EntityUpdateListener::class => EntityUpdateListener::class,
             EntityUpdateWorkerInterface::class => EntityUpdateWorker::class,
+            EventDispatcherInterface::class => EventDispatcher::class,
             IndexNameTransformerInterface::class => DefaultIndexNameTransformer::class,
             IndexerInterface::class => Indexer::class,
             MappingHelperInterface::class => AccessTokenMappingHelper::class,
@@ -143,6 +148,14 @@ final class SearchServiceProviderTest extends UnitTestCase
         $app->singleton(EoneoPayEntityManagerInterface::class, static function (): EoneoPayEntityManagerStub {
             return new EoneoPayEntityManagerStub();
         });
+
+        // Bind illuminate Dispatcher to container so app->make on interface works
+        $app->singleton(
+            IlluminateDispatcherInterface::class,
+            static function (): IlluminateDispatcherInterface {
+                return new IlluminateDispatcher();
+            }
+        );
 
         $app->singleton('registry', RegistryStub::class);
         $app->bind(HttpClientInterface::class, HttpClient::class);

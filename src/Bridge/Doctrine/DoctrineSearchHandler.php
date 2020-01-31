@@ -89,6 +89,16 @@ abstract class DoctrineSearchHandler implements TransformableSearchHandlerInterf
     }
 
     /**
+     * Returns the entity manager.
+     *
+     * @return \Doctrine\ORM\EntityManagerInterface
+     */
+    protected function getEntityManager(): EntityManagerInterface
+    {
+        return $this->entityManager;
+    }
+
+    /**
      * Retrieves a repository, or throw if it isnt a FillableRepositoryInterface.
      *
      * @phpstan-return \LoyaltyCorp\Search\Bridge\Doctrine\Interfaces\FillableRepositoryInterface<T>

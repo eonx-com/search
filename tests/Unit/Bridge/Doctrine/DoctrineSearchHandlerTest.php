@@ -87,6 +87,25 @@ class DoctrineSearchHandlerTest extends UnitTestCase
     }
 
     /**
+     * Tests getEntityManager.
+     *
+     * @return void
+     */
+    public function testGetEntityManager(): void
+    {
+        $entityManager = new EntityManagerStub();
+
+        $handler = new DoctrineSearchHandlerStub(
+            EntityStub::class,
+            $entityManager
+        );
+
+        $result = $handler->getEntityManager();
+
+        self::assertSame($entityManager, $result);
+    }
+
+    /**
      * Tests that get subscriptions returns a basic subscription by default.
      *
      * @return void

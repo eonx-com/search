@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Stubs\Bridge\Doctrine;
 
+use Doctrine\ORM\EntityManagerInterface;
 use LoyaltyCorp\Search\Bridge\Doctrine\DoctrineSearchHandler;
 use LoyaltyCorp\Search\DataTransferObjects\DocumentAction;
 use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange;
@@ -30,6 +31,14 @@ class DoctrineSearchHandlerStub extends DoctrineSearchHandler
     public static function getSettings(): array
     {
         return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityManager(): EntityManagerInterface
+    {
+        return parent::getEntityManager();
     }
 
     /**

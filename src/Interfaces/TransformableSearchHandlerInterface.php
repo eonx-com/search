@@ -35,7 +35,7 @@ interface TransformableSearchHandlerInterface extends SearchHandlerInterface
      * would like to be subscribed to, and how to transform that data when passed into
      * the getSearchId() and transform() methods.
      *
-     * @phpstan-return array<int, \LoyaltyCorp\Search\DataTransferObjects\Handlers\ChangeSubscription<object>>
+     * @phpstan-return array<int, \LoyaltyCorp\Search\DataTransferObjects\Handlers\ChangeSubscription<mixed>>
      *
      * @return \LoyaltyCorp\Search\DataTransferObjects\Handlers\ChangeSubscription[]
      */

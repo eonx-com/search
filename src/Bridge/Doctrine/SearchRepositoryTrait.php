@@ -56,7 +56,7 @@ trait SearchRepositoryTrait
         foreach ($builder->getQuery()->iterate() as $result) {
             // For each result, create an ObjectForUpdate object.
             yield new ObjectForUpdate($searchClass, [
-                $field => $result[$index][$field],
+                $field => $result[$index++][$field],
             ]);
         }
     }

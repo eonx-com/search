@@ -47,7 +47,8 @@ trait SearchRepositoryTrait
         // primary key.
         $field = $classMetadata->getSingleIdentifierFieldName();
 
-        $builder->select(\sprintf('e.%s', $field));
+        $root = $builder->getRootAliases()[0] ?? 'e';
+        $builder->select(\sprintf('%s.%s', $root, $field));
 
         // Doctrine has weird behaviour where the data index for the result is
         // in an incrementing index for each row
@@ -112,7 +113,9 @@ trait SearchRepositoryTrait
         }
 
         $expr = $builder->expr();
-        $builder->where($expr->in(\sprintf('e.%s', $field), $ids));
+
+        $root = $builder->getRootAliases()[0] ?? 'e';
+        $builder->where($expr->in(\sprintf('%s.%s', $root, $field), $ids));
 
         foreach ($builder->getQuery()->iterate() as $entity) {
             $entityId = $classMetadata->getFieldValue($entity, $field);

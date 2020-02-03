@@ -100,10 +100,8 @@ declare(strict_types=1);
 
 namespace App\Services\Search;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Query;
 use EonX\EasyEntityChange\DataTransferObjects\ChangedEntity;
-use EonX\EasyEntityChange\DataTransferObjects\DeletedEntity;
+use LoyaltyCorp\Search\Bridge\Doctrine\DoctrineSearchHandler;
 use LoyaltyCorp\Search\DataTransferObjects\DocumentAction;
 use LoyaltyCorp\Search\DataTransferObjects\DocumentDelete;
 use LoyaltyCorp\Search\DataTransferObjects\DocumentUpdate;
@@ -111,25 +109,19 @@ use LoyaltyCorp\Search\DataTransferObjects\Handlers\ChangeSubscription;
 use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange;
 use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForDelete;
 use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate;
-use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 
-class TransactionHandler implements TransformableSearchHandlerInterface
+/**
+ * This handler represents a single index in Elasticsearch, and reacts to a single primary
+ * entity for building those indicies.
+ * 
+ * The extends annotation below tells phpstan that we're creating a handler for dealing
+ * with Transactions only, and enables additional checks to ensure code correctness. For
+ * more details, check out PhpStan Generics.
+ * 
+ * @extends DoctrineSearchHandler<Transaction>
+ */
+class TransactionHandler extends DoctrineSearchHandler 
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
-     * Constructor
-     *
-     * @param EntityManagerInterface $entityManager
-     */
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
     /**
      * This method is used to define the Elasticsearch mappings. By convention, our indices should
      * be defined with dynamic->strict wherever they can be, to avoid issues with mistakes in the
@@ -146,6 +138,7 @@ class TransactionHandler implements TransformableSearchHandlerInterface
                     'createdAt' => [
                         'type' => 'date',
                     ],
+                    // Additional mappings as required
                 ],
             ],
         ];
@@ -164,32 +157,6 @@ class TransactionHandler implements TransformableSearchHandlerInterface
             'number_of_replicas' => 1,
             'number_of_shards' => 1,
         ];
-    }
-
-    /**
-     * This method is used during re-indexing to gather an iterable that should return every single
-     * entity that needs to be indexed when reindexing. The returned results should be
-     * ObjectForUpdate DTOs which will then be used to batch the reindexing into multiple jobs.
-     *
-     * {@inheritdoc}
-     */
-    public function getFillIterable(): iterable
-    {
-        $builder = $this->entityManager->createQueryBuilder();
-
-        $builder->select('t.transactionId');
-        $builder->from(Transaction::class, 't');
-
-        $builder->where('t.status != :void');
-        $builder->setParameter('void', Transaction::VOIDED);
-
-        // We order the transactions by date so that newer transactions are indexed first, which in
-        // an emergency if we had to reindex live more relevant data is indexed at the start.
-        $builder->addOrderBy('t.created_at', 'DESC');
-
-        foreach ($builder->getQuery()->iterate(null, Query::HYDRATE_SCALAR) as $result) {
-            yield new ObjectForUpdate(Transaction::class, $result['transactionId']);
-        }
     }
 
     /**
@@ -222,48 +189,65 @@ class TransactionHandler implements TransformableSearchHandlerInterface
      *
      * {@inheritdoc}
      */
-    public function getSubscriptions(): array
+    public function getSubscriptions(): iterable
     {
-        return [
-            // React to any transaction changes.
-            new ChangeSubscription(Transaction::class),
+        yield from parent::getSubscriptions();
+        
+        // React to transaction metadata changes.
+        yield new ChangeSubscription(
+            Metadata::class,
+            ['key', 'value'],
+            fn (ChangedEntity $change) => $this->loadTransactionsFromMetadata($change)
+        );
 
-            // React to any customer name changes.
-            new ChangeSubscription(
-                Customer::class,
-                ['name'],
-                static function (ChangedEntity $change): iterable {
-                    // If we've deleted the customer the transactions shouldnt be deleted so
-                    // we return no changes.
-                    if ($change instanceof DeletedEntity === true) {
-                        return [];
-                    }
+        // React to changes to the user's email address
+        yield new ChangeSubscription(
+            User::class,
+            ['email'],
+            fn (ChangedEntity $change) => $this->loadTransactionsFromUser($change)      
+         );
+    }
 
-                    $builder = $this->entityManager->createQueryBuilder();
+    /**
+     * Loads related transactions from a metadata change.
+     *
+     * @phpstan-return iterable<ObjectForUpdate<Transaction>>
+     *
+     * @param \EonX\EasyEntityChange\DataTransferObjects\ChangedEntity $change
+     *
+     * @return \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange[]
+     */
+    public function loadTransactionsFromMetadata(ChangedEntity $change): iterable
+    {
+        if ($change->getClass() !== Metadata::class ||
+            \is_string($change->getIds()['metadataId'] ?? null) === false) {
+            return [];
+        }
 
-                    $builder->select('t.transactionId');
-                    $builder->from(Transaction::class, 't');
+        $repository = $this->getEntityManager()->getRepository(Transaction::class);
 
-                    // Return any transactions that are not voided
-                    $builder->where('t.status != :void');
-                    $builder->setParameter('void', Transaction::VOIDED);
+        return $repository->getSearchTransactionsForMetadataUpdate($change->getIds()['metadataId']);
+    }
 
-                    // Since the customer's name has changed and we index the customer's name as
-                    // part of the transaction index we need to gather all transactions for the
-                    // customer.
-                    $builder->andWhere('IDENTITY(t.customer) = :customer');
-                    $builder->setParameter('customer', $change->getIds()['customerId'] ?? null);
+    /**
+     * Loads related transactions from a user.
+     *
+     * @phpstan-return iterable<ObjectForUpdate<Transaction>>
+     *
+     * @param \EonX\EasyEntityChange\DataTransferObjects\ChangedEntity $change
+     *
+     * @return \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange[]
+     */
+    public function loadTransactionsFromUser(ChangedEntity $change): iterable
+    {
+        if ($change->getClass() !== User::class ||
+            \is_string($change->getIds()['userId'] ?? null) === false) {
+            return [];
+        }
 
-                    // We order the result by date so that newer transactions are indexed first, which in
-                    // an emergency if we had to reindex live more relevant data is indexed at the start.
-                    $builder->addOrderBy('t.created_at', 'DESC');
+        $repository = $this->getEntityManager()->getRepository(Transaction::class);
 
-                    foreach ($builder->getQuery()->iterate(null, Query::HYDRATE_SCALAR) as $result) {
-                        yield new ObjectForUpdate(Transaction::class, $result['transactionId']);
-                    }
-                }
-            )
-        ];
+        return $repository->getSearchTransactionsForUserUpdate($change->getIds()['userId']);
     }
 
     /**
@@ -291,20 +275,39 @@ class TransactionHandler implements TransformableSearchHandlerInterface
      */
     public function transform(ObjectForChange $change): ?DocumentAction
     {
-        if ($change instanceof ObjectForDelete === true) {
-            return new DocumentDelete($change->getMetadata()['searchId'] ?? '');
+        // We didnt get a $change that makes sense for this transform method.
+        if ($change->getClass() !== Transaction::class ||
+            ($change->getObject() instanceof Transaction) === false) {
+            return null;
+        }
+        
+        // If we got an ObjectForDelete and we have the searchId metadata,
+        // issue a delete action to search.
+        if ($change instanceof ObjectForDelete === true &&
+            \is_string($change->getMetadata()['searchId'] ?? null) === true) {
+            return new DocumentDelete($change->getMetadata()['searchId']);
         }
 
-        // If we didnt get an Update or Delete we dont know what the system wants, lets not do
-        // anything.
+        // If we didnt get an Update or Delete we dont know what the system// 
+        // wants, lets not do anything.
         if ($change instanceof ObjectForUpdate === false) {
             return null;
         }
 
-        $transaction = $change->getObject() ?? $this->lookupObject($change);
+        /**
+         * @var \App\Database\Entities\Transaction $transaction
+         *
+         * @see https://youtrack.jetbrains.com/issue/WI-37859 - typehint required until PhpStorm recognises === check
+         */
+        $transaction = $change->getObject();
+
+        // An object without an external id cannot be transformed.
+        if (\is_string($transaction->getExternalId()) === false) {
+            return null;
+        }
 
         return new DocumentUpdate(
-            $change->getMetadata()['searchId'] ?? '',
+            $transaction->getExternalId(),
             [
                 'id' => $transaction->getId(),
                 'created_at' => $transaction->getCreatedAt(),
@@ -312,23 +315,116 @@ class TransactionHandler implements TransformableSearchHandlerInterface
             ]
         );
     }
+}
+```
+
+### Example Entity Repository
+
+Along with the search handler, there are a few methods that need to be implemented into
+the entity's repository. The package provides a SearchRepository trait that does the
+heavy lifting, but you still need to implement the interface and a few methods that
+proxy to the trait.
+
+```php
+<?php
+declare(strict_types=1);
+
+namespace App\Database\Repositories;
+
+use LoyaltyCorp\Search\Bridge\Doctrine\Interfaces\FillableRepositoryInterface;
+use LoyaltyCorp\Search\Bridge\Doctrine\SearchRepositoryTrait;
+use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate;
+
+/**
+ * @implements FillableRepositoryInterface<Transaction>
+ */
+class TransactionRepository extends Repository implements FillableRepositoryInterface
+{
+    use SearchRepositoryTrait;
 
     /**
-     * Looks up the object in the database, otherwise throwing when the
-     * object couldnt be found.
+     * {@inheritdoc}
      *
-     * @return Transaction
+     * @throws \Doctrine\ORM\ORMException
      */
-    private function lookupObject(ObjectForChange $object): Transaction
+    public function getFillIterable(): iterable
     {
-        $transaction = $this->entityManager->getRepository(Transaction::class)
-            ->findOneBy($object->getIds());
+        return $this->doGetFillIterable(
+            $this->createQueryBuilder('e'),
+            $this->entityManager->getClassMetadata(Transaction::class),
+            Transaction::class
+        );
+    }
 
-        if ($transaction instanceof Transaction === false) {
-            throw new InvalidChange();
+    /**
+     * Returns an iterable of transactions that relate to a user.
+     *
+     * @phpstan-return array<ObjectForUpdate<Transaction>>
+     *
+     * @param string $metadataId
+     *
+     * @return \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate[]
+     *
+     * @throws \Doctrine\ORM\ORMException
+     */
+    public function getSearchTransactionsForMetadataUpdate(string $metadataId): iterable
+    {
+        $builder = $this->createQueryBuilder('t');
+        $builder->select('t.transactionId');
+
+        $builder->where(':metadata MEMBER OF t.metadata');
+        $builder->setParameter('metadata', $metadataId);
+
+        $index = 0;
+        foreach ($builder->getQuery()->iterate([], AbstractQuery::HYDRATE_SCALAR) as $result) {
+            yield new ObjectForUpdate(
+                Transaction::class,
+                ['transactionId' => $result[$index++]['transactionId']]
+            );
         }
+    }
 
-        return $transaction;
+    /**
+     * Returns an iterable of transactions that relate to a user.
+     *
+     * @phpstan-return array<ObjectForUpdate<Transaction>>
+     *
+     * @param string $userId
+     *
+     * @return \LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate[]
+     *
+     * @throws \Doctrine\ORM\ORMException
+     */
+    public function getSearchTransactionsForUserUpdate(string $userId): iterable
+    {
+        $builder = $this->createQueryBuilder('t');
+        $builder->select('t.transactionId');
+
+        $builder->where('IDENTITY(t.user) = :user');
+        $builder->setParameter('user', $userId);
+
+        $index = 0;
+        foreach ($builder->getQuery()->iterate([], AbstractQuery::HYDRATE_SCALAR) as $result) {
+            yield new ObjectForUpdate(
+                Transaction::class,
+                ['transactionId' => $result[$index++]['transactionId']]
+            );
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @throws \Doctrine\ORM\Mapping\MappingException
+     */
+    public function prefillSearch(iterable $changes): void
+    {
+        $this->doPrefillSearch(
+            $this->createQueryBuilder('e'),
+            $this->entityManager->getClassMetadata(Transaction::class),
+            Transaction::class,
+            $changes
+        );
     }
 }
 ```

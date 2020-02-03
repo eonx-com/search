@@ -279,9 +279,10 @@ class TransactionHandler extends DoctrineSearchHandler
         }
 
         /**
-         * @var \App\Database\Entities\Transaction $transaction
+         * PHPStorm isnt capable of recognising that this is a Transaction even though
+         * we check it above. This is just for IDE compatibility.
          *
-         * @see https://youtrack.jetbrains.com/issue/WI-37859 - typehint required until PhpStorm recognises === check
+         * @var \App\Database\Entities\Transaction $transaction
          */
         $transaction = $change->getObject();
 

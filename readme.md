@@ -251,22 +251,6 @@ class TransactionHandler extends DoctrineSearchHandler
     }
 
     /**
-     * This function will prefill the ObjectForChange with actual entities, which is done in a batch
-     * instead of singularly looking up entities.
-     *
-     * {@inheritdoc}
-     */
-    public function prefill(iterable $changes): void
-    {
-        // This is a contrived example, but an example implementation for this method
-        // can be seen in the abstract DoctrineSearchHandler and SearchRepository
-        // classes of this library.
-        foreach ($changes as $change) {
-            $change->setObject($this->lookupObject($change));
-        }
-    }
-
-    /**
      * This method takes an ObjectForChange and returns a DocumentAction.
      *
      * Its primary purpose is to either decide that a document should be deleted or updated.

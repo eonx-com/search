@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch;
 
 use Elasticsearch\Client;
+use Elasticsearch\Namespaces\CatNamespace;
+use Elasticsearch\Namespaces\IndicesNamespace;
 use RuntimeException;
 
 /**
@@ -61,7 +63,7 @@ final class ClientStub extends Client
      *
      * {@inheritdoc}
      */
-    public function cat()
+    public function cat(): CatNamespace
     {
         return new CatStub($this->throwException);
     }
@@ -81,7 +83,7 @@ final class ClientStub extends Client
      *
      * {@inheritdoc}
      */
-    public function indices()
+    public function indices(): IndicesNamespace
     {
         // If an exception should be thrown, throw it
         if ($this->throwException === true) {

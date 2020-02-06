@@ -9,6 +9,8 @@ use LoyaltyCorp\Search\Interfaces\ClientInterface;
 /**
  * @coversNothing
  *
+ * @deprecated Use ClientStub instead
+ *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods) Well tested code for all the cases
  */
 final class LegacyClientStub implements ClientInterface

@@ -11,7 +11,7 @@
   "require": {
     "php": ">=7.3",
     "doctrine/orm": "^2.6",
-    "elasticsearch/elasticsearch": "^6.1",
+    "elasticsearch/elasticsearch": "^6.1 || ^7.0",
     "eonx-com/externals": "^1.0 || ^2.0",
     "ext-json": "*",
     "guzzlehttp/guzzle": "^6.3",

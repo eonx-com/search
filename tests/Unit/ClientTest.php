@@ -548,7 +548,7 @@ final class ClientTest extends UnitTestCase
             'status' => $statusCode ?? 200,
             'transfer_stats' => [
                 'total_time' => 100,
-                'primary_port' => '80'
+                'primary_port' => '80',
             ],
         ];
 

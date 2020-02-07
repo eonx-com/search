@@ -117,7 +117,14 @@ trait SearchRepositoryTrait
         $root = $builder->getRootAliases()[0] ?? 'e';
         $builder->where($expr->in(\sprintf('%s.%s', $root, $field), $ids));
 
-        foreach ($builder->getQuery()->iterate() as $entity) {
+        foreach ($builder->getQuery()->iterate() as $row) {
+            $entity = $row[0];
+
+            // We got back a result we didnt expect, skip it.
+            if ($entity instanceof $searchClass === false) {
+                continue;
+            }
+
             $entityId = $classMetadata->getFieldValue($entity, $field);
 
             // We somehow got back an entity that wasn't in the reverseId map.

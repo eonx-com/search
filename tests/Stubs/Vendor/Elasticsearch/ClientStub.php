@@ -19,9 +19,9 @@ use RuntimeException;
 final class ClientStub extends Client
 {
     /**
-     * @var mixed[]|null
+     * @var mixed[][]
      */
-    private $bulk;
+    private $bulk = [];
 
     /**
      * @var bool
@@ -52,7 +52,7 @@ final class ClientStub extends Client
             throw new RuntimeException('An error occured');
         }
 
-        $this->bulk = $params;
+        $this->bulk[] = $params;
 
         // This must return an array to be compatible with base client
         return [];
@@ -71,9 +71,9 @@ final class ClientStub extends Client
     /**
      * Get bulk parameters used when calling bulk().
      *
-     * @return mixed[]|null
+     * @return mixed[][]
      */
-    public function getBulkParameters(): ?array
+    public function getBulkCalls(): ?array
     {
         return $this->bulk;
     }

@@ -11,7 +11,7 @@ use LoyaltyCorp\Search\UpdateProcessor;
 use stdClass;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableHandlerStub;
-use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlersStub;
 use Tests\LoyaltyCorp\Search\TestCases\UnitTestCase;
 
 /**
@@ -27,7 +27,7 @@ final class UpdateProcessorTest extends UnitTestCase
     public function testNoUpdates(): void
     {
         $client = new ClientStub();
-        $registeredHandlers = new RegisteredSearchHandlerStub();
+        $registeredHandlers = new RegisteredSearchHandlersStub();
 
         $processor = new UpdateProcessor(
             $client,
@@ -50,7 +50,7 @@ final class UpdateProcessorTest extends UnitTestCase
         $handler = new TransformableHandlerStub('index', [
             'transform' => [null],
         ]);
-        $registeredHandlers = new RegisteredSearchHandlerStub([
+        $registeredHandlers = new RegisteredSearchHandlersStub([
             'getTransformableHandlerByKey' => [
                 $handler,
             ],
@@ -90,7 +90,7 @@ final class UpdateProcessorTest extends UnitTestCase
         $handler = new TransformableHandlerStub('index', [
             'transform' => [$action],
         ]);
-        $registeredHandlers = new RegisteredSearchHandlerStub([
+        $registeredHandlers = new RegisteredSearchHandlersStub([
             'getTransformableHandlerByKey' => [
                 $handler,
             ],
@@ -141,7 +141,7 @@ final class UpdateProcessorTest extends UnitTestCase
         $handler2 = new TransformableHandlerStub('index2', [
             'transform' => [$action2],
         ]);
-        $registeredHandlers = new RegisteredSearchHandlerStub([
+        $registeredHandlers = new RegisteredSearchHandlersStub([
             'getTransformableHandlerByKey' => [
                 $handler,
                 $handler2,

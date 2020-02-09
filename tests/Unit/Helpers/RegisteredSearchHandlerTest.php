@@ -7,7 +7,7 @@ use LoyaltyCorp\Search\DataTransferObjects\Handlers\ChangeSubscription;
 use LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerChangeSubscription;
 use LoyaltyCorp\Search\Exceptions\DuplicateSearchHandlerKeyException;
 use LoyaltyCorp\Search\Exceptions\HandlerDoesntExistException;
-use LoyaltyCorp\Search\Helpers\RegisteredSearchHandler;
+use LoyaltyCorp\Search\Helpers\RegisteredSearchHandlers;
 use stdClass;
 use Tests\LoyaltyCorp\Search\Stubs\Entities\EntityStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NonDoctrineHandlerStub;
@@ -15,7 +15,7 @@ use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableHandlerStub;
 use Tests\LoyaltyCorp\Search\TestCases\UnitTestCase;
 
 /**
- * @covers \LoyaltyCorp\Search\Helpers\RegisteredSearchHandler
+ * @covers \LoyaltyCorp\Search\Helpers\RegisteredSearchHandlers
  */
 final class RegisteredSearchHandlerTest extends UnitTestCase
 {
@@ -191,10 +191,10 @@ final class RegisteredSearchHandlerTest extends UnitTestCase
      *
      * @param \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[]|null $searchHandlers
      *
-     * @return \LoyaltyCorp\Search\Helpers\RegisteredSearchHandler
+     * @return \LoyaltyCorp\Search\Helpers\RegisteredSearchHandlers
      */
-    private function createInstance(?array $searchHandlers = null): RegisteredSearchHandler
+    private function createInstance(?array $searchHandlers = null): RegisteredSearchHandlers
     {
-        return new RegisteredSearchHandler($searchHandlers ?? []);
+        return new RegisteredSearchHandlers($searchHandlers ?? []);
     }
 }

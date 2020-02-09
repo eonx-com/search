@@ -24,13 +24,13 @@ use LoyaltyCorp\Search\Bridge\Laravel\Listeners\EntityUpdateListener;
 use LoyaltyCorp\Search\Bridge\Laravel\Providers\SearchServiceProvider;
 use LoyaltyCorp\Search\Client;
 use LoyaltyCorp\Search\Helpers\ClientBulkResponseHelper;
-use LoyaltyCorp\Search\Helpers\RegisteredSearchHandler;
+use LoyaltyCorp\Search\Helpers\RegisteredSearchHandlers;
 use LoyaltyCorp\Search\Indexer;
 use LoyaltyCorp\Search\Indexer\AccessTokenMappingHelper;
 use LoyaltyCorp\Search\Interfaces\Access\AccessPopulatorInterface;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\ClientBulkResponseHelperInterface;
-use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
+use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface;
 use LoyaltyCorp\Search\Interfaces\Indexer\MappingHelperInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
@@ -85,7 +85,7 @@ final class SearchServiceProviderTest extends UnitTestCase
             IndexerInterface::class => Indexer::class,
             MappingHelperInterface::class => AccessTokenMappingHelper::class,
             PopulatorInterface::class => Populator::class,
-            RegisteredSearchHandlerInterface::class => RegisteredSearchHandler::class,
+            RegisteredSearchHandlersInterface::class => RegisteredSearchHandlers::class,
             RequestProxyFactoryInterface::class => RequestProxyFactory::class,
             ResponseFactoryInterface::class => ResponseFactory::class,
             UpdateProcessorInterface::class => UpdateProcessor::class,
@@ -120,7 +120,7 @@ final class SearchServiceProviderTest extends UnitTestCase
         $serviceProvider = new SearchServiceProvider($application);
         $serviceProvider->register();
 
-        $registeredHandlers = $application->make(RegisteredSearchHandlerInterface::class);
+        $registeredHandlers = $application->make(RegisteredSearchHandlersInterface::class);
 
         self::assertEquals($expected, $registeredHandlers->getAll());
     }

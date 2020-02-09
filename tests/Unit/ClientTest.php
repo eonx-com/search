@@ -120,7 +120,7 @@ final class ClientTest extends UnitTestCase
             new IndexAction(new DocumentDelete('1'), 'index'),
         ]);
 
-        self::assertSame($expected, $stub->getBulkParameters());
+        self::assertSame($expected, $stub->getBulkCalls());
     }
 
     /**

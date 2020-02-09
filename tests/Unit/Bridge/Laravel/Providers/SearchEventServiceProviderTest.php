@@ -7,7 +7,7 @@ use EonX\EasyEntityChange\Events\EntityChangeEvent;
 use LoyaltyCorp\Search\Bridge\Laravel\Listeners\BatchOfUpdatesListener;
 use LoyaltyCorp\Search\Bridge\Laravel\Listeners\EntityUpdateListener;
 use LoyaltyCorp\Search\Bridge\Laravel\Providers\SearchEventServiceProvider;
-use LoyaltyCorp\Search\Events\BatchOfUpdates;
+use LoyaltyCorp\Search\Events\BatchOfUpdatesEvent;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Illuminate\Contracts\Foundation\ApplicationStub;
 use Tests\LoyaltyCorp\Search\TestCases\UnitTestCase;
 
@@ -31,7 +31,7 @@ final class SearchEventServiceProviderTest extends UnitTestCase
             EntityChangeEvent::class => [
                 EntityUpdateListener::class,
             ],
-            BatchOfUpdates::class => [
+            BatchOfUpdatesEvent::class => [
                 BatchOfUpdatesListener::class,
             ],
         ];

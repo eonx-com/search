@@ -4,13 +4,13 @@ declare(strict_types=1);
 namespace Tests\LoyaltyCorp\Search\Stubs\Helpers;
 
 use Eonx\TestUtils\Stubs\BaseStub;
-use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
+use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface;
 use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 
 /**
  * @coversNothing
  */
-final class RegisteredSearchHandlerStub extends BaseStub implements RegisteredSearchHandlerInterface
+final class RegisteredSearchHandlersStub extends BaseStub implements RegisteredSearchHandlersInterface
 {
     /**
      * {@inheritdoc}

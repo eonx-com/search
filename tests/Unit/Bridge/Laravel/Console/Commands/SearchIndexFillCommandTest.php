@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace Tests\LoyaltyCorp\Search\Unit\Bridge\Laravel\Console\Commands;
 
 use LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexFillCommand;
-use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
+use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface;
 use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableHandlerStub;
-use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlersStub;
 use Tests\LoyaltyCorp\Search\Stubs\PopulatorStub;
 use Tests\LoyaltyCorp\Search\TestCases\Unit\SearchIndexCommandTestCase;
 
@@ -32,7 +32,7 @@ final class SearchIndexFillCommandTest extends SearchIndexCommandTestCase
         $otherHandler = new TransformableHandlerStub('other');
         $handlers = [$handlerStub, $otherHandler];
 
-        $registeredHandlers = new RegisteredSearchHandlerStub([
+        $registeredHandlers = new RegisteredSearchHandlersStub([
             'getTransformableHandlers' => [
                 $handlers,
             ],
@@ -65,17 +65,17 @@ final class SearchIndexFillCommandTest extends SearchIndexCommandTestCase
      * Instantiate a command class.
      *
      * @param \LoyaltyCorp\Search\Interfaces\PopulatorInterface|null $populator
-     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface|null $registeredHandlers
+     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface|null $registeredHandlers
      *
      * @return \LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexFillCommand
      */
     private function createInstance(
         ?PopulatorInterface $populator = null,
-        ?RegisteredSearchHandlerInterface $registeredHandlers = null
+        ?RegisteredSearchHandlersInterface $registeredHandlers = null
     ): SearchIndexFillCommand {
         return new SearchIndexFillCommand(
             $populator ?? new PopulatorStub(),
-            $registeredHandlers ?? new RegisteredSearchHandlerStub([])
+            $registeredHandlers ?? new RegisteredSearchHandlersStub([])
         );
     }
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace LoyaltyCorp\Search\Bridge\Laravel\Console\Commands;
 
 use Illuminate\Console\Command;
-use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
+use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface;
 use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
 
 final class SearchIndexFillCommand extends Command
@@ -15,7 +15,7 @@ final class SearchIndexFillCommand extends Command
     private $populator;
 
     /**
-     * @var \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface
+     * @var \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface
      */
     private $searchHandlers;
 
@@ -23,9 +23,9 @@ final class SearchIndexFillCommand extends Command
      * SearchIndexFill constructor.
      *
      * @param \LoyaltyCorp\Search\Interfaces\PopulatorInterface $populator
-     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface $searchHandlers
+     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface $searchHandlers
      */
-    public function __construct(PopulatorInterface $populator, RegisteredSearchHandlerInterface $searchHandlers)
+    public function __construct(PopulatorInterface $populator, RegisteredSearchHandlersInterface $searchHandlers)
     {
         $this->description = 'Populate all search handler indices with their corresponding data';
         $this->signature = 'search:index:fill';

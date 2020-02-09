@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace LoyaltyCorp\Search\Bridge\Laravel\Console\Commands;
 
 use Illuminate\Console\Command;
-use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
+use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 
 final class SearchIndexLiveCommand extends Command
@@ -15,7 +15,7 @@ final class SearchIndexLiveCommand extends Command
     private $indexer;
 
     /**
-     * @var \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface
+     * @var \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface
      */
     private $searchHandlers;
 
@@ -23,9 +23,9 @@ final class SearchIndexLiveCommand extends Command
      * SearchIndexLiveCommand constructor.
      *
      * @param \LoyaltyCorp\Search\Interfaces\IndexerInterface $indexer
-     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface $searchHandlers
+     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface $searchHandlers
      */
-    public function __construct(IndexerInterface $indexer, RegisteredSearchHandlerInterface $searchHandlers)
+    public function __construct(IndexerInterface $indexer, RegisteredSearchHandlersInterface $searchHandlers)
     {
         $this->description = 'Atomically switches root aliases from search handlers to the latest index';
         $this->signature = 'search:index:live {--dry-run}';

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Events;
 
-final class BatchOfUpdates
+final class BatchOfUpdatesEvent
 {
     /**
      * @var iterable|\LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange[]
@@ -13,7 +13,7 @@ final class BatchOfUpdates
     /**
      * BatchOfUpdates constructor.
      *
-     * @param \LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange[] $updates
+     * @param iterable|\LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange[] $updates
      */
     public function __construct(iterable $updates)
     {

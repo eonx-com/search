@@ -6,7 +6,7 @@ namespace LoyaltyCorp\Search;
 use LoyaltyCorp\Search\DataTransferObjects\DocumentAction;
 use LoyaltyCorp\Search\DataTransferObjects\IndexAction;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
-use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
+use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface;
 use LoyaltyCorp\Search\Interfaces\UpdateProcessorInterface;
 
 final class UpdateProcessor implements UpdateProcessorInterface
@@ -17,7 +17,7 @@ final class UpdateProcessor implements UpdateProcessorInterface
     private $client;
 
     /**
-     * @var \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface
+     * @var \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface
      */
     private $registeredHandlers;
 
@@ -25,11 +25,11 @@ final class UpdateProcessor implements UpdateProcessorInterface
      * Constructor.
      *
      * @param \LoyaltyCorp\Search\Interfaces\ClientInterface $client
-     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface $registeredHandlers
+     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface $registeredHandlers
      */
     public function __construct(
         ClientInterface $client,
-        RegisteredSearchHandlerInterface $registeredHandlers
+        RegisteredSearchHandlersInterface $registeredHandlers
     ) {
         $this->client = $client;
         $this->registeredHandlers = $registeredHandlers;

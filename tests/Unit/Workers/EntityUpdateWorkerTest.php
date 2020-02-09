@@ -12,12 +12,12 @@ use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForDelete;
 use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate;
 use LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerChangeSubscription;
 use LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange;
-use LoyaltyCorp\Search\Events\BatchOfUpdates;
-use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
+use LoyaltyCorp\Search\Events\BatchOfUpdatesEvent;
+use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface;
 use LoyaltyCorp\Search\Workers\EntityUpdateWorker;
 use stdClass;
 use Tests\LoyaltyCorp\Search\Stubs\EventDispatcherStub;
-use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlersStub;
 use Tests\LoyaltyCorp\Search\TestCases\UnitTestCase;
 
 /**
@@ -39,7 +39,7 @@ final class EntityUpdateWorkerTest extends UnitTestCase
      */
     public function testDeleteIgnoresSubscriptionProperties(): void
     {
-        $searchHandlers = new RegisteredSearchHandlerStub([
+        $searchHandlers = new RegisteredSearchHandlersStub([
             'getSubscriptionsGroupedByClass' => [
                 [
                     stdClass::class => [
@@ -57,7 +57,7 @@ final class EntityUpdateWorkerTest extends UnitTestCase
 
         $expectedDispatch = [
             [
-                'event' => new BatchOfUpdates([
+                'event' => new BatchOfUpdatesEvent([
                     new HandlerObjectForChange(
                         'handler',
                         new ObjectForDelete(
@@ -89,7 +89,7 @@ final class EntityUpdateWorkerTest extends UnitTestCase
      */
     public function testHandlesMatchingSubscriptionNoPropertyOverlap(): void
     {
-        $searchHandlers = new RegisteredSearchHandlerStub([
+        $searchHandlers = new RegisteredSearchHandlersStub([
             'getSubscriptionsGroupedByClass' => [
                 [
                     stdClass::class => [
@@ -123,7 +123,7 @@ final class EntityUpdateWorkerTest extends UnitTestCase
      */
     public function testHandlesMatchingSubscriptionPropertiesNoTransform(): void
     {
-        $searchHandlers = new RegisteredSearchHandlerStub([
+        $searchHandlers = new RegisteredSearchHandlersStub([
             'getSubscriptionsGroupedByClass' => [
                 [
                     stdClass::class => [
@@ -141,7 +141,7 @@ final class EntityUpdateWorkerTest extends UnitTestCase
 
         $expectedDispatch = [
             [
-                'event' => new BatchOfUpdates([
+                'event' => new BatchOfUpdatesEvent([
                     new HandlerObjectForChange(
                         'handler',
                         new ObjectForUpdate(
@@ -192,7 +192,7 @@ final class EntityUpdateWorkerTest extends UnitTestCase
             ];
         };
 
-        $searchHandlers = new RegisteredSearchHandlerStub([
+        $searchHandlers = new RegisteredSearchHandlersStub([
             'getSubscriptionsGroupedByClass' => [
                 [
                     stdClass::class => [
@@ -211,7 +211,7 @@ final class EntityUpdateWorkerTest extends UnitTestCase
 
         $expectedDispatch = [
             [
-                'event' => new BatchOfUpdates([
+                'event' => new BatchOfUpdatesEvent([
                     new HandlerObjectForChange(
                         'handler',
                         new ObjectForUpdate(
@@ -243,7 +243,7 @@ final class EntityUpdateWorkerTest extends UnitTestCase
      */
     public function testHandlesMatchingSubscriptionNullProperties(): void
     {
-        $searchHandlers = new RegisteredSearchHandlerStub([
+        $searchHandlers = new RegisteredSearchHandlersStub([
             'getSubscriptionsGroupedByClass' => [
                 [
                     stdClass::class => [
@@ -258,7 +258,7 @@ final class EntityUpdateWorkerTest extends UnitTestCase
 
         $expectedDispatch = [
             [
-                'event' => new BatchOfUpdates([
+                'event' => new BatchOfUpdatesEvent([
                     new HandlerObjectForChange(
                         'handler',
                         new ObjectForUpdate(
@@ -290,7 +290,7 @@ final class EntityUpdateWorkerTest extends UnitTestCase
      */
     public function testHandlesDispatchingByBatches(): void
     {
-        $searchHandlers = new RegisteredSearchHandlerStub([
+        $searchHandlers = new RegisteredSearchHandlersStub([
             'getSubscriptionsGroupedByClass' => [
                 [
                     stdClass::class => [
@@ -305,7 +305,7 @@ final class EntityUpdateWorkerTest extends UnitTestCase
 
         $expectedDispatch = [
             [
-                'event' => new BatchOfUpdates([
+                'event' => new BatchOfUpdatesEvent([
                     new HandlerObjectForChange(
                         'handler',
                         new ObjectForUpdate(
@@ -325,7 +325,7 @@ final class EntityUpdateWorkerTest extends UnitTestCase
                 'halt' => null,
             ],
             [
-                'event' => new BatchOfUpdates([
+                'event' => new BatchOfUpdatesEvent([
                     new HandlerObjectForChange(
                         'handler',
                         new ObjectForUpdate(
@@ -375,7 +375,7 @@ final class EntityUpdateWorkerTest extends UnitTestCase
      */
     public function testHandlesNoSubscriptions(): void
     {
-        $searchHandlers = new RegisteredSearchHandlerStub([
+        $searchHandlers = new RegisteredSearchHandlersStub([
             'getSubscriptionsGroupedByClass' => [
                 // Return no subscriptions
                 [],
@@ -397,16 +397,16 @@ final class EntityUpdateWorkerTest extends UnitTestCase
      * Builds worker under test.
      *
      * @param \EoneoPay\Externals\EventDispatcher\Interfaces\EventDispatcherInterface $eventDispatcher
-     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface|null $searchHandlers
+     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface|null $searchHandlers
      *
      * @return \LoyaltyCorp\Search\Workers\EntityUpdateWorker
      */
     private function createWorker(
         EventDispatcherInterface $eventDispatcher,
-        ?RegisteredSearchHandlerInterface $searchHandlers = null
+        ?RegisteredSearchHandlersInterface $searchHandlers = null
     ): EntityUpdateWorker {
         return new EntityUpdateWorker(
-            $searchHandlers ?? new RegisteredSearchHandlerStub(),
+            $searchHandlers ?? new RegisteredSearchHandlersStub(),
             $eventDispatcher ?? new EventDispatcherStub(),
             self::BATCH_SIZE
         );

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Tests\LoyaltyCorp\Search\Unit\Bridge\Laravel\Listeners;
 
 use LoyaltyCorp\Search\Bridge\Laravel\Listeners\BatchOfUpdatesListener;
-use LoyaltyCorp\Search\Events\BatchOfUpdates;
+use LoyaltyCorp\Search\Events\BatchOfUpdatesEvent;
 use Tests\LoyaltyCorp\Search\Stubs\UpdateProcessorStub;
 use Tests\LoyaltyCorp\Search\TestCases\UnitTestCase;
 
@@ -28,7 +28,7 @@ final class BatchOfUpdatesListenerTest extends UnitTestCase
             ['indexSuffix' => '', 'updates' => []],
         ];
 
-        $listener->handle(new BatchOfUpdates([]));
+        $listener->handle(new BatchOfUpdatesEvent([]));
 
         self::assertSame($expectedProcessCalls, $updateProcessor->getCalls('process'));
     }

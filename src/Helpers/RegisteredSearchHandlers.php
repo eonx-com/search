@@ -6,10 +6,10 @@ namespace LoyaltyCorp\Search\Helpers;
 use LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerChangeSubscription;
 use LoyaltyCorp\Search\Exceptions\DuplicateSearchHandlerKeyException;
 use LoyaltyCorp\Search\Exceptions\HandlerDoesntExistException;
-use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
+use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface;
 use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 
-final class RegisteredSearchHandler implements RegisteredSearchHandlerInterface
+final class RegisteredSearchHandlers implements RegisteredSearchHandlersInterface
 {
     /**
      * @phpstan-var array<\LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface<mixed>>

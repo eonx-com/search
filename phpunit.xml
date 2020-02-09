@@ -14,4 +14,8 @@
             <directory suffix=".php">./src</directory>
         </whitelist>
     </filter>
+
+    <php>
+        <env name="ELASTICSEARCH_UPDATES_BATCH_SIZE" value="2" />
+    </php>
 </phpunit>

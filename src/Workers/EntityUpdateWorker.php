@@ -96,12 +96,18 @@ final class EntityUpdateWorker implements EntityUpdateWorkerInterface
         // If we didnt get a callable in the subscription it means that the handler is
         // fine to receive the objects as is.
         if (\is_callable($transform) === false) {
-            $classToBuild = $update instanceof DeletedEntity === true
-                ? ObjectForDelete::class
-                : ObjectForUpdate::class;
+            if ($update instanceof DeletedEntity === true) {
+                return [
+                    new ObjectForDelete(
+                        $update->getClass(),
+                        $update->getIds(),
+                        $update->getMetadata()
+                    ),
+                ];
+            }
 
             return [
-                new $classToBuild(
+                new ObjectForUpdate(
                     $update->getClass(),
                     $update->getIds()
                 ),

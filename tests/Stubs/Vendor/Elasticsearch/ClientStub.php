@@ -90,4 +90,14 @@ final class ClientStub extends Client
             throw new RuntimeException('An error occured');
         }
     }
+
+    /**
+     * Resets calls to bulk().
+     *
+     * @return void
+     */
+    public function resetBulkCalls(): void
+    {
+        $this->bulk = [];
+    }
 }

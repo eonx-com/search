@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Integration;
 
+use EonX\EasyEntityChange\Interfaces\DeletedEntityEnrichmentInterface;
+use Tests\LoyaltyCorp\Search\Integration\Fixtures\DeletedEntityIdEnrichment;
 use Tests\LoyaltyCorp\Search\Integration\Fixtures\Entities\Blog;
 use Tests\LoyaltyCorp\Search\Integration\Fixtures\SearchHandlers\BlogSearchHandler;
 use Tests\LoyaltyCorp\Search\TestCases\IntegrationTestCase;
@@ -54,6 +56,14 @@ class EntityLifecycleTest extends IntegrationTestCase
     {
         $entityManager = $this->getEntityManager();
 
+        $deleteBlog = new Blog('Deleted', 'Deleted');
+        $entityManager->persist($deleteBlog);
+        $entityManager->flush();
+
+        $this->getContainer()->get('search_elasticsearch_client')->resetBulkCalls();
+
+        $entityManager->remove($deleteBlog);
+
         $blog1 = new Blog('Body1', 'Title');
         $entityManager->persist($blog1);
 
@@ -69,27 +79,23 @@ class EntityLifecycleTest extends IntegrationTestCase
             [
                 'body' => [
                     0 => [
-                        'index' => [
+                        'delete' =>[
                             '_index' => 'blog',
                             '_type' => 'doc',
                             '_id' => '1'
                         ]
                     ],
                     1 => [
-                        'body' => 'Body1',
-                        'title' => 'Title'
-                    ],
-                    2 => [
                         'index' => [
                             '_index' => 'blog',
                             '_type' => 'doc',
                             '_id' => '2'
                         ]
                     ],
-                    3 => [
-                        'body' => 'Body2',
+                    2 => [
+                        'body' => 'Body1',
                         'title' => 'Title'
-                    ]
+                    ],
                 ]
             ],
             [
@@ -102,6 +108,17 @@ class EntityLifecycleTest extends IntegrationTestCase
                         ]
                     ],
                     1 => [
+                        'body' => 'Body2',
+                        'title' => 'Title'
+                    ],
+                    2 => [
+                        'index' => [
+                            '_index' => 'blog',
+                            '_type' => 'doc',
+                            '_id' => '4'
+                        ]
+                    ],
+                    3 => [
                         'body' => 'Body3',
                         'title' => 'Title'
                     ]
@@ -112,6 +129,16 @@ class EntityLifecycleTest extends IntegrationTestCase
         $client = $this->getContainer()->get('search_elasticsearch_client');
 
         self::assertEquals($expected, $client->getBulkCalls());
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @noinspection PhpMissingParentCallCommonInspection
+     */
+    protected function getDeleteEnrichment(): ?DeletedEntityEnrichmentInterface
+    {
+        return new DeletedEntityIdEnrichment();
     }
 
     /**

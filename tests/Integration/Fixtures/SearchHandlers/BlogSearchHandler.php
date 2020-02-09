@@ -6,8 +6,10 @@ namespace Tests\LoyaltyCorp\Search\Integration\Fixtures\SearchHandlers;
 use Doctrine\ORM\EntityManagerInterface;
 use LoyaltyCorp\Search\Bridge\Doctrine\DoctrineSearchHandler;
 use LoyaltyCorp\Search\DataTransferObjects\DocumentAction;
+use LoyaltyCorp\Search\DataTransferObjects\DocumentDelete;
 use LoyaltyCorp\Search\DataTransferObjects\DocumentUpdate;
 use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange;
+use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForDelete;
 use Tests\LoyaltyCorp\Search\Integration\Fixtures\Entities\Blog;
 
 /**
@@ -62,9 +64,15 @@ class BlogSearchHandler extends DoctrineSearchHandler
      */
     public function transform(ObjectForChange $change): ?DocumentAction
     {
-//        if ($change instanceof ObjectForDelete === true) {
-//            return new DocumentDelete()
-//        }
+        if ($change instanceof ObjectForDelete === true) {
+            if (($change->getMetadata()['deletedId'] ?? null) === null) {
+                return null;
+            }
+
+            return new DocumentDelete(
+                (string)$change->getMetadata()['deletedId']
+            );
+        }
 
         $blog = $change->getObject();
 

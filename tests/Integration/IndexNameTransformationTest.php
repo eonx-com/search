@@ -11,6 +11,9 @@ use Tests\LoyaltyCorp\Search\Integration\Fixtures\SearchHandlers\BlogSearchHandl
 use Tests\LoyaltyCorp\Search\Stubs\Transformers\CustomIndexNameTransformerStub;
 use Tests\LoyaltyCorp\Search\TestCases\IntegrationTestCase;
 
+/**
+ * @coversNothing
+ */
 class IndexNameTransformationTest extends IntegrationTestCase
 {
     /**
@@ -49,27 +52,27 @@ class IndexNameTransformationTest extends IntegrationTestCase
                         'index' => [
                             '_index' => 'blog_customId',
                             '_type' => 'doc',
-                            '_id' => '1'
-                        ]
+                            '_id' => '1',
+                        ],
                     ],
                     1 => [
                         'body' => 'Deleted',
                         'title' => 'Deleted',
-                        '_access_tokens' => ['anonymous']
+                        '_access_tokens' => ['anonymous'],
                     ],
                     2 => [
                         'index' => [
                             '_index' => 'blog_customId',
                             '_type' => 'doc',
-                            '_id' => '2'
-                        ]
+                            '_id' => '2',
+                        ],
                     ],
                     3 => [
                         'body' => 'Body1',
                         'title' => 'Title',
-                        '_access_tokens' => ['anonymous']
+                        '_access_tokens' => ['anonymous'],
                     ],
-                ]
+                ],
             ],
             [
                 'body' => [
@@ -77,23 +80,23 @@ class IndexNameTransformationTest extends IntegrationTestCase
                         'index' => [
                             '_index' => 'blog_customId',
                             '_type' => 'doc',
-                            '_id' => '2'
-                        ]
+                            '_id' => '2',
+                        ],
                     ],
                     1 => [
                         'body' => 'Body1',
                         'title' => 'UPDATED BLOG 1',
-                        '_access_tokens' => ['anonymous']
+                        '_access_tokens' => ['anonymous'],
                     ],
                     2 => [
                         'delete' => [
                             '_index' => 'blog_customId',
                             '_type' => 'doc',
-                            '_id' => '1'
-                        ]
-                    ]
-                ]
-            ]
+                            '_id' => '1',
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $client = $this->getContainer()->get('search_elasticsearch_client');
@@ -119,7 +122,7 @@ class IndexNameTransformationTest extends IntegrationTestCase
     protected function getRegisteredHandlers(): array
     {
         return [
-            BlogSearchHandler::class
+            BlogSearchHandler::class,
         ];
     }
 }

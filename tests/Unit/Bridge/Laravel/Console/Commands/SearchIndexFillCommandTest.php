@@ -42,17 +42,15 @@ final class SearchIndexFillCommandTest extends SearchIndexCommandTestCase
         $this->bootstrapCommand($command);
 
         $expectedCalls  = [
-            'Tests\LoyaltyCorp\Search\Stubs\PopulatorStub::populate' => [
-                [
-                    'handler' => $handlerStub,
-                    'indexSuffix' => '_new',
-                    'batchSize' => 200,
-                ],
-                [
-                    'handler' => $otherHandler,
-                    'indexSuffix' => '_new',
-                    'batchSize' => 200,
-                ],
+            [
+                'handler' => $handlerStub,
+                'indexSuffix' => '_new',
+                'batchSize' => 200,
+            ],
+            [
+                'handler' => $otherHandler,
+                'indexSuffix' => '_new',
+                'batchSize' => 200,
             ],
         ];
 

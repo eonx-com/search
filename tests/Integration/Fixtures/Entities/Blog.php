@@ -21,7 +21,7 @@ class Blog
 
     /**
      * @ORM\Column(type="integer")
-     * @ORM\Id()
+     * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      *
      * @var int
@@ -36,7 +36,7 @@ class Blog
     private $title;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param string $body
      * @param string $title

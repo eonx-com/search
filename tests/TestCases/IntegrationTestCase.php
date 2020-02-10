@@ -20,6 +20,8 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch\ClientStub;
 
 /**
+ * @coversNothing
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.StaticAccess)
  */
@@ -56,7 +58,7 @@ abstract class IntegrationTestCase extends DoctrineORMTestCase
 
         // Register and tag all handlers
         foreach ($this->getRegisteredHandlers() as $idx => $handler) {
-            $abstract = $handler.$idx;
+            $abstract = $handler . $idx;
 
             $container->singleton($abstract, $handler);
             $container->tag($abstract, ['search_handler']);
@@ -135,7 +137,7 @@ abstract class IntegrationTestCase extends DoctrineORMTestCase
     protected function getEntityPaths(): array
     {
         return [
-            \implode(\DIRECTORY_SEPARATOR, [$this->getProjectPath(), 'tests', 'Integration', 'Fixtures', 'Entities'])
+            \implode(\DIRECTORY_SEPARATOR, [$this->getProjectPath(), 'tests', 'Integration', 'Fixtures', 'Entities']),
         ];
     }
 

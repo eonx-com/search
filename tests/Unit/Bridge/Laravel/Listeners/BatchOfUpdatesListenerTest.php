@@ -27,7 +27,7 @@ final class BatchOfUpdatesListenerTest extends UnitTestCase
         $expectedProcessCalls = [
             [
                 'indexSuffix' => 'suffix',
-                'updates' => []
+                'updates' => [],
             ],
         ];
 

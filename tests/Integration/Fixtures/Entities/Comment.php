@@ -28,7 +28,7 @@ class Comment
 
     /**
      * @ORM\Column(type="integer")
-     * @ORM\Id()
+     * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      *
      * @var int
@@ -36,7 +36,7 @@ class Comment
     private $id;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \Tests\LoyaltyCorp\Search\Integration\Fixtures\Entities\Blog $blog
      * @param string $body

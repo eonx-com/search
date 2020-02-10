@@ -108,7 +108,7 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
             );
         });
     }
-    
+
     /**
      * @noinspection PhpMissingParentCallCommonInspection Parent implementation is empty
      *

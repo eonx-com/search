@@ -5,6 +5,9 @@ namespace LoyaltyCorp\Search\Interfaces\Helpers;
 
 use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 
+/**
+ * @internal
+ */
 interface RegisteredSearchHandlersInterface
 {
     /**

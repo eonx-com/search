@@ -26,7 +26,7 @@ use Tests\LoyaltyCorp\Search\Integration\Fixtures\Entities\Comment;
 class CommentSearchHandler extends DoctrineSearchHandler
 {
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \Doctrine\ORM\EntityManagerInterface $entityManager
      */
@@ -131,7 +131,7 @@ class CommentSearchHandler extends DoctrineSearchHandler
             (string)$comment->getId(),
             [
                 'body' => $comment->getBody(),
-                'title' => $comment->getBlog()->getTitle()
+                'title' => $comment->getBlog()->getTitle(),
             ]
         );
     }

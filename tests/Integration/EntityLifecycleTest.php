@@ -11,6 +11,9 @@ use Tests\LoyaltyCorp\Search\Integration\Fixtures\SearchHandlers\BlogSearchHandl
 use Tests\LoyaltyCorp\Search\Integration\Fixtures\SearchHandlers\CommentSearchHandler;
 use Tests\LoyaltyCorp\Search\TestCases\IntegrationTestCase;
 
+/**
+ * @coversNothing
+ */
 class EntityLifecycleTest extends IntegrationTestCase
 {
     /**
@@ -34,16 +37,16 @@ class EntityLifecycleTest extends IntegrationTestCase
                         'index' => [
                             '_index' => 'blog',
                             '_type' => 'doc',
-                            '_id' => '1'
-                        ]
+                            '_id' => '1',
+                        ],
                     ],
                     1 => [
                         'body' => 'Body',
                         'title' => 'Title',
-                        '_access_tokens' => ['anonymous']
-                    ]
-                ]
-            ]
+                        '_access_tokens' => ['anonymous'],
+                    ],
+                ],
+            ],
         ];
 
         $client = $this->getContainer()->get('search_elasticsearch_client');
@@ -80,7 +83,7 @@ class EntityLifecycleTest extends IntegrationTestCase
                             '_index' => 'blog',
                             '_type' => 'doc',
                             '_id' => '1',
-                        ]
+                        ],
                     ],
                     1 => [
                         'body' => 'Body',
@@ -92,15 +95,15 @@ class EntityLifecycleTest extends IntegrationTestCase
                             '_index' => 'comment',
                             '_type' => 'doc',
                             '_id' => '1',
-                        ]
+                        ],
                     ],
                     3 => [
                         'body' => 'comment body',
                         'title' => 'Updated Title',
-                        '_access_tokens' => ['anonymous']
-                    ]
-                ]
-            ]
+                        '_access_tokens' => ['anonymous'],
+                    ],
+                ],
+            ],
         ];
 
         $client = $this->getContainer()->get('search_elasticsearch_client');
@@ -109,7 +112,7 @@ class EntityLifecycleTest extends IntegrationTestCase
     }
 
     /**
-     * Tests multiple entities go in batches
+     * Tests multiple entities go in batches.
      *
      * @return void
      */
@@ -147,22 +150,22 @@ class EntityLifecycleTest extends IntegrationTestCase
                         'index' => [
                             '_index' => 'blog',
                             '_type' => 'doc',
-                            '_id' => '2'
-                        ]
+                            '_id' => '2',
+                        ],
                     ],
                     1 => [
                         'body' => 'Body1',
                         'title' => 'UPDATED BLOG 1',
-                        '_access_tokens' => ['anonymous']
+                        '_access_tokens' => ['anonymous'],
                     ],
                     2 => [
                         'delete' =>[
                             '_index' => 'blog',
                             '_type' => 'doc',
-                            '_id' => '1'
-                        ]
+                            '_id' => '1',
+                        ],
                     ],
-                ]
+                ],
             ],
             [
                 'body' => [
@@ -170,28 +173,28 @@ class EntityLifecycleTest extends IntegrationTestCase
                         'index' => [
                             '_index' => 'blog',
                             '_type' => 'doc',
-                            '_id' => '3'
-                        ]
+                            '_id' => '3',
+                        ],
                     ],
                     1 => [
                         'body' => 'Body2',
                         'title' => 'Title',
-                        '_access_tokens' => ['anonymous']
+                        '_access_tokens' => ['anonymous'],
                     ],
                     2 => [
                         'index' => [
                             '_index' => 'blog',
                             '_type' => 'doc',
-                            '_id' => '4'
-                        ]
+                            '_id' => '4',
+                        ],
                     ],
                     3 => [
                         'body' => 'Body3',
                         'title' => 'Title',
-                        '_access_tokens' => ['anonymous']
-                    ]
-                ]
-            ]
+                        '_access_tokens' => ['anonymous'],
+                    ],
+                ],
+            ],
         ];
 
         $client = $this->getContainer()->get('search_elasticsearch_client');
@@ -218,7 +221,7 @@ class EntityLifecycleTest extends IntegrationTestCase
     {
         return [
             BlogSearchHandler::class,
-            CommentSearchHandler::class
+            CommentSearchHandler::class,
         ];
     }
 }

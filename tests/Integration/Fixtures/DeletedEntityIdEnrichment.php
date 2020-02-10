@@ -19,7 +19,7 @@ class DeletedEntityIdEnrichment implements DeletedEntityEnrichmentInterface
         }
 
         return [
-            'deletedId' => $entity->getId()
+            'deletedId' => $entity->getId(),
         ];
     }
 }

@@ -65,7 +65,7 @@ final class EntityUpdateWorkerTest extends UnitTestCase
                             ['id' => 7]
                         )
                     ),
-                ])
+                ]),
             ],
         ];
 

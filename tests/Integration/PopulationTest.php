@@ -8,6 +8,9 @@ use Tests\LoyaltyCorp\Search\Integration\Fixtures\Entities\Blog;
 use Tests\LoyaltyCorp\Search\Integration\Fixtures\SearchHandlers\BlogSearchHandler;
 use Tests\LoyaltyCorp\Search\TestCases\IntegrationTestCase;
 
+/**
+ * @coversNothing
+ */
 class PopulationTest extends IntegrationTestCase
 {
     /**
@@ -31,7 +34,7 @@ class PopulationTest extends IntegrationTestCase
 
         $this->getContainer()->get('search_elasticsearch_client')->resetBulkCalls();
 
-        $blogHandler = $this->getContainer()->get(BlogSearchHandler::class.'0');
+        $blogHandler = $this->getContainer()->get(BlogSearchHandler::class . '0');
         $this->getContainer()->get(PopulatorInterface::class)
             ->populate(
                 $blogHandler,
@@ -46,27 +49,27 @@ class PopulationTest extends IntegrationTestCase
                         'index' => [
                             '_index' => 'blog_new',
                             '_type' => 'doc',
-                            '_id' => '1'
-                        ]
+                            '_id' => '1',
+                        ],
                     ],
                     1 => [
                         'body' => 'Body1',
                         'title' => 'Title',
-                        '_access_tokens' => ['anonymous']
+                        '_access_tokens' => ['anonymous'],
                     ],
                     2 => [
                         'index' => [
                             '_index' => 'blog_new',
                             '_type' => 'doc',
-                            '_id' => '2'
-                        ]
+                            '_id' => '2',
+                        ],
                     ],
                     3 => [
                         'body' => 'Body2',
                         'title' => 'Title',
-                        '_access_tokens' => ['anonymous']
+                        '_access_tokens' => ['anonymous'],
                     ],
-                ]
+                ],
             ],
             [
                 'body' => [
@@ -74,27 +77,27 @@ class PopulationTest extends IntegrationTestCase
                         'index' => [
                             '_index' => 'blog_new',
                             '_type' => 'doc',
-                            '_id' => '3'
-                        ]
+                            '_id' => '3',
+                        ],
                     ],
                     1 => [
                         'body' => 'Body3',
                         'title' => 'Title',
-                        '_access_tokens' => ['anonymous']
+                        '_access_tokens' => ['anonymous'],
                     ],
                     2 => [
                         'index' => [
                             '_index' => 'blog_new',
                             '_type' => 'doc',
-                            '_id' => '4'
-                        ]
+                            '_id' => '4',
+                        ],
                     ],
                     3 => [
                         'body' => 'Body4',
                         'title' => 'Title',
-                        '_access_tokens' => ['anonymous']
+                        '_access_tokens' => ['anonymous'],
                     ],
-                ]
+                ],
             ],
         ];
 
@@ -111,7 +114,7 @@ class PopulationTest extends IntegrationTestCase
     protected function getRegisteredHandlers(): array
     {
         return [
-            BlogSearchHandler::class
+            BlogSearchHandler::class,
         ];
     }
 }

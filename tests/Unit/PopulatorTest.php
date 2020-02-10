@@ -36,17 +36,17 @@ final class PopulatorTest extends UnitTestCase
                 'event' => new BatchOfUpdatesEvent(
                     '_suffix',
                     [
-                        new HandlerObjectForChange('handlerKey', $update1)
+                        new HandlerObjectForChange('handlerKey', $update1),
                     ]
-                )
+                ),
             ],
             [
                 'event' => new BatchOfUpdatesEvent(
                     '_suffix',
                     [
-                        new HandlerObjectForChange('handlerKey', $update2)
+                        new HandlerObjectForChange('handlerKey', $update2),
                     ]
-                )
+                ),
             ],
         ];
 
@@ -104,7 +104,7 @@ final class PopulatorTest extends UnitTestCase
                         new HandlerObjectForChange('handlerKey', $update1),
                         new HandlerObjectForChange('handlerKey', $update2),
                     ]
-                )
+                ),
             ],
         ];
 
@@ -142,7 +142,7 @@ final class PopulatorTest extends UnitTestCase
                         new HandlerObjectForChange('handlerKey', $update1),
                         new HandlerObjectForChange('handlerKey', $update2),
                     ]
-                )
+                ),
             ],
             [
                 'event' => new BatchOfUpdatesEvent(
@@ -150,7 +150,7 @@ final class PopulatorTest extends UnitTestCase
                     [
                         new HandlerObjectForChange('handlerKey', $update3),
                     ]
-                )
+                ),
             ],
         ];
 
@@ -185,7 +185,7 @@ final class PopulatorTest extends UnitTestCase
                     [
                         new HandlerObjectForChange('handlerKey', $update1),
                     ]
-                )
+                ),
             ],
         ];
 

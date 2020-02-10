@@ -19,7 +19,7 @@ use Tests\LoyaltyCorp\Search\Integration\Fixtures\Entities\Blog;
 class BlogSearchHandler extends DoctrineSearchHandler
 {
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \Doctrine\ORM\EntityManagerInterface $entityManager
      */
@@ -87,7 +87,7 @@ class BlogSearchHandler extends DoctrineSearchHandler
             (string)$blog->getId(),
             [
                 'body' => $blog->getBody(),
-                'title' => $blog->getTitle()
+                'title' => $blog->getTitle(),
             ]
         );
     }

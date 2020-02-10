@@ -120,10 +120,10 @@ final class ClientTest extends UnitTestCase
                     'delete' => [
                         '_index' => 'index',
                         '_type' => 'doc',
-                        '_id' => '1'
-                    ]
-                ]
-            ]
+                        '_id' => '1',
+                    ],
+                ],
+            ],
         ];
 
         $client->bulk([

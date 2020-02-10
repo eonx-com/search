@@ -20,7 +20,7 @@ final class ObjectForDelete extends ObjectForChange
     private $metadata;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @phpstan-param class-string<T> $class
      *

@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Workers;
 
-use EoneoPay\Externals\EventDispatcher\Interfaces\EventDispatcherInterface;
 use EonX\EasyEntityChange\DataTransferObjects\ChangedEntity;
 use EonX\EasyEntityChange\DataTransferObjects\DeletedEntity;
 use EonX\EasyEntityChange\DataTransferObjects\UpdatedEntity;
@@ -12,9 +11,10 @@ use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForDelete;
 use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate;
 use LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerChangeSubscription;
 use LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange;
-use LoyaltyCorp\Search\Events\BatchOfUpdates;
-use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
+use LoyaltyCorp\Search\Events\BatchOfUpdatesEvent;
+use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface;
 use LoyaltyCorp\Search\Interfaces\Workers\EntityUpdateWorkerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 final class EntityUpdateWorker implements EntityUpdateWorkerInterface
 {
@@ -24,24 +24,24 @@ final class EntityUpdateWorker implements EntityUpdateWorkerInterface
     private $batchSize;
 
     /**
-     * @var \EoneoPay\Externals\EventDispatcher\Interfaces\EventDispatcherInterface
+     * @var \Psr\EventDispatcher\EventDispatcherInterface
      */
     private $dispatcher;
 
     /**
-     * @var \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface
+     * @var \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface
      */
     private $registeredHandlers;
 
     /**
      * Constructor.
      *
-     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface $registeredHandlers
-     * @param \EoneoPay\Externals\EventDispatcher\Interfaces\EventDispatcherInterface $dispatcher
+     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface $registeredHandlers
+     * @param \Psr\EventDispatcher\EventDispatcherInterface $dispatcher
      * @param int $batchSize
      */
     public function __construct(
-        RegisteredSearchHandlerInterface $registeredHandlers,
+        RegisteredSearchHandlersInterface $registeredHandlers,
         EventDispatcherInterface $dispatcher,
         int $batchSize
     ) {
@@ -74,7 +74,7 @@ final class EntityUpdateWorker implements EntityUpdateWorkerInterface
         $batches = \array_chunk($updates, $this->batchSize);
 
         foreach ($batches as $batch) {
-            $this->dispatcher->dispatch(new BatchOfUpdates($batch));
+            $this->dispatcher->dispatch(new BatchOfUpdatesEvent('', $batch));
         }
     }
 
@@ -96,12 +96,18 @@ final class EntityUpdateWorker implements EntityUpdateWorkerInterface
         // If we didnt get a callable in the subscription it means that the handler is
         // fine to receive the objects as is.
         if (\is_callable($transform) === false) {
-            $classToBuild = $update instanceof DeletedEntity === true
-                ? ObjectForDelete::class
-                : ObjectForUpdate::class;
+            if ($update instanceof DeletedEntity === true) {
+                return [
+                    new ObjectForDelete(
+                        $update->getClass(),
+                        $update->getIds(),
+                        $update->getMetadata()
+                    ),
+                ];
+            }
 
             return [
-                new $classToBuild(
+                new ObjectForUpdate(
                     $update->getClass(),
                     $update->getIds()
                 ),

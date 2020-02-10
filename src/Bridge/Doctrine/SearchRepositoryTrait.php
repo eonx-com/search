@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Bridge\Doctrine;
 
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\QueryBuilder;
 use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate;
@@ -52,11 +53,10 @@ trait SearchRepositoryTrait
 
         // Doctrine has weird behaviour where the data index for the result is
         // in an incrementing index for each row
-        $index = 0;
-        foreach ($builder->getQuery()->iterate() as $result) {
+        foreach ($builder->getQuery()->iterate([], AbstractQuery::HYDRATE_SCALAR) as $result) {
             // For each result, create an ObjectForUpdate object.
             yield new ObjectForUpdate($searchClass, [
-                $field => $result[$index++][$field],
+                $field => $result[0][$field],
             ]);
         }
     }
@@ -129,12 +129,6 @@ trait SearchRepositoryTrait
 
             // We somehow got back an entity that wasn't in the reverseId map.
             if (isset($reverseIds[$entityId]) === false) {
-                continue;
-            }
-
-            // We got back an entity that doesnt implement the changeClass
-            $changeClass = $reverseIds[$entityId]->getClass();
-            if ($entity instanceof $changeClass === false) {
                 continue;
             }
 

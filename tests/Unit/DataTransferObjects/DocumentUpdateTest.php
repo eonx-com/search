@@ -19,8 +19,10 @@ final class DocumentUpdateTest extends UnitTestCase
     public function testMethods(): void
     {
         $update = new DocumentUpdate('id', 'document');
+        $update->addExtra('extra', 'thing');
 
         self::assertSame('document', $update->getDocument());
         self::assertSame('index', $update::getAction());
+        self::assertSame(['extra' => 'thing'], $update->getExtra());
     }
 }

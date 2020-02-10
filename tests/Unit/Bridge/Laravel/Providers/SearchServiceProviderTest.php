@@ -4,8 +4,6 @@ declare(strict_types=1);
 namespace Tests\LoyaltyCorp\Search\Unit\Bridge\Laravel\Providers;
 
 use Doctrine\ORM\EntityManagerInterface as DoctrineEntityManagerInterface;
-use EoneoPay\Externals\Bridge\Laravel\EventDispatcher;
-use EoneoPay\Externals\EventDispatcher\Interfaces\EventDispatcherInterface;
 use EoneoPay\Externals\HttpClient\Client as HttpClient;
 use EoneoPay\Externals\HttpClient\ExceptionHandler;
 use EoneoPay\Externals\HttpClient\Interfaces\ClientInterface as HttpClientInterface;
@@ -24,13 +22,13 @@ use LoyaltyCorp\Search\Bridge\Laravel\Listeners\EntityUpdateListener;
 use LoyaltyCorp\Search\Bridge\Laravel\Providers\SearchServiceProvider;
 use LoyaltyCorp\Search\Client;
 use LoyaltyCorp\Search\Helpers\ClientBulkResponseHelper;
-use LoyaltyCorp\Search\Helpers\RegisteredSearchHandler;
+use LoyaltyCorp\Search\Helpers\RegisteredSearchHandlers;
 use LoyaltyCorp\Search\Indexer;
 use LoyaltyCorp\Search\Indexer\AccessTokenMappingHelper;
 use LoyaltyCorp\Search\Interfaces\Access\AccessPopulatorInterface;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\ClientBulkResponseHelperInterface;
-use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
+use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface;
 use LoyaltyCorp\Search\Interfaces\Indexer\MappingHelperInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
@@ -45,7 +43,9 @@ use LoyaltyCorp\Search\ResponseFactory;
 use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use LoyaltyCorp\Search\UpdateProcessor;
 use LoyaltyCorp\Search\Workers\EntityUpdateWorker;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use stdClass;
+use Tests\LoyaltyCorp\Search\Stubs\EventDispatcherStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NonDoctrineHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Doctrine\RegistryStub;
@@ -71,6 +71,11 @@ final class SearchServiceProviderTest extends UnitTestCase
     {
         $application = $this->createApplication();
 
+        $application->singleton(
+            EventDispatcherInterface::class,
+            EventDispatcherStub::class
+        );
+
         // Run registration
         (new SearchServiceProvider($application))->register();
 
@@ -80,12 +85,11 @@ final class SearchServiceProviderTest extends UnitTestCase
             ClientBulkResponseHelperInterface::class => ClientBulkResponseHelper::class,
             EntityUpdateListener::class => EntityUpdateListener::class,
             EntityUpdateWorkerInterface::class => EntityUpdateWorker::class,
-            EventDispatcherInterface::class => EventDispatcher::class,
             IndexNameTransformerInterface::class => DefaultIndexNameTransformer::class,
             IndexerInterface::class => Indexer::class,
             MappingHelperInterface::class => AccessTokenMappingHelper::class,
             PopulatorInterface::class => Populator::class,
-            RegisteredSearchHandlerInterface::class => RegisteredSearchHandler::class,
+            RegisteredSearchHandlersInterface::class => RegisteredSearchHandlers::class,
             RequestProxyFactoryInterface::class => RequestProxyFactory::class,
             ResponseFactoryInterface::class => ResponseFactory::class,
             UpdateProcessorInterface::class => UpdateProcessor::class,
@@ -120,7 +124,7 @@ final class SearchServiceProviderTest extends UnitTestCase
         $serviceProvider = new SearchServiceProvider($application);
         $serviceProvider->register();
 
-        $registeredHandlers = $application->make(RegisteredSearchHandlerInterface::class);
+        $registeredHandlers = $application->make(RegisteredSearchHandlersInterface::class);
 
         self::assertEquals($expected, $registeredHandlers->getAll());
     }

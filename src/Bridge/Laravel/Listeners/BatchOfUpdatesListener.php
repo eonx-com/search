@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace LoyaltyCorp\Search\Bridge\Laravel\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
-use LoyaltyCorp\Search\Events\BatchOfUpdates;
+use LoyaltyCorp\Search\Events\BatchOfUpdatesEvent;
 use LoyaltyCorp\Search\Interfaces\UpdateProcessorInterface;
 
 class BatchOfUpdatesListener implements ShouldQueue
@@ -27,12 +27,15 @@ class BatchOfUpdatesListener implements ShouldQueue
     /**
      * Handles batch of updates.
      *
-     * @param \LoyaltyCorp\Search\Events\BatchOfUpdates $batchOfUpdates
+     * @param \LoyaltyCorp\Search\Events\BatchOfUpdatesEvent $batchOfUpdates
      *
      * @return void
      */
-    public function handle(BatchOfUpdates $batchOfUpdates): void
+    public function handle(BatchOfUpdatesEvent $batchOfUpdates): void
     {
-        $this->updateProcessor->process('', $batchOfUpdates->getUpdates());
+        $this->updateProcessor->process(
+            $batchOfUpdates->getIndexSuffix(),
+            $batchOfUpdates->getUpdates()
+        );
     }
 }

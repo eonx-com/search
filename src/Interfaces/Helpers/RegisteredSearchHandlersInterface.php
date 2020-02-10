@@ -5,7 +5,10 @@ namespace LoyaltyCorp\Search\Interfaces\Helpers;
 
 use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 
-interface RegisteredSearchHandlerInterface
+/**
+ * @internal
+ */
+interface RegisteredSearchHandlersInterface
 {
     /**
      * Get all search handlers that have been registered in the container.

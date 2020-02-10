@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Stubs;
 
-use EoneoPay\Externals\EventDispatcher\Interfaces\EventDispatcherInterface;
 use Eonx\TestUtils\Stubs\BaseStub;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @coversNothing
@@ -14,11 +14,11 @@ final class EventDispatcherStub extends BaseStub implements EventDispatcherInter
     /**
      * {@inheritdoc}
      */
-    public function dispatch($event, $payload = null, ?bool $halt = null): ?array
+    public function dispatch($event)
     {
         $this->saveCalls(__FUNCTION__, \get_defined_vars());
 
-        return [];
+        return $event;
     }
 
     /**
@@ -29,13 +29,5 @@ final class EventDispatcherStub extends BaseStub implements EventDispatcherInter
     public function getDispatchCalls(): array
     {
         return $this->getCalls('dispatch');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function listen(array $events, string $listener): void
-    {
-        $this->saveCalls(__FUNCTION__, \get_defined_vars());
     }
 }

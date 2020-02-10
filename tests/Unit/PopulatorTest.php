@@ -3,17 +3,13 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Unit;
 
-use LoyaltyCorp\Search\DataTransferObjects\DocumentUpdate;
 use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate;
-use LoyaltyCorp\Search\DataTransferObjects\IndexAction;
-use LoyaltyCorp\Search\Interfaces\ClientInterface;
-use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
+use LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange;
+use LoyaltyCorp\Search\Events\BatchOfUpdatesEvent;
 use LoyaltyCorp\Search\Populator;
-use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use stdClass;
-use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
+use Tests\LoyaltyCorp\Search\Stubs\EventDispatcherStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableHandlerStub;
-use Tests\LoyaltyCorp\Search\Stubs\LegacyClientStub;
 use Tests\LoyaltyCorp\Search\TestCases\UnitTestCase;
 
 /**
@@ -35,62 +31,36 @@ final class PopulatorTest extends UnitTestCase
 
         $objects = [$update1, $update2];
 
-        $documentUpdate1 = new DocumentUpdate('search1', 'document');
-        $documentUpdate2 = new DocumentUpdate('search2', 'document');
-
         $expected = [
             [
-                'actions' => [new IndexAction($documentUpdate1, 'valid_suffix')],
+                'event' => new BatchOfUpdatesEvent(
+                    '_suffix',
+                    [
+                        new HandlerObjectForChange('handlerKey', $update1),
+                    ]
+                ),
             ],
             [
-                'actions' => [new IndexAction($documentUpdate2, 'valid_suffix')],
+                'event' => new BatchOfUpdatesEvent(
+                    '_suffix',
+                    [
+                        new HandlerObjectForChange('handlerKey', $update2),
+                    ]
+                ),
             ],
         ];
 
         $handler = new TransformableHandlerStub('valid', [
+            'getHandlerKey' => 'handlerKey',
             'getFillIterable' => [$objects],
-            'transform' => [
-                $documentUpdate1,
-                $documentUpdate2,
-            ],
         ]);
 
-        $client = new ClientStub();
-        $populator = $this->getPopulator($client);
+        $dispatcher = new EventDispatcherStub();
+        $populator = new Populator($dispatcher);
 
         $populator->populate($handler, '_suffix', 1);
 
-        self::assertEquals($expected, $client->getCalls('bulk'));
-    }
-
-    /**
-     * Tests the populator when there is more than one batch.
-     *
-     * @return void
-     */
-    public function testSkippingUpdates(): void
-    {
-        $update1 = new ObjectForUpdate(stdClass::class, ['id' => 'search1']);
-        $update2 = new ObjectForUpdate(stdClass::class, ['id' => 'search2']);
-
-        $objects = [$update1, $update2];
-
-        $expected = [];
-
-        $handler = new TransformableHandlerStub('valid', [
-            'getFillIterable' => [$objects],
-            'transform' => [
-                null,
-                null,
-            ],
-        ]);
-
-        $client = new ClientStub();
-        $populator = $this->getPopulator($client);
-
-        $populator->populate($handler, '_suffix', 1);
-
-        self::assertEquals($expected, $client->getCalls('bulk'));
+        self::assertEquals($expected, $dispatcher->getCalls('dispatch'));
     }
 
     /**
@@ -106,16 +76,16 @@ final class PopulatorTest extends UnitTestCase
             'getFillIterable' => [[]],
         ]);
 
-        $client = new ClientStub();
-        $populator = $this->getPopulator($client);
+        $dispatcher = new EventDispatcherStub();
+        $populator = new Populator($dispatcher);
 
         $populator->populate($handler, '_suffix', 1);
 
-        self::assertEquals($expected, $client->getCalls('bulk'));
+        self::assertEquals($expected, $dispatcher->getCalls('dispatch'));
     }
 
     /**
-     * Tests the populator when there is more than one batch.
+     * Tests the populator when the batch is exactly the size of the batch count.
      *
      * @return void
      */
@@ -126,32 +96,29 @@ final class PopulatorTest extends UnitTestCase
 
         $objects = [$update1, $update2];
 
-        $documentUpdate1 = new DocumentUpdate('search1', 'document');
-        $documentUpdate2 = new DocumentUpdate('search2', 'document');
-
         $expected = [
             [
-                'actions' => [
-                    new IndexAction($documentUpdate1, 'valid_suffix'),
-                    new IndexAction($documentUpdate2, 'valid_suffix'),
-                ],
+                'event' => new BatchOfUpdatesEvent(
+                    '_suffix',
+                    [
+                        new HandlerObjectForChange('handlerKey', $update1),
+                        new HandlerObjectForChange('handlerKey', $update2),
+                    ]
+                ),
             ],
         ];
 
         $handler = new TransformableHandlerStub('valid', [
+            'getHandlerKey' => 'handlerKey',
             'getFillIterable' => [$objects],
-            'transform' => [
-                $documentUpdate1,
-                $documentUpdate2,
-            ],
         ]);
 
-        $client = new ClientStub();
-        $populator = $this->getPopulator($client);
+        $dispatcher = new EventDispatcherStub();
+        $populator = new Populator($dispatcher);
 
         $populator->populate($handler, '_suffix', 2);
 
-        self::assertEquals($expected, $client->getCalls('bulk'));
+        self::assertEquals($expected, $dispatcher->getCalls('dispatch'));
     }
 
     /**
@@ -167,39 +134,37 @@ final class PopulatorTest extends UnitTestCase
 
         $objects = [$update1, $update2, $update3];
 
-        $documentUpdate1 = new DocumentUpdate('search1', 'document');
-        $documentUpdate2 = new DocumentUpdate('search2', 'document');
-        $documentUpdate3 = new DocumentUpdate('search3', 'document');
-
         $expected = [
             [
-                'actions' => [
-                    new IndexAction($documentUpdate1, 'valid_suffix'),
-                    new IndexAction($documentUpdate2, 'valid_suffix'),
-                ],
+                'event' => new BatchOfUpdatesEvent(
+                    '_suffix',
+                    [
+                        new HandlerObjectForChange('handlerKey', $update1),
+                        new HandlerObjectForChange('handlerKey', $update2),
+                    ]
+                ),
             ],
             [
-                'actions' => [
-                    new IndexAction($documentUpdate3, 'valid_suffix'),
-                ],
+                'event' => new BatchOfUpdatesEvent(
+                    '_suffix',
+                    [
+                        new HandlerObjectForChange('handlerKey', $update3),
+                    ]
+                ),
             ],
         ];
 
         $handler = new TransformableHandlerStub('valid', [
+            'getHandlerKey' => 'handlerKey',
             'getFillIterable' => [$objects],
-            'transform' => [
-                $documentUpdate1,
-                $documentUpdate2,
-                $documentUpdate3,
-            ],
         ]);
 
-        $client = new ClientStub();
-        $populator = $this->getPopulator($client);
+        $dispatcher = new EventDispatcherStub();
+        $populator = new Populator($dispatcher);
 
         $populator->populate($handler, '_suffix', 2);
 
-        self::assertEquals($expected, $client->getCalls('bulk'));
+        self::assertEquals($expected, $dispatcher->getCalls('dispatch'));
     }
 
     /**
@@ -213,46 +178,27 @@ final class PopulatorTest extends UnitTestCase
 
         $objects = [$update1];
 
-        $documentUpdate1 = new DocumentUpdate('search1', 'document');
-
         $expected = [
             [
-                'actions' => [
-                    new IndexAction($documentUpdate1, 'valid_suffix'),
-                ],
+                'event' => new BatchOfUpdatesEvent(
+                    '_suffix',
+                    [
+                        new HandlerObjectForChange('handlerKey', $update1),
+                    ]
+                ),
             ],
         ];
 
         $handler = new TransformableHandlerStub('valid', [
+            'getHandlerKey' => 'handlerKey',
             'getFillIterable' => [$objects],
-            'transform' => [
-                $documentUpdate1,
-            ],
         ]);
 
-        $client = new ClientStub();
-        $populator = $this->getPopulator($client);
+        $dispatcher = new EventDispatcherStub();
+        $populator = new Populator($dispatcher);
 
         $populator->populate($handler, '_suffix', 2);
 
-        self::assertEquals($expected, $client->getCalls('bulk'));
-    }
-
-    /**
-     * Returns the populator under test.
-     *
-     * @param \LoyaltyCorp\Search\Interfaces\ClientInterface|null $client
-     * @param \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface|null $nameTransformer
-     *
-     * @return \LoyaltyCorp\Search\Populator
-     */
-    private function getPopulator(
-        ?ClientInterface $client = null,
-        ?IndexNameTransformerInterface $nameTransformer = null
-    ): Populator {
-        return new Populator(
-            $client ?? new LegacyClientStub(),
-            $nameTransformer ?? new DefaultIndexNameTransformer()
-        );
+        self::assertEquals($expected, $dispatcher->getCalls('dispatch'));
     }
 }

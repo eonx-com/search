@@ -12,4 +12,34 @@ namespace LoyaltyCorp\Search\DataTransferObjects\Handlers;
  */
 final class ObjectForDelete extends ObjectForChange
 {
+    /**
+     * Stores metadata from the EntityChange system.
+     *
+     * @var mixed[]
+     */
+    private $metadata;
+
+    /**
+     * Constructor.
+     *
+     * @phpstan-param class-string<T> $class
+     *
+     * @param string $class
+     * @param mixed[] $ids
+     * @param mixed[]|null $metadata
+     */
+    public function __construct(string $class, array $ids, ?array $metadata = null)
+    {
+        parent::__construct($class, $ids, null);
+
+        $this->metadata = $metadata ?? [];
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public function getMetadata(): ?array
+    {
+        return $this->metadata;
+    }
 }

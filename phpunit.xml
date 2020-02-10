@@ -7,6 +7,9 @@
         <testsuite name="Search Test Suite">
             <directory>./tests</directory>
         </testsuite>
+        <testsuite name="Validation Test Suite">
+            <directory>./vendor/eonx-com/test-utils/Tests/Validation</directory>
+        </testsuite>
     </testsuites>
 
     <filter>
@@ -14,4 +17,8 @@
             <directory suffix=".php">./src</directory>
         </whitelist>
     </filter>
+
+    <php>
+        <env name="ELASTICSEARCH_UPDATES_BATCH_SIZE" value="2" />
+    </php>
 </phpunit>

@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace Tests\LoyaltyCorp\Search\Unit\Bridge\Laravel\Console\Commands;
 
 use LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexCleanCommand;
-use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
+use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableHandlerStub;
-use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlersStub;
 use Tests\LoyaltyCorp\Search\Stubs\IndexerStub;
 use Tests\LoyaltyCorp\Search\TestCases\Unit\SearchIndexCommandTestCase;
 
@@ -34,7 +34,7 @@ final class SearchIndexCleanCommandTest extends SearchIndexCommandTestCase
             new TransformableHandlerStub('other'),
         ];
 
-        $registeredHandlers = new RegisteredSearchHandlerStub([
+        $registeredHandlers = new RegisteredSearchHandlersStub([
             'getAll' => [
                 $handlers,
             ],
@@ -55,13 +55,13 @@ final class SearchIndexCleanCommandTest extends SearchIndexCommandTestCase
      * Create command instance.
      *
      * @param \LoyaltyCorp\Search\Interfaces\IndexerInterface $indexer
-     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface $registeredHandlers
+     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface $registeredHandlers
      *
      * @return \LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexCleanCommand
      */
     private function createInstance(
         IndexerInterface $indexer,
-        RegisteredSearchHandlerInterface $registeredHandlers
+        RegisteredSearchHandlersInterface $registeredHandlers
     ): SearchIndexCleanCommand {
         return new SearchIndexCleanCommand(
             $indexer,

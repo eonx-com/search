@@ -4,14 +4,14 @@ declare(strict_types=1);
 namespace Tests\LoyaltyCorp\Search\Unit\Bridge\Laravel\Console\Commands;
 
 use LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexLiveCommand;
-use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface;
+use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableHandlerStub;
-use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlersStub;
 use Tests\LoyaltyCorp\Search\Stubs\IndexerStub;
 use Tests\LoyaltyCorp\Search\TestCases\Unit\SearchIndexCommandTestCase;
 
@@ -34,7 +34,7 @@ final class SearchIndexLiveCommandTest extends SearchIndexCommandTestCase
         $indexer = new IndexerStub();
         $handlers = [new TransformableHandlerStub()];
 
-        $registeredHandlers = new RegisteredSearchHandlerStub([
+        $registeredHandlers = new RegisteredSearchHandlersStub([
             'getAll' => [
                 $handlers,
             ],
@@ -61,7 +61,7 @@ final class SearchIndexLiveCommandTest extends SearchIndexCommandTestCase
         $indexer = new IndexerStub();
         $handlers = [new TransformableHandlerStub()];
 
-        $registeredHandlers = new RegisteredSearchHandlerStub([
+        $registeredHandlers = new RegisteredSearchHandlersStub([
             'getAll' => [
                 $handlers,
             ],
@@ -95,7 +95,7 @@ final class SearchIndexLiveCommandTest extends SearchIndexCommandTestCase
         $indexer = new IndexerStub();
         $handlers = [new TransformableHandlerStub()];
 
-        $registeredHandlers = new RegisteredSearchHandlerStub([
+        $registeredHandlers = new RegisteredSearchHandlersStub([
             'getAll' => [
                 $handlers,
             ],
@@ -113,13 +113,13 @@ final class SearchIndexLiveCommandTest extends SearchIndexCommandTestCase
      * Create command instance.
      *
      * @param \LoyaltyCorp\Search\Interfaces\IndexerInterface $indexer
-     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface $registeredHandlers
+     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface $registeredHandlers
      *
      * @return \LoyaltyCorp\Search\Bridge\Laravel\Console\Commands\SearchIndexLiveCommand
      */
     private function createInstance(
         IndexerInterface $indexer,
-        RegisteredSearchHandlerInterface $registeredHandlers
+        RegisteredSearchHandlersInterface $registeredHandlers
     ): SearchIndexLiveCommand {
         return new SearchIndexLiveCommand(
             $indexer,

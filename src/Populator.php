@@ -61,6 +61,8 @@ final class Populator implements PopulatorInterface
     ): void {
         $actions = [];
 
+        $handler->prefill($objects);
+
         foreach ($objects as $object) {
             $update = $handler->transform($object);
 

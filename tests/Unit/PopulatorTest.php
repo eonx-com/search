@@ -55,12 +55,22 @@ final class PopulatorTest extends UnitTestCase
             ],
         ]);
 
+        $expectedPrefillCalls = [
+            [
+                'changes' => [new ObjectForUpdate(stdClass::class, ['id' => 'search1'], null)],
+            ],
+            [
+                'changes' => [new ObjectForUpdate(stdClass::class, ['id' => 'search2'], null)],
+            ],
+        ];
+
         $client = new ClientStub();
         $populator = $this->getPopulator($client);
 
         $populator->populate($handler, '_suffix', 1);
 
         self::assertEquals($expected, $client->getCalls('bulk'));
+        self::assertEquals($expectedPrefillCalls, $handler->getCalls('prefill'));
     }
 
     /**
@@ -85,12 +95,22 @@ final class PopulatorTest extends UnitTestCase
             ],
         ]);
 
+        $expectedPrefillCalls = [
+            [
+                'changes' => [new ObjectForUpdate(stdClass::class, ['id' => 'search1'], null)],
+            ],
+            [
+                'changes' => [new ObjectForUpdate(stdClass::class, ['id' => 'search2'], null)],
+            ],
+        ];
+
         $client = new ClientStub();
         $populator = $this->getPopulator($client);
 
         $populator->populate($handler, '_suffix', 1);
 
         self::assertEquals($expected, $client->getCalls('bulk'));
+        self::assertEquals($expectedPrefillCalls, $handler->getCalls('prefill'));
     }
 
     /**
@@ -112,6 +132,7 @@ final class PopulatorTest extends UnitTestCase
         $populator->populate($handler, '_suffix', 1);
 
         self::assertEquals($expected, $client->getCalls('bulk'));
+        self::assertEquals([], $handler->getCalls('prefill'));
     }
 
     /**
@@ -146,12 +167,22 @@ final class PopulatorTest extends UnitTestCase
             ],
         ]);
 
+        $expectedPrefillCalls = [
+            [
+                'changes' => [
+                    new ObjectForUpdate(stdClass::class, ['id' => 'search1'], null),
+                    new ObjectForUpdate(stdClass::class, ['id' => 'search2'], null),
+                ],
+            ],
+        ];
+
         $client = new ClientStub();
         $populator = $this->getPopulator($client);
 
         $populator->populate($handler, '_suffix', 2);
 
         self::assertEquals($expected, $client->getCalls('bulk'));
+        self::assertEquals($expectedPrefillCalls, $handler->getCalls('prefill'));
     }
 
     /**
@@ -194,12 +225,27 @@ final class PopulatorTest extends UnitTestCase
             ],
         ]);
 
+        $expectedPrefillCalls = [
+            [
+                'changes' => [
+                    new ObjectForUpdate(stdClass::class, ['id' => 'search1'], null),
+                    new ObjectForUpdate(stdClass::class, ['id' => 'search2'], null),
+                ],
+            ],
+            [
+                'changes' => [
+                    new ObjectForUpdate(stdClass::class, ['id' => 'search2'], null),
+                ],
+            ],
+        ];
+
         $client = new ClientStub();
         $populator = $this->getPopulator($client);
 
         $populator->populate($handler, '_suffix', 2);
 
         self::assertEquals($expected, $client->getCalls('bulk'));
+        self::assertEquals($expectedPrefillCalls, $handler->getCalls('prefill'));
     }
 
     /**
@@ -230,12 +276,21 @@ final class PopulatorTest extends UnitTestCase
             ],
         ]);
 
+        $expectedPrefillCalls = [
+            [
+                'changes' => [
+                    new ObjectForUpdate(stdClass::class, ['id' => 'search1'], null),
+                ],
+            ],
+        ];
+
         $client = new ClientStub();
         $populator = $this->getPopulator($client);
 
         $populator->populate($handler, '_suffix', 2);
 
         self::assertEquals($expected, $client->getCalls('bulk'));
+        self::assertEquals($expectedPrefillCalls, $handler->getCalls('prefill'));
     }
 
     /**

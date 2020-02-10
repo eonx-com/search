@@ -155,12 +155,12 @@ final class ClientTest extends UnitTestCase
                 [
                     'body' => 'does stuff',
                     'extra' => 'thing',
-                ]
+                ],
             ],
         ];
 
         $documentAction = new DocumentUpdate('1', [
-            'body' => 'does stuff'
+            'body' => 'does stuff',
         ]);
         $documentAction->addExtra('body', 'not overridden');
         $documentAction->addExtra('extra', 'thing');

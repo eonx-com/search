@@ -51,7 +51,8 @@ class PopulationTest extends IntegrationTestCase
                     ],
                     1 => [
                         'body' => 'Body1',
-                        'title' => 'Title'
+                        'title' => 'Title',
+                        '_access_tokens' => ['anonymous']
                     ],
                     2 => [
                         'index' => [
@@ -62,7 +63,8 @@ class PopulationTest extends IntegrationTestCase
                     ],
                     3 => [
                         'body' => 'Body2',
-                        'title' => 'Title'
+                        'title' => 'Title',
+                        '_access_tokens' => ['anonymous']
                     ],
                 ]
             ],
@@ -77,7 +79,8 @@ class PopulationTest extends IntegrationTestCase
                     ],
                     1 => [
                         'body' => 'Body3',
-                        'title' => 'Title'
+                        'title' => 'Title',
+                        '_access_tokens' => ['anonymous']
                     ],
                     2 => [
                         'index' => [
@@ -88,7 +91,8 @@ class PopulationTest extends IntegrationTestCase
                     ],
                     3 => [
                         'body' => 'Body4',
-                        'title' => 'Title'
+                        'title' => 'Title',
+                        '_access_tokens' => ['anonymous']
                     ],
                 ]
             ],

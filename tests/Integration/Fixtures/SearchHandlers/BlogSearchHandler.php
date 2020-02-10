@@ -10,6 +10,7 @@ use LoyaltyCorp\Search\DataTransferObjects\DocumentDelete;
 use LoyaltyCorp\Search\DataTransferObjects\DocumentUpdate;
 use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange;
 use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForDelete;
+use RuntimeException;
 use Tests\LoyaltyCorp\Search\Integration\Fixtures\Entities\Blog;
 
 /**
@@ -65,13 +66,13 @@ class BlogSearchHandler extends DoctrineSearchHandler
     public function transform(ObjectForChange $change): ?DocumentAction
     {
         if ($change instanceof ObjectForDelete === true) {
-            if (($change->getMetadata()['deletedId'] ?? null) === null) {
+            $deletedId = $change->getMetadata()['deletedId'] ?? null;
+
+            if ($deletedId === null) {
                 return null;
             }
 
-            return new DocumentDelete(
-                (string)$change->getMetadata()['deletedId']
-            );
+            return new DocumentDelete((string)$deletedId);
         }
 
         $blog = $change->getObject();
@@ -79,7 +80,7 @@ class BlogSearchHandler extends DoctrineSearchHandler
         if ($blog instanceof Blog === false) {
             // Since the DoctrineSearchHandler prefills objects if we didnt get one
             // something is super wrong.
-            throw new \RuntimeException();
+            throw new RuntimeException();
         }
 
         return new DocumentUpdate(

@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Unit\Workers;
 
-use EoneoPay\Externals\EventDispatcher\Interfaces\EventDispatcherInterface;
 use EonX\EasyEntityChange\DataTransferObjects\ChangedEntity;
 use EonX\EasyEntityChange\DataTransferObjects\DeletedEntity;
 use EonX\EasyEntityChange\DataTransferObjects\UpdatedEntity;
@@ -15,6 +14,7 @@ use LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange;
 use LoyaltyCorp\Search\Events\BatchOfUpdatesEvent;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface;
 use LoyaltyCorp\Search\Workers\EntityUpdateWorker;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use stdClass;
 use Tests\LoyaltyCorp\Search\Stubs\EventDispatcherStub;
 use Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlersStub;
@@ -57,7 +57,7 @@ final class EntityUpdateWorkerTest extends UnitTestCase
 
         $expectedDispatch = [
             [
-                'event' => new BatchOfUpdatesEvent([
+                'event' => new BatchOfUpdatesEvent('', [
                     new HandlerObjectForChange(
                         'handler',
                         new ObjectForDelete(
@@ -65,9 +65,7 @@ final class EntityUpdateWorkerTest extends UnitTestCase
                             ['id' => 7]
                         )
                     ),
-                ]),
-                'payload' => null,
-                'halt' => null,
+                ])
             ],
         ];
 
@@ -77,6 +75,71 @@ final class EntityUpdateWorkerTest extends UnitTestCase
 
         $worker->handle([
             new DeletedEntity(stdClass::class, ['id' => 7], []),
+        ]);
+
+        self::assertEquals($expectedDispatch, $eventDispatcher->getDispatchCalls());
+    }
+
+    /**
+     * Tests that HandlerObjectForChange array is dispatched by batches.
+     *
+     * @return void
+     */
+    public function testHandlesDispatchingByBatches(): void
+    {
+        $searchHandlers = new RegisteredSearchHandlersStub([
+            'getSubscriptionsGroupedByClass' => [
+                [
+                    stdClass::class => [
+                        new HandlerChangeSubscription(
+                            'handler',
+                            new ChangeSubscription(stdClass::class)
+                        ),
+                    ],
+                ],
+            ],
+        ]);
+
+        $expectedDispatch = [
+            [
+                'event' => new BatchOfUpdatesEvent('', [
+                    new HandlerObjectForChange(
+                        'handler',
+                        new ObjectForUpdate(
+                            stdClass::class,
+                            ['id' => 7]
+                        )
+                    ),
+                    new HandlerObjectForChange(
+                        'handler',
+                        new ObjectForUpdate(
+                            stdClass::class,
+                            ['id' => 8]
+                        )
+                    ),
+                ]),
+            ],
+            [
+                'event' => new BatchOfUpdatesEvent('', [
+                    new HandlerObjectForChange(
+                        'handler',
+                        new ObjectForUpdate(
+                            stdClass::class,
+                            ['id' => 9]
+                        )
+                    ),
+                ]),
+            ],
+        ];
+
+        $eventDispatcher = new EventDispatcherStub();
+
+        $worker = $this->createWorker($eventDispatcher, $searchHandlers);
+
+        $worker->handle([
+            new UpdatedEntity(['interesting'], stdClass::class, ['id' => 7]),
+            new UpdatedEntity(['interesting'], stdClass::class, ['id' => 8]),
+            new UpdatedEntity(['interesting'], stdClass::class, ['id' => 9]),
         ]);
 
         self::assertEquals($expectedDispatch, $eventDispatcher->getDispatchCalls());
@@ -121,6 +184,51 @@ final class EntityUpdateWorkerTest extends UnitTestCase
      *
      * @return void
      */
+    public function testHandlesMatchingSubscriptionNullProperties(): void
+    {
+        $searchHandlers = new RegisteredSearchHandlersStub([
+            'getSubscriptionsGroupedByClass' => [
+                [
+                    stdClass::class => [
+                        new HandlerChangeSubscription(
+                            'handler',
+                            new ChangeSubscription(stdClass::class)
+                        ),
+                    ],
+                ],
+            ],
+        ]);
+
+        $expectedDispatch = [
+            [
+                'event' => new BatchOfUpdatesEvent('', [
+                    new HandlerObjectForChange(
+                        'handler',
+                        new ObjectForUpdate(
+                            stdClass::class,
+                            ['id' => 7]
+                        )
+                    ),
+                ]),
+            ],
+        ];
+
+        $eventDispatcher = new EventDispatcherStub();
+
+        $worker = $this->createWorker($eventDispatcher, $searchHandlers);
+
+        $worker->handle([
+            new UpdatedEntity(['interesting'], stdClass::class, ['id' => 7]),
+        ]);
+
+        self::assertEquals($expectedDispatch, $eventDispatcher->getDispatchCalls());
+    }
+
+    /**
+     * Tests that nothing happens when the subscription doesnt contain an intersection of property changes.
+     *
+     * @return void
+     */
     public function testHandlesMatchingSubscriptionPropertiesNoTransform(): void
     {
         $searchHandlers = new RegisteredSearchHandlersStub([
@@ -141,7 +249,7 @@ final class EntityUpdateWorkerTest extends UnitTestCase
 
         $expectedDispatch = [
             [
-                'event' => new BatchOfUpdatesEvent([
+                'event' => new BatchOfUpdatesEvent('', [
                     new HandlerObjectForChange(
                         'handler',
                         new ObjectForUpdate(
@@ -150,8 +258,6 @@ final class EntityUpdateWorkerTest extends UnitTestCase
                         )
                     ),
                 ]),
-                'payload' => null,
-                'halt' => null,
             ],
         ];
 
@@ -211,7 +317,7 @@ final class EntityUpdateWorkerTest extends UnitTestCase
 
         $expectedDispatch = [
             [
-                'event' => new BatchOfUpdatesEvent([
+                'event' => new BatchOfUpdatesEvent('', [
                     new HandlerObjectForChange(
                         'handler',
                         new ObjectForUpdate(
@@ -220,8 +326,6 @@ final class EntityUpdateWorkerTest extends UnitTestCase
                         )
                     ),
                 ]),
-                'payload' => null,
-                'halt' => null,
             ],
         ];
 
@@ -231,122 +335,6 @@ final class EntityUpdateWorkerTest extends UnitTestCase
 
         $worker->handle([
             new UpdatedEntity(['interesting'], stdClass::class, ['id' => 7]),
-        ]);
-
-        self::assertEquals($expectedDispatch, $eventDispatcher->getDispatchCalls());
-    }
-
-    /**
-     * Tests that nothing happens when the subscription doesnt contain an intersection of property changes.
-     *
-     * @return void
-     */
-    public function testHandlesMatchingSubscriptionNullProperties(): void
-    {
-        $searchHandlers = new RegisteredSearchHandlersStub([
-            'getSubscriptionsGroupedByClass' => [
-                [
-                    stdClass::class => [
-                        new HandlerChangeSubscription(
-                            'handler',
-                            new ChangeSubscription(stdClass::class)
-                        ),
-                    ],
-                ],
-            ],
-        ]);
-
-        $expectedDispatch = [
-            [
-                'event' => new BatchOfUpdatesEvent([
-                    new HandlerObjectForChange(
-                        'handler',
-                        new ObjectForUpdate(
-                            stdClass::class,
-                            ['id' => 7]
-                        )
-                    ),
-                ]),
-                'payload' => null,
-                'halt' => null,
-            ],
-        ];
-
-        $eventDispatcher = new EventDispatcherStub();
-
-        $worker = $this->createWorker($eventDispatcher, $searchHandlers);
-
-        $worker->handle([
-            new UpdatedEntity(['interesting'], stdClass::class, ['id' => 7]),
-        ]);
-
-        self::assertEquals($expectedDispatch, $eventDispatcher->getDispatchCalls());
-    }
-
-    /**
-     * Tests that HandlerObjectForChange array is dispatched by batches.
-     *
-     * @return void
-     */
-    public function testHandlesDispatchingByBatches(): void
-    {
-        $searchHandlers = new RegisteredSearchHandlersStub([
-            'getSubscriptionsGroupedByClass' => [
-                [
-                    stdClass::class => [
-                        new HandlerChangeSubscription(
-                            'handler',
-                            new ChangeSubscription(stdClass::class)
-                        ),
-                    ],
-                ],
-            ],
-        ]);
-
-        $expectedDispatch = [
-            [
-                'event' => new BatchOfUpdatesEvent([
-                    new HandlerObjectForChange(
-                        'handler',
-                        new ObjectForUpdate(
-                            stdClass::class,
-                            ['id' => 7]
-                        )
-                    ),
-                    new HandlerObjectForChange(
-                        'handler',
-                        new ObjectForUpdate(
-                            stdClass::class,
-                            ['id' => 8]
-                        )
-                    ),
-                ]),
-                'payload' => null,
-                'halt' => null,
-            ],
-            [
-                'event' => new BatchOfUpdatesEvent([
-                    new HandlerObjectForChange(
-                        'handler',
-                        new ObjectForUpdate(
-                            stdClass::class,
-                            ['id' => 9]
-                        )
-                    ),
-                ]),
-                'payload' => null,
-                'halt' => null,
-            ],
-        ];
-
-        $eventDispatcher = new EventDispatcherStub();
-
-        $worker = $this->createWorker($eventDispatcher, $searchHandlers);
-
-        $worker->handle([
-            new UpdatedEntity(['interesting'], stdClass::class, ['id' => 7]),
-            new UpdatedEntity(['interesting'], stdClass::class, ['id' => 8]),
-            new UpdatedEntity(['interesting'], stdClass::class, ['id' => 9]),
         ]);
 
         self::assertEquals($expectedDispatch, $eventDispatcher->getDispatchCalls());
@@ -396,7 +384,7 @@ final class EntityUpdateWorkerTest extends UnitTestCase
     /**
      * Builds worker under test.
      *
-     * @param \EoneoPay\Externals\EventDispatcher\Interfaces\EventDispatcherInterface $eventDispatcher
+     * @param \Psr\EventDispatcher\EventDispatcherInterface $eventDispatcher
      * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface|null $searchHandlers
      *
      * @return \LoyaltyCorp\Search\Workers\EntityUpdateWorker

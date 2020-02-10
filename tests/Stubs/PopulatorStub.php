@@ -3,29 +3,15 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Stubs;
 
+use Eonx\TestUtils\Stubs\BaseStub;
 use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
 use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
 
 /**
  * @coversNothing
  */
-final class PopulatorStub implements PopulatorInterface
+final class PopulatorStub extends BaseStub implements PopulatorInterface
 {
-    /**
-     * Calls to the stub.
-     *
-     * @var mixed[]
-     */
-    private $calls = [];
-
-    /**
-     * @return mixed[]
-     */
-    public function getCalls(): array
-    {
-        return $this->calls;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -34,17 +20,6 @@ final class PopulatorStub implements PopulatorInterface
         string $indexSuffix,
         int $batchSize
     ): void {
-        $this->calls[__METHOD__][] = \compact('handler', 'indexSuffix', 'batchSize');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function populateWith(
-        TransformableSearchHandlerInterface $handler,
-        string $indexSuffix,
-        iterable $objects
-    ): void {
-        $this->calls[__METHOD__][] = \compact('handler', 'indexSuffix', 'objects');
+        $this->saveCalls(__FUNCTION__, \get_defined_vars());
     }
 }

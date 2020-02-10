@@ -19,23 +19,27 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch\ClientStub;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.StaticAccess)
+ */
 abstract class IntegrationTestCase extends DoctrineORMTestCase
 {
     /**
-     * @var \Illuminate\Container\Container
+     * @var \Illuminate\Container\Container|null
      */
     private $container;
 
     /**
      * Builds search services.
      *
-     * @param \Psr\EventDispatcher\EventDispatcherInterface $dispatcher
+     * @param \Symfony\Component\EventDispatcher\EventDispatcher $dispatcher
      * @param \Doctrine\ORM\EntityManagerInterface $entityManager
      *
      * @return void
      */
     protected function buildServices(
-        EventDispatcherInterface $dispatcher,
+        EventDispatcher $dispatcher,
         EntityManagerInterface $entityManager
     ): void {
         $container = new Container();

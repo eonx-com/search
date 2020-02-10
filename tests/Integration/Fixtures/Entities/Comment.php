@@ -7,6 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="Tests\LoyaltyCorp\Search\Integration\Fixtures\Repositories\FillableRepository")
+ *
+ * @SuppressWarnings(PHPMD.ShortVariable)
  */
 class Comment
 {

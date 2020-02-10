@@ -18,8 +18,9 @@ final class BatchOfUpdatesEventTest extends UnitTestCase
      */
     public function testGetUpdates(): void
     {
-        $batchOfUpdates = new BatchOfUpdatesEvent([]);
+        $batchOfUpdates = new BatchOfUpdatesEvent('suffix', []);
 
+        self::assertSame('suffix', $batchOfUpdates->getIndexSuffix());
         self::assertSame([], $batchOfUpdates->getUpdates());
     }
 }

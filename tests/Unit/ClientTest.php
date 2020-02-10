@@ -114,13 +114,23 @@ final class ClientTest extends UnitTestCase
         $stub = new ClientStub();
         $client = $this->createInstance($stub);
 
-        $expected = ['body' => [['delete' => ['_index' => 'index', '_type' => 'doc', '_id' => '1']]]];
+        $expected = [
+            'body' => [
+                [
+                    'delete' => [
+                        '_index' => 'index',
+                        '_type' => 'doc',
+                        '_id' => '1'
+                    ]
+                ]
+            ]
+        ];
 
         $client->bulk([
             new IndexAction(new DocumentDelete('1'), 'index'),
         ]);
 
-        self::assertSame($expected, $stub->getBulkCalls());
+        self::assertSame([$expected], $stub->getBulkCalls());
     }
 
     /**

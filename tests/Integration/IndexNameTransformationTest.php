@@ -54,7 +54,8 @@ class IndexNameTransformationTest extends IntegrationTestCase
                     ],
                     1 => [
                         'body' => 'Deleted',
-                        'title' => 'Deleted'
+                        'title' => 'Deleted',
+                        '_access_tokens' => ['anonymous']
                     ],
                     2 => [
                         'index' => [
@@ -65,7 +66,8 @@ class IndexNameTransformationTest extends IntegrationTestCase
                     ],
                     3 => [
                         'body' => 'Body1',
-                        'title' => 'Title'
+                        'title' => 'Title',
+                        '_access_tokens' => ['anonymous']
                     ],
                 ]
             ],
@@ -80,7 +82,8 @@ class IndexNameTransformationTest extends IntegrationTestCase
                     ],
                     1 => [
                         'body' => 'Body1',
-                        'title' => 'UPDATED BLOG 1'
+                        'title' => 'UPDATED BLOG 1',
+                        '_access_tokens' => ['anonymous']
                     ],
                     2 => [
                         'delete' => [

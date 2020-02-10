@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Tests\LoyaltyCorp\Search\Unit\Access;
 
 use LoyaltyCorp\Search\Access\AnonymousAccessPopulator;
+use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate;
 use stdClass;
 use Tests\LoyaltyCorp\Search\TestCases\UnitTestCase;
 
@@ -23,7 +24,10 @@ final class AnonymousAccessPopulatorTest extends UnitTestCase
         $populator = new AnonymousAccessPopulator();
         $expected = ['anonymous'];
 
-        $tokens = $populator->getAccessTokens(new stdClass());
+        $tokens = $populator->getAccessTokens(new ObjectForUpdate(
+            stdClass::class,
+            []
+        ));
 
         self::assertSame($expected, $tokens);
     }

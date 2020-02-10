@@ -3,10 +3,13 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Unit;
 
+use LoyaltyCorp\Search\Access\AnonymousAccessPopulator;
 use LoyaltyCorp\Search\DataTransferObjects\DocumentUpdate;
 use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate;
 use LoyaltyCorp\Search\DataTransferObjects\IndexAction;
 use LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange;
+use LoyaltyCorp\Search\Interfaces\Access\AccessPopulatorInterface;
+use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use LoyaltyCorp\Search\UpdateProcessor;
 use stdClass;
 use Tests\LoyaltyCorp\Search\Stubs\ClientStub;
@@ -19,56 +22,6 @@ use Tests\LoyaltyCorp\Search\TestCases\UnitTestCase;
  */
 final class UpdateProcessorTest extends UnitTestCase
 {
-    /**
-     * Tests the processor does nothing when there are no updates.
-     *
-     * @return void
-     */
-    public function testNoUpdates(): void
-    {
-        $client = new ClientStub();
-        $registeredHandlers = new RegisteredSearchHandlersStub();
-
-        $processor = new UpdateProcessor(
-            $client,
-            $registeredHandlers
-        );
-
-        $processor->process('', []);
-
-        self::assertSame([], $client->getBulkCalls());
-    }
-
-    /**
-     * Tests the processor does not call bulk when no actions are generated.
-     *
-     * @return void
-     */
-    public function testNoActionsGenerated(): void
-    {
-        $client = new ClientStub();
-        $handler = new TransformableHandlerStub('index', [
-            'transform' => [null],
-        ]);
-        $registeredHandlers = new RegisteredSearchHandlersStub([
-            'getTransformableHandlerByKey' => [
-                $handler,
-            ],
-        ]);
-
-        $processor = new UpdateProcessor(
-            $client,
-            $registeredHandlers
-        );
-
-        $processor->process('', [new HandlerObjectForChange(
-            'handler',
-            new ObjectForUpdate(stdClass::class, ['id' => 7])
-        )]);
-
-        self::assertSame([], $client->getBulkCalls());
-    }
-
     /**
      * Tests the processor calls bulk with the actions.
      *
@@ -96,10 +49,7 @@ final class UpdateProcessorTest extends UnitTestCase
             ],
         ]);
 
-        $processor = new UpdateProcessor(
-            $client,
-            $registeredHandlers
-        );
+        $processor = $this->getUpdateProcessor($client, $registeredHandlers);
 
         $processor->process('-suffix', [new HandlerObjectForChange(
             'handler',
@@ -148,10 +98,7 @@ final class UpdateProcessorTest extends UnitTestCase
             ],
         ]);
 
-        $processor = new UpdateProcessor(
-            $client,
-            $registeredHandlers
-        );
+        $processor = $this->getUpdateProcessor($client, $registeredHandlers);
 
         $processor->process('-suffix', [
             new HandlerObjectForChange(
@@ -165,5 +112,73 @@ final class UpdateProcessorTest extends UnitTestCase
         ]);
 
         self::assertEquals([['actions' => [$expected, $expected2]]], $client->getBulkCalls());
+    }
+
+    /**
+     * Tests the processor does not call bulk when no actions are generated.
+     *
+     * @return void
+     */
+    public function testNoActionsGenerated(): void
+    {
+        $client = new ClientStub();
+        $handler = new TransformableHandlerStub('index', [
+            'transform' => [null],
+        ]);
+        $registeredHandlers = new RegisteredSearchHandlersStub([
+            'getTransformableHandlerByKey' => [
+                $handler,
+            ],
+        ]);
+
+        $processor = $this->getUpdateProcessor($client, $registeredHandlers);
+
+        $processor->process('', [new HandlerObjectForChange(
+            'handler',
+            new ObjectForUpdate(stdClass::class, ['id' => 7])
+        )]);
+
+        self::assertSame([], $client->getBulkCalls());
+    }
+
+    /**
+     * Tests the processor does nothing when there are no updates.
+     *
+     * @return void
+     */
+    public function testNoUpdates(): void
+    {
+        $client = new ClientStub();
+        $registeredHandlers = new RegisteredSearchHandlersStub();
+
+        $processor = $this->getUpdateProcessor($client, $registeredHandlers);
+
+        $processor->process('', []);
+
+        self::assertSame([], $client->getBulkCalls());
+    }
+
+    /**
+     * Build update processor.
+     *
+     * @param \Tests\LoyaltyCorp\Search\Stubs\ClientStub $client
+     * @param \Tests\LoyaltyCorp\Search\Stubs\Helpers\RegisteredSearchHandlersStub $registeredHandlers
+     * @param \LoyaltyCorp\Search\Interfaces\Access\AccessPopulatorInterface|null $accessPopulator
+     * @param \LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer|null $nameTransformer
+     *
+     * @return \LoyaltyCorp\Search\UpdateProcessor
+     */
+    private function getUpdateProcessor(
+        ClientStub $client,
+        RegisteredSearchHandlersStub $registeredHandlers,
+        ?AccessPopulatorInterface $accessPopulator = null,
+        ?DefaultIndexNameTransformer $nameTransformer = null
+    ): UpdateProcessor {
+        return new UpdateProcessor(
+            $accessPopulator ?? new AnonymousAccessPopulator(),
+            $client,
+            $nameTransformer ?? new DefaultIndexNameTransformer(),
+            $registeredHandlers
+        );
     }
 }

@@ -42,7 +42,7 @@ final class ChangeSubscription
      *
      * phpcs:disable
      *
-     * @phpstan-var null|callable(\EonX\EasyEntityChange\DataTransferObjects\ChangedEntity): array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange<T>>
+     * @phpstan-var null|callable(\EonX\EasyEntityChange\DataTransferObjects\ChangedEntity): iterable<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange<mixed>>
      *
      * @var callable|null
      *
@@ -55,7 +55,7 @@ final class ChangeSubscription
      *
      * phpcs:disable
      * @phpstan-param class-string<T> $class
-     * @phpstan-param callable(\EonX\EasyEntityChange\DataTransferObjects\ChangedEntity): array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange<T>> $transform
+     * @phpstan-param callable(\EonX\EasyEntityChange\DataTransferObjects\ChangedEntity): iterable<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange<mixed>> $transform
      *
      * @param string $class
      * @param string[]|null $properties
@@ -96,7 +96,7 @@ final class ChangeSubscription
      *
      * phpcs:disable
      *
-     * @phpstan-return null|callable(\EonX\EasyEntityChange\DataTransferObjects\ChangedEntity): array<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange<T>>
+     * @phpstan-return null|callable(\EonX\EasyEntityChange\DataTransferObjects\ChangedEntity): iterable<\LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange<mixed>>
      *
      * @return callable|null
      *

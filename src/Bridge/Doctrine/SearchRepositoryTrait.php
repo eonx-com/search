@@ -132,12 +132,6 @@ trait SearchRepositoryTrait
                 continue;
             }
 
-            // We got back an entity that doesnt implement the changeClass
-            $changeClass = $reverseIds[$entityId]->getClass();
-            if ($entity instanceof $changeClass === false) {
-                continue;
-            }
-
             $reverseIds[$entityId]->setObject($entity);
         }
     }

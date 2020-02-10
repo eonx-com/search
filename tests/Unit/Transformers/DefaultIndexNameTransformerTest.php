@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Unit\Transformers;
 
+use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForUpdate;
 use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use Tests\LoyaltyCorp\Search\Stubs\Entities\EntityStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NonDoctrineHandlerStub;
@@ -21,13 +22,17 @@ final class DefaultIndexNameTransformerTest extends UnitTestCase
      */
     public function testTransformIndexName(): void
     {
-        $entity = new EntityStub();
         $handler = new TransformableHandlerStub();
         $transformer = $this->getTransformer();
 
         $expectedIndexName = 'valid';
 
-        $actualIndexName = $transformer->transformIndexName($handler, $entity);
+        $object = new ObjectForUpdate(
+            EntityStub::class,
+            []
+        );
+
+        $actualIndexName = $transformer->transformIndexName($handler, $object);
 
         self::assertSame($expectedIndexName, $actualIndexName);
     }

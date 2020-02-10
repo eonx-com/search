@@ -7,6 +7,9 @@ use Doctrine\ORM\EntityRepository;
 use LoyaltyCorp\Search\Bridge\Doctrine\Interfaces\FillableRepositoryInterface;
 use LoyaltyCorp\Search\Bridge\Doctrine\SearchRepositoryTrait;
 
+/**
+ * @implements FillableRepositoryInterface<mixed>
+ */
 class FillableRepository extends EntityRepository implements FillableRepositoryInterface
 {
     use SearchRepositoryTrait;
@@ -18,10 +21,13 @@ class FillableRepository extends EntityRepository implements FillableRepositoryI
      */
     public function getFillIterable(): iterable
     {
+        /** @phpstan-var class-string $entityName */
+        $entityName = $this->_entityName;
+
         return $this->doGetFillIterable(
             $this->createQueryBuilder('e'),
             $this->_class,
-            $this->_entityName
+            $entityName
         );
     }
 
@@ -32,10 +38,13 @@ class FillableRepository extends EntityRepository implements FillableRepositoryI
      */
     public function prefillSearch(iterable $changes): void
     {
+        /** @phpstan-var class-string $entityName */
+        $entityName = $this->_entityName;
+
         $this->doPrefillSearch(
             $this->createQueryBuilder('e'),
             $this->_class,
-            $this->_entityName,
+            $entityName,
             $changes
         );
     }

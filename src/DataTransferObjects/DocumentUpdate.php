@@ -16,6 +16,17 @@ final class DocumentUpdate extends DocumentAction
     private $document;
 
     /**
+     * Stores additional keys that may need to be added to a document after the
+     * search handler has created the DocumentUpdate DTO.
+     *
+     * Extra keys will not be added to the document if the document already contains
+     * the key.
+     *
+     * @var mixed[]
+     */
+    private $extra = [];
+
+    /**
      * Constructor.
      *
      * @param string $documentId
@@ -37,6 +48,19 @@ final class DocumentUpdate extends DocumentAction
     }
 
     /**
+     * Adds an extra key to the document.
+     *
+     * @param string $key
+     * @param mixed $value
+     *
+     * @return void
+     */
+    public function addExtra(string $key, $value): void
+    {
+        $this->extra[$key] = $value;
+    }
+
+    /**
      * Returns the document body to be indexed.
      *
      * @return mixed|null
@@ -44,5 +68,15 @@ final class DocumentUpdate extends DocumentAction
     public function getDocument()
     {
         return $this->document;
+    }
+
+    /**
+     * Returns extra fields for the document.
+     *
+     * @return mixed[]
+     */
+    public function getExtra(): array
+    {
+        return $this->extra;
     }
 }

@@ -52,7 +52,7 @@ final class ClientStub extends Client
             throw new RuntimeException('An error occured');
         }
 
-        $this->bulk[] = $params;
+        $this->bulk[] = $params ?? [];
 
         // This must return an array to be compatible with base client
         return [];

@@ -58,17 +58,27 @@ final class Client implements ClientInterface
             // we reach Elasticsearch 7.0.
             //
             // See: https://www.elastic.co/guide/en/elasticsearch/reference/current/removal-of-types.html
+            $documentAction = $action->getDocumentAction();
+
             $bulk[] = [
-                $action->getDocumentAction()::getAction() => [
+                $documentAction::getAction() => [
                     '_index' => $action->getIndex(),
                     '_type' => 'doc',
-                    '_id' => $action->getDocumentAction()->getDocumentId(),
+                    '_id' => $documentAction->getDocumentId(),
                 ],
             ];
 
             // When updating a document, the bulk action must be followed by the document body.
-            if ($action->getDocumentAction() instanceof DocumentUpdate === true) {
-                $bulk[] = $action->getDocumentAction()->getDocument();
+            if ($documentAction instanceof DocumentUpdate === true) {
+                $extra = $documentAction->getExtra();
+
+                // If the DocumentUpdate has extra keys, merge the document into the
+                // extra array - so we dont overwrite anything the SearchHandler output.
+                $document = \count($extra) > 0
+                    ? \array_merge($extra, $documentAction->getDocument())
+                    : $documentAction->getDocument();
+
+                $bulk[] = $document;
             }
         }
 

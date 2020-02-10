@@ -58,7 +58,7 @@ final class SearchIndexFillCommandTest extends SearchIndexCommandTestCase
 
         $command->handle();
 
-        self::assertSame($expectedCalls, $populator->getCalls());
+        self::assertSame($expectedCalls, $populator->getCalls('populate'));
     }
 
     /**

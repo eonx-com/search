@@ -39,7 +39,8 @@ class EntityLifecycleTest extends IntegrationTestCase
                     ],
                     1 => [
                         'body' => 'Body',
-                        'title' => 'Title'
+                        'title' => 'Title',
+                        '_access_tokens' => ['anonymous']
                     ]
                 ]
             ]
@@ -84,6 +85,7 @@ class EntityLifecycleTest extends IntegrationTestCase
                     1 => [
                         'body' => 'Body',
                         'title' => 'Updated Title',
+                        '_access_tokens' => ['anonymous'],
                     ],
                     2 => [
                         'index' => [
@@ -94,7 +96,8 @@ class EntityLifecycleTest extends IntegrationTestCase
                     ],
                     3 => [
                         'body' => 'comment body',
-                        'title' => 'Updated Title'
+                        'title' => 'Updated Title',
+                        '_access_tokens' => ['anonymous']
                     ]
                 ]
             ]
@@ -149,7 +152,8 @@ class EntityLifecycleTest extends IntegrationTestCase
                     ],
                     1 => [
                         'body' => 'Body1',
-                        'title' => 'UPDATED BLOG 1'
+                        'title' => 'UPDATED BLOG 1',
+                        '_access_tokens' => ['anonymous']
                     ],
                     2 => [
                         'delete' =>[
@@ -171,7 +175,8 @@ class EntityLifecycleTest extends IntegrationTestCase
                     ],
                     1 => [
                         'body' => 'Body2',
-                        'title' => 'Title'
+                        'title' => 'Title',
+                        '_access_tokens' => ['anonymous']
                     ],
                     2 => [
                         'index' => [
@@ -182,7 +187,8 @@ class EntityLifecycleTest extends IntegrationTestCase
                     ],
                     3 => [
                         'body' => 'Body3',
-                        'title' => 'Title'
+                        'title' => 'Title',
+                        '_access_tokens' => ['anonymous']
                     ]
                 ]
             ]

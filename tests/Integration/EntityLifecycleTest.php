@@ -6,7 +6,9 @@ namespace Tests\LoyaltyCorp\Search\Integration;
 use EonX\EasyEntityChange\Interfaces\DeletedEntityEnrichmentInterface;
 use Tests\LoyaltyCorp\Search\Integration\Fixtures\DeletedEntityIdEnrichment;
 use Tests\LoyaltyCorp\Search\Integration\Fixtures\Entities\Blog;
+use Tests\LoyaltyCorp\Search\Integration\Fixtures\Entities\Comment;
 use Tests\LoyaltyCorp\Search\Integration\Fixtures\SearchHandlers\BlogSearchHandler;
+use Tests\LoyaltyCorp\Search\Integration\Fixtures\SearchHandlers\CommentSearchHandler;
 use Tests\LoyaltyCorp\Search\TestCases\IntegrationTestCase;
 
 class EntityLifecycleTest extends IntegrationTestCase
@@ -38,6 +40,61 @@ class EntityLifecycleTest extends IntegrationTestCase
                     1 => [
                         'body' => 'Body',
                         'title' => 'Title'
+                    ]
+                ]
+            ]
+        ];
+
+        $client = $this->getContainer()->get('search_elasticsearch_client');
+
+        self::assertEquals($expected, $client->getBulkCalls());
+    }
+
+    /**
+     * Tests related entities causing updates.
+     *
+     * @return void
+     */
+    public function testRelatedEntities(): void
+    {
+        $entityManager = $this->getEntityManager();
+
+        $blog = new Blog('Body', 'Title');
+        $comment = new Comment($blog, 'comment body');
+
+        $entityManager->persist($blog);
+        $entityManager->persist($comment);
+        $entityManager->flush();
+
+        $this->getContainer()->get('search_elasticsearch_client')->resetBulkCalls();
+
+        $blog->setTitle('Updated Title');
+        $entityManager->flush();
+
+        $expected = [
+            [
+                'body' => [
+                    0 => [
+                        'index' => [
+                            '_index' => 'blog',
+                            '_type' => 'doc',
+                            '_id' => '1',
+                        ]
+                    ],
+                    1 => [
+                        'body' => 'Body',
+                        'title' => 'Updated Title',
+                    ],
+                    2 => [
+                        'index' => [
+                            '_index' => 'comment',
+                            '_type' => 'doc',
+                            '_id' => '1',
+                        ]
+                    ],
+                    3 => [
+                        'body' => 'comment body',
+                        'title' => 'Updated Title'
                     ]
                 ]
             ]
@@ -154,7 +211,8 @@ class EntityLifecycleTest extends IntegrationTestCase
     protected function getRegisteredHandlers(): array
     {
         return [
-            BlogSearchHandler::class
+            BlogSearchHandler::class,
+            CommentSearchHandler::class
         ];
     }
 }

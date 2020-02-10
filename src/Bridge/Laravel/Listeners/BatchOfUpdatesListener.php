@@ -33,6 +33,9 @@ class BatchOfUpdatesListener implements ShouldQueue
      */
     public function handle(BatchOfUpdatesEvent $batchOfUpdates): void
     {
-        $this->updateProcessor->process('', $batchOfUpdates->getUpdates());
+        $this->updateProcessor->process(
+            $batchOfUpdates->getIndexSuffix(),
+            $batchOfUpdates->getUpdates()
+        );
     }
 }

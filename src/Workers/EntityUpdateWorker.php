@@ -74,7 +74,7 @@ final class EntityUpdateWorker implements EntityUpdateWorkerInterface
         $batches = \array_chunk($updates, $this->batchSize);
 
         foreach ($batches as $batch) {
-            $this->dispatcher->dispatch(new BatchOfUpdatesEvent($batch));
+            $this->dispatcher->dispatch(new BatchOfUpdatesEvent('', $batch));
         }
     }
 

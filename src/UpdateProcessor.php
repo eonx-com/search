@@ -18,7 +18,7 @@ final class UpdateProcessor implements UpdateProcessorInterface
     private $client;
 
     /**
-     * @var IndexNameTransformerInterface
+     * @var \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface
      */
     private $indexNameTransformer;
 
@@ -31,7 +31,7 @@ final class UpdateProcessor implements UpdateProcessorInterface
      * Constructor.
      *
      * @param \LoyaltyCorp\Search\Interfaces\ClientInterface $client
-     * @param IndexNameTransformerInterface $indexNameTransformer
+     * @param \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface $indexNameTransformer
      * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface $registeredHandlers
      */
     public function __construct(

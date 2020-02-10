@@ -25,10 +25,13 @@ final class BatchOfUpdatesListenerTest extends UnitTestCase
         $listener = new BatchOfUpdatesListener($updateProcessor);
 
         $expectedProcessCalls = [
-            ['indexSuffix' => '', 'updates' => []],
+            [
+                'indexSuffix' => 'suffix',
+                'updates' => []
+            ],
         ];
 
-        $listener->handle(new BatchOfUpdatesEvent([]));
+        $listener->handle(new BatchOfUpdatesEvent('suffix', []));
 
         self::assertSame($expectedProcessCalls, $updateProcessor->getCalls('process'));
     }

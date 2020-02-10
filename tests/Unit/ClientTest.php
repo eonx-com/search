@@ -134,6 +134,45 @@ final class ClientTest extends UnitTestCase
     }
 
     /**
+     * Test bulk() is passed through to elastic search client.
+     *
+     * @return void
+     */
+    public function testBulkWithExtras(): void
+    {
+        $stub = new ClientStub();
+        $client = $this->createInstance($stub);
+
+        $expected = [
+            'body' => [
+                [
+                    'index' => [
+                        '_index' => 'index',
+                        '_type' => 'doc',
+                        '_id' => '1',
+                    ],
+                ],
+                [
+                    'body' => 'does stuff',
+                    'extra' => 'thing',
+                ]
+            ],
+        ];
+
+        $documentAction = new DocumentUpdate('1', [
+            'body' => 'does stuff'
+        ]);
+        $documentAction->addExtra('body', 'not overridden');
+        $documentAction->addExtra('extra', 'thing');
+
+        $client->bulk([
+            new IndexAction($documentAction, 'index'),
+        ]);
+
+        self::assertSame([$expected], $stub->getBulkCalls());
+    }
+
+    /**
      * Test elastic client returning count data.
      *
      * @return void

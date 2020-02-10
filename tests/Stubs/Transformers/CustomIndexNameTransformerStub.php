@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Stubs\Transformers;
 
+use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange;
 use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 
@@ -14,7 +15,7 @@ final class CustomIndexNameTransformerStub implements IndexNameTransformerInterf
     /**
      * {@inheritdoc}
      */
-    public function transformIndexName(SearchHandlerInterface $handler, object $object): string
+    public function transformIndexName(SearchHandlerInterface $handler, ObjectForChange $object): string
     {
         return \sprintf('%s_%s', $handler->getIndexName(), 'customId');
     }

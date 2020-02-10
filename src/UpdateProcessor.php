@@ -7,6 +7,7 @@ use LoyaltyCorp\Search\DataTransferObjects\DocumentAction;
 use LoyaltyCorp\Search\DataTransferObjects\IndexAction;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface;
+use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 use LoyaltyCorp\Search\Interfaces\UpdateProcessorInterface;
 
 final class UpdateProcessor implements UpdateProcessorInterface
@@ -17,6 +18,11 @@ final class UpdateProcessor implements UpdateProcessorInterface
     private $client;
 
     /**
+     * @var IndexNameTransformerInterface
+     */
+    private $indexNameTransformer;
+
+    /**
      * @var \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface
      */
     private $registeredHandlers;
@@ -25,13 +31,16 @@ final class UpdateProcessor implements UpdateProcessorInterface
      * Constructor.
      *
      * @param \LoyaltyCorp\Search\Interfaces\ClientInterface $client
+     * @param IndexNameTransformerInterface $indexNameTransformer
      * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface $registeredHandlers
      */
     public function __construct(
         ClientInterface $client,
+        IndexNameTransformerInterface $indexNameTransformer,
         RegisteredSearchHandlersInterface $registeredHandlers
     ) {
         $this->client = $client;
+        $this->indexNameTransformer = $indexNameTransformer;
         $this->registeredHandlers = $registeredHandlers;
     }
 
@@ -49,9 +58,6 @@ final class UpdateProcessor implements UpdateProcessorInterface
             // Prefill any $changes with entities.
             $handler->prefill($changes);
 
-            // Build the appropriate index name for the actions to occur in.
-            $index = $handler->getIndexName() . $indexSuffix;
-
             foreach ($changes as $change) {
                 $documentAction = $handler->transform($change);
 
@@ -59,6 +65,12 @@ final class UpdateProcessor implements UpdateProcessorInterface
                 if ($documentAction instanceof DocumentAction === false) {
                     continue;
                 }
+
+                // Build the appropriate index name for the actions to occur in.
+                $index = $this->indexNameTransformer->transformIndexName(
+                    $handler,
+                    $change
+                ) . $indexSuffix;
 
                 // Wrap each DocumentAction in an IndexAction for the client.
                 $actions[] = new IndexAction($documentAction, $index);

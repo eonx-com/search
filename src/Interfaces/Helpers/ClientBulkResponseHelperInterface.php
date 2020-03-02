@@ -11,16 +11,15 @@ interface ClientBulkResponseHelperInterface
      * Check a bulk response array for errors, throw an exception if errors are found.
      *
      * @param mixed $response The response from the bulk action
-     * @param string $type The bulk action that was performed
      *
      * @return void
      */
-    public function checkBulkResponsesForErrors($response, string $type): void;
+    public function checkBulkResponsesForErrors($response): void;
 
     /**
      * Wait for a promise to resolve and unwrap the response.
      *
-     * @param \GuzzleHttp\Ring\Future\FutureArrayInterface $promise
+     * @param \GuzzleHttp\Ring\Future\FutureArrayInterface<mixed> $promise
      *
      * @return mixed
      */

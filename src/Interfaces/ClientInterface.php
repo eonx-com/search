@@ -3,36 +3,18 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Interfaces;
 
+use LoyaltyCorp\Search\DataTransferObjects\ClusterHealth;
+
 interface ClientInterface
 {
     /**
-     * Does a bulk delete action for all ids provided. Expects
-     * the format to be :.
+     * Processes all index actions to be performed.
      *
-     * [
-     *   'index_name' => [
-     *     'ID1',
-     *     'ID2'
-     *   ],
-     *   'index_name_2' => [
-     *     'ID3',
-     *   ]
-     * ]
-     *
-     * @param string[][] $searchIds
+     * @param \LoyaltyCorp\Search\DataTransferObjects\IndexAction[] $actions
      *
      * @return void
      */
-    public function bulkDelete(array $searchIds): void;
-
-    /**
-     * Upserts all documents provided into the index.
-     *
-     * @param \LoyaltyCorp\Search\DataTransferObjects\DocumentUpdate[] $updates
-     *
-     * @return void
-     */
-    public function bulkUpdate(array $updates): void;
+    public function bulk(array $actions): void;
 
     /**
      * Count the number of documents within an index.
@@ -94,6 +76,13 @@ interface ClientInterface
      * @return string[][]
      */
     public function getAliases(?string $name = null): array;
+
+    /**
+     * Gets the health of the cluster.
+     *
+     * @return \LoyaltyCorp\Search\DataTransferObjects\ClusterHealth
+     */
+    public function getHealth(): ClusterHealth;
 
     /**
      * List all existing indexes.

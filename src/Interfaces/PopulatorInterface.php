@@ -8,6 +8,8 @@ interface PopulatorInterface
     /**
      * Populates a handler's index with the handlers fill iterable.
      *
+     * @phpstan-param \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface<mixed> $handler
+     *
      * @param \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface $handler
      * @param string $indexSuffix
      * @param int $batchSize
@@ -18,20 +20,5 @@ interface PopulatorInterface
         TransformableSearchHandlerInterface $handler,
         string $indexSuffix,
         int $batchSize
-    ): void;
-
-    /**
-     * Populates a handler's index with an array of objects.
-     *
-     * @param \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface $handler
-     * @param string $indexSuffix
-     * @param object[] $objects
-     *
-     * @return void
-     */
-    public function populateWith(
-        TransformableSearchHandlerInterface $handler,
-        string $indexSuffix,
-        iterable $objects
     ): void;
 }

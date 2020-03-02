@@ -4,8 +4,9 @@ declare(strict_types=1);
 namespace Tests\LoyaltyCorp\Search\Stubs\Vendor\Elasticsearch;
 
 use Elasticsearch\Client;
+use Elasticsearch\Namespaces\CatNamespace;
+use Elasticsearch\Namespaces\IndicesNamespace;
 use RuntimeException;
-use Tests\LoyaltyCorp\Search\Stubs\CatStub;
 
 /**
  * This stub overloads methods within the elasticsearch client as it doesn't implement an interface so
@@ -18,9 +19,9 @@ use Tests\LoyaltyCorp\Search\Stubs\CatStub;
 final class ClientStub extends Client
 {
     /**
-     * @var mixed[]
+     * @var mixed[][]
      */
-    private $bulk;
+    private $bulk = [];
 
     /**
      * @var bool
@@ -32,7 +33,7 @@ final class ClientStub extends Client
      *
      * Create stub
      *
-     * @param bool|null $throwException Whether a call to bulk() should throw an exception or not
+     * @param bool|null $throwException Whether calls should throw an exception or not
      */
     public function __construct(?bool $throwException = null)
     {
@@ -42,7 +43,7 @@ final class ClientStub extends Client
     /**
      * @noinspection PhpMissingParentCallCommonInspection ReturnTypeCanBeDeclaredInspection
      *
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function bulk($params = null)
     {
@@ -51,7 +52,7 @@ final class ClientStub extends Client
             throw new RuntimeException('An error occured');
         }
 
-        $this->bulk = $params;
+        $this->bulk[] = $params ?? [];
 
         // This must return an array to be compatible with base client
         return [];
@@ -60,9 +61,9 @@ final class ClientStub extends Client
     /**
      * @noinspection PhpMissingParentCallCommonInspection ReturnTypeCanBeDeclaredInspection
      *
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function cat()
+    public function cat(): CatNamespace
     {
         return new CatStub($this->throwException);
     }
@@ -70,9 +71,9 @@ final class ClientStub extends Client
     /**
      * Get bulk parameters used when calling bulk().
      *
-     * @return mixed[]|null
+     * @return mixed[][]
      */
-    public function getBulkParameters(): ?array
+    public function getBulkCalls(): ?array
     {
         return $this->bulk;
     }
@@ -80,13 +81,23 @@ final class ClientStub extends Client
     /**
      * @noinspection PhpMissingParentCallCommonInspection Parent is intentionally ignored as per class comment
      *
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function indices()
+    public function indices(): IndicesNamespace
     {
         // If an exception should be thrown, throw it
         if ($this->throwException === true) {
             throw new RuntimeException('An error occured');
         }
+    }
+
+    /**
+     * Resets calls to bulk().
+     *
+     * @return void
+     */
+    public function resetBulkCalls(): void
+    {
+        $this->bulk = [];
     }
 }

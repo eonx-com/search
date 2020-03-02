@@ -15,6 +15,8 @@ use Illuminate\Contracts\Foundation\Application;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods) This class is implemented from a Laravel interface
  *
  * @coversNothing
+ *
+ * @implements \ArrayAccess<string, mixed>
  */
 final class ApplicationStub implements Application, ArrayAccess
 {
@@ -34,273 +36,274 @@ final class ApplicationStub implements Application, ArrayAccess
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function addContextualBinding($concrete, $abstract, $implementation): void
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function afterResolving($abstract, ?Closure $callback = null): void
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function alias($abstract, $alias): void
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function basePath()
+    public function basePath($path = null)
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function bind($abstract, $concrete = null, $shared = null): void
     {
+        $this->container->bind($abstract, $concrete, $shared ?? false);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function bindIf($abstract, $concrete = null, $shared = null): void
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function boot(): void
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function booted($callback): void
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function booting($callback): void
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function bootstrapPath($path = null)
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function bootstrapWith(array $bootstrappers): void
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function bound($abstract)
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function call($callback, ?array $parameters = null, $defaultMethod = null)
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function configPath($path = null)
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function configurationIsCached()
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function databasePath($path = null)
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function detectEnvironment(Closure $callback)
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function environment(...$environments)
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function environmentFile()
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function environmentFilePath()
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function environmentPath()
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function extend($abstract, Closure $closure): void
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function factory($abstract)
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function flush(): void
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function get($containerId)
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getCachedConfigPath()
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getCachedPackagesPath()
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getCachedRoutesPath()
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getCachedServicesPath()
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getLocale()
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getNamespace()
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getProviders($provider)
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function has($containerId)
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function hasBeenBootstrapped()
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function instance($abstract, $instance): void
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isDownForMaintenance()
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function loadDeferredProviders(): void
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function loadEnvironmentFrom($file)
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function make($abstract, ?array $parameters = null)
     {
@@ -312,163 +315,171 @@ final class ApplicationStub implements Application, ArrayAccess
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function offsetExists($offset)
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function offsetGet($offset)
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function offsetSet($offset, $value): void
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function offsetUnset($offset): void
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function register($provider, $force = null)
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function registerConfiguredProviders(): void
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function registerDeferredProvider($provider, $service = null): void
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function resolveProvider($provider)
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function resolved($abstract)
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function resolving($abstract, ?Closure $callback = null): void
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function resourcePath($path = null)
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function routesAreCached()
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function runningInConsole()
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function runningUnitTests()
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setLocale($locale): void
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function shouldSkipMiddleware()
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function singleton($abstract, $concrete = null)
+    public function singleton($abstract, $concrete = null): void
     {
-        return $this->callMethod('singleton', [$abstract, $concrete]);
+        $this->callMethod('singleton', [$abstract, $concrete]);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     */
+    public function singletonIf($abstract, $concrete = null)
+    {
+        $this->container->singletonIf($abstract, $concrete);
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function storagePath()
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function tag($abstracts, $tags)
+    public function tag($abstracts, $tags): void
     {
-        return $this->callMethod('tag', [$abstracts, $tags]);
+        $this->callMethod('tag', [$abstracts, $tags]);
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function tagged($tag)
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function terminate(): void
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function version()
     {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function when($concrete)
     {

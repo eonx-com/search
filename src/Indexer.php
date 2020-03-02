@@ -9,6 +9,7 @@ use LoyaltyCorp\Search\Exceptions\AliasNotFoundException;
 use LoyaltyCorp\Search\Indexer\IndexCleanResult;
 use LoyaltyCorp\Search\Indexer\IndexSwapResult;
 use LoyaltyCorp\Search\Interfaces\ClientInterface;
+use LoyaltyCorp\Search\Interfaces\Indexer\MappingHelperInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
 use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
@@ -21,7 +22,12 @@ final class Indexer implements IndexerInterface
     /**
      * @var \LoyaltyCorp\Search\Interfaces\ClientInterface
      */
-    private $elasticClient;
+    private $client;
+
+    /**
+     * @var \LoyaltyCorp\Search\Interfaces\Indexer\MappingHelperInterface
+     */
+    private $mappingHelper;
 
     /**
      * @var \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface
@@ -31,14 +37,17 @@ final class Indexer implements IndexerInterface
     /**
      * Constructor.
      *
-     * @param \LoyaltyCorp\Search\Interfaces\ClientInterface $elasticClient
+     * @param \LoyaltyCorp\Search\Interfaces\ClientInterface $client
+     * @param \LoyaltyCorp\Search\Interfaces\Indexer\MappingHelperInterface $mappingHelper
      * @param \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface $nameTransformer
      */
     public function __construct(
-        ClientInterface $elasticClient,
+        ClientInterface $client,
+        MappingHelperInterface $mappingHelper,
         IndexNameTransformerInterface $nameTransformer
     ) {
-        $this->elasticClient = $elasticClient;
+        $this->client = $client;
+        $this->mappingHelper = $mappingHelper;
         $this->nameTransformer = $nameTransformer;
     }
 
@@ -51,13 +60,12 @@ final class Indexer implements IndexerInterface
         $allIndices = [];
         $handlerIndices = [];
 
-        /** @var \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[] $searchHandlers */
         foreach ($searchHandlers as $searchHandler) {
             $handlerIndices[] = $this->nameTransformer->transformIndexNames($searchHandler);
         }
 
         // Build array of all indices used by aliases
-        foreach ($this->elasticClient->getAliases() as $alias) {
+        foreach ($this->client->getAliases() as $alias) {
             $indicesUsedByAlias[] = $alias['index'];
         }
 
@@ -65,7 +73,7 @@ final class Indexer implements IndexerInterface
         $knownIndices = \array_merge(...$handlerIndices);
 
         // Build array of all indices
-        foreach ($this->elasticClient->getIndices() as $index) {
+        foreach ($this->client->getIndices() as $index) {
             // Disregard any indices that are not to do with search handlers
             if ($this->indexStartsWith($index['name'], $knownIndices) === false) {
                 continue;
@@ -88,7 +96,7 @@ final class Indexer implements IndexerInterface
 
         // Remove any indices unused by a root alias
         foreach ($unusedIndices as $unusedIndex) {
-            $this->elasticClient->deleteIndex($unusedIndex);
+            $this->client->deleteIndex($unusedIndex);
         }
 
         return $results;
@@ -113,18 +121,18 @@ final class Indexer implements IndexerInterface
             // Alias to correlate the index with the 'latest' one (re)created
             $tempAlias = \sprintf('%s_new', $indexName);
 
-            $this->elasticClient->createIndex(
+            $this->client->createIndex(
                 $newIndex,
-                $searchHandler::getMappings(),
+                $this->mappingHelper->buildIndexMappings($searchHandler),
                 $searchHandler::getSettings()
             );
 
             // Remove _new alias if already exists index, before we re-use the temporary alias name
-            if ($this->elasticClient->isAlias($tempAlias) === true) {
-                $this->elasticClient->deleteAlias([$tempAlias]);
+            if ($this->client->isAlias($tempAlias) === true) {
+                $this->client->deleteAlias([$tempAlias]);
             }
 
-            $this->elasticClient->createAlias($newIndex, $tempAlias);
+            $this->client->createAlias($newIndex, $tempAlias);
         }
     }
 
@@ -146,21 +154,20 @@ final class Indexer implements IndexerInterface
                 // Use index+_new to determine the latest index name
                 $newAlias = \sprintf('%s_new', $indexName);
 
-                /** @var string[]|null $latestIndex */
-                $latestAlias = $this->elasticClient->getAliases($newAlias)[0] ?? null;
+                $latestAlias = $this->client->getAliases($newAlias)[0]['index'] ?? null;
 
-                if ($latestAlias === null) {
+                if (\is_string($latestAlias) === false) {
                     throw new AliasNotFoundException(\sprintf('Could not find expected alias \'%s\'', $newAlias));
                 }
 
                 if ($this->shouldIndexSwap($indexName, $newAlias)) {
-                    $indexToSkip[] = $latestAlias['index'];
+                    $indexToSkip[] = $latestAlias;
                     $aliasedToRemove[] = $newAlias;
 
                     continue;
                 }
 
-                $aliasesToMove[] = ['alias' => $indexName, 'index' => $latestAlias['index']];
+                $aliasesToMove[] = ['alias' => $indexName, 'index' => $latestAlias];
                 $aliasedToRemove[] = $newAlias;
             }
         }
@@ -173,12 +180,12 @@ final class Indexer implements IndexerInterface
 
         // Atomically switch which index the root alias is associated with
         if (\count($aliasesToMove) > 0) {
-            $this->elasticClient->moveAlias($aliasesToMove);
+            $this->client->moveAlias($aliasesToMove);
         }
 
         // Remove *_new alias for this handler
         if (\count($aliasedToRemove) > 0) {
-            $this->elasticClient->deleteAlias($aliasedToRemove);
+            $this->client->deleteAlias($aliasedToRemove);
         }
 
         return $actions;
@@ -217,8 +224,8 @@ final class Indexer implements IndexerInterface
      */
     private function shouldIndexSwap(string $indexName, string $newAlias): bool
     {
-        return $this->elasticClient->isAlias($indexName) === true &&
-            $this->elasticClient->count($newAlias) === 0 &&
-            $this->elasticClient->count($indexName) > 0;
+        return $this->client->isAlias($indexName) === true &&
+            $this->client->count($newAlias) === 0 &&
+            $this->client->count($indexName) > 0;
     }
 }

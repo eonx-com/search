@@ -5,6 +5,8 @@ namespace LoyaltyCorp\Search;
 
 use Elasticsearch\Client as BaseClient;
 use Exception;
+use LoyaltyCorp\Search\DataTransferObjects\ClusterHealth;
+use LoyaltyCorp\Search\DataTransferObjects\DocumentUpdate;
 use LoyaltyCorp\Search\Exceptions\SearchCheckerException;
 use LoyaltyCorp\Search\Exceptions\SearchDeleteException;
 use LoyaltyCorp\Search\Exceptions\SearchUpdateException;
@@ -40,74 +42,44 @@ final class Client implements ClientInterface
     }
 
     /**
-     * @inheritdoc
-     *
-     * @throws \LoyaltyCorp\Search\Exceptions\BulkFailureException If there is at least one record with an error
-     * @throws \LoyaltyCorp\Search\Exceptions\SearchDeleteException If backend client throws an exception via bulk()
-     */
-    public function bulkDelete(array $searchIds): void
-    {
-        $bulk = [];
-
-        foreach ($searchIds as $index => $indexIds) {
-            // Skip non-interable items
-            if (\is_iterable($indexIds) === false) {
-                continue;
-            }
-
-            /**
-             * @var mixed[] $indexIds
-             *
-             * @see https://youtrack.jetbrains.com/issue/WI-37859 typehint required until PhpStorm recognises === check
-             */
-            foreach ($indexIds as $indexId) {
-                // The _type parameter is being deprecated, and in Elasticsearch 6.0+ means
-                // nothing, but still must be provided. As a standard, anything using this
-                // library will need to define the type as "doc" in any schema mappings until
-                // we reach Elasticsearch 7.0.
-                //
-                // See: https://www.elastic.co/guide/en/elasticsearch/reference/current/removal-of-types.html
-
-                $bulk[] = ['delete' => ['_index' => $index, '_type' => 'doc', '_id' => $indexId]];
-            }
-        }
-
-        try {
-            $responses = $this->elastic->bulk(['body' => $bulk]);
-        } catch (Exception $exception) {
-            throw new SearchDeleteException('An error occurred while performing bulk delete on backend', 0, $exception);
-        }
-
-        // Check responses for error
-        $this->bulkResponseHelper->checkBulkResponsesForErrors($responses, 'delete');
-    }
-
-    /**
      * {@inheritdoc}
      *
      * @throws \LoyaltyCorp\Search\Exceptions\BulkFailureException If there is at least one record with an error
      * @throws \LoyaltyCorp\Search\Exceptions\SearchUpdateException If backend client throws an exception via bulk()
      */
-    public function bulkUpdate(array $updates): void
+    public function bulk(array $actions): void
     {
         $bulk = [];
 
-        foreach ($updates as $update) {
+        foreach ($actions as $action) {
             // The _type parameter is being deprecated, and in Elasticsearch 6.0+ means
             // nothing, but still must be provided. As a standard, anything using this
             // library will need to define the type as "doc" in any schema mappings until
             // we reach Elasticsearch 7.0.
             //
             // See: https://www.elastic.co/guide/en/elasticsearch/reference/current/removal-of-types.html
+            $documentAction = $action->getDocumentAction();
 
             $bulk[] = [
-                'index' => [
-                    '_index' => $update->getIndex(),
+                $documentAction::getAction() => [
+                    '_index' => $action->getIndex(),
                     '_type' => 'doc',
-                    '_id' => $update->getDocumentId(),
+                    '_id' => $documentAction->getDocumentId(),
                 ],
             ];
-            $bulk[] = $update->getDocument();
+
+            // When updating a document, the bulk action must be followed by the document body.
+            if ($documentAction instanceof DocumentUpdate === true) {
+                $extra = $documentAction->getExtra();
+
+                // If the DocumentUpdate has extra keys, merge the document into the
+                // extra array - so we dont overwrite anything the SearchHandler output.
+                $document = \count($extra) > 0
+                    ? \array_merge($extra, $documentAction->getDocument())
+                    : $documentAction->getDocument();
+
+                $bulk[] = $document;
+            }
         }
 
         try {
@@ -117,7 +89,7 @@ final class Client implements ClientInterface
         }
 
         // Check responses for error
-        $this->bulkResponseHelper->checkBulkResponsesForErrors($responses, 'update');
+        $this->bulkResponseHelper->checkBulkResponsesForErrors($responses);
     }
 
     /**
@@ -219,7 +191,22 @@ final class Client implements ClientInterface
 
             return \array_values($aliases);
         } catch (Exception $exception) {
-            throw new SearchCheckerException('An error ocurred obtaining a list of aliases', 0, $exception);
+            throw new SearchCheckerException('An error occurred obtaining a list of aliases', 0, $exception);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getHealth(): ClusterHealth
+    {
+        try {
+            $cluster = $this->elastic->cluster();
+            $result = $cluster->health();
+
+            return new ClusterHealth($result);
+        } catch (Exception $exception) {
+            throw new SearchCheckerException('An error occurred checking the cluster health', 0, $exception);
         }
     }
 
@@ -241,7 +228,7 @@ final class Client implements ClientInterface
             // Reset keys to numerical indexes & remove aliases key
             return \array_values($indices);
         } catch (Exception $exception) {
-            throw new SearchCheckerException('An error ocurred obtaining a list of indices', 0, $exception);
+            throw new SearchCheckerException('An error occurred obtaining a list of indices', 0, $exception);
         }
     }
 

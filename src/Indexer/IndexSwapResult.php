@@ -8,17 +8,17 @@ final class IndexSwapResult
     /**
      * @var string[][]
      */
-    private $movingAliases = [];
+    private $movingAliases;
 
     /**
      * @var string[]
      */
-    private $removingAliases = [];
+    private $removingAliases;
 
     /**
      * @var string[]
      */
-    private $skipIndices = [];
+    private $skipIndices;
 
     /**
      * IndexSwapResult constructor.

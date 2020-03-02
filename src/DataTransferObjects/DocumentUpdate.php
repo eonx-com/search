@@ -3,47 +3,67 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\DataTransferObjects;
 
-final class DocumentUpdate
+/**
+ * This DTO indicates that a document should be inserted or updated in the search index.
+ */
+final class DocumentUpdate extends DocumentAction
 {
     /**
-     * The document to be written.
+     * The document body to be written.
      *
      * @var mixed
      */
     private $document;
 
     /**
-     * The id of the document.
+     * Stores additional keys that may need to be added to a document after the
+     * search handler has created the DocumentUpdate DTO.
      *
-     * @var string
-     */
-    private $documentId;
-
-    /**
-     * The index the document will be written to.
+     * Extra keys will not be added to the document if the document already contains
+     * the key.
      *
-     * @var string
+     * @var mixed[]
      */
-    private $index;
+    private $extra = [];
 
     /**
      * Constructor.
      *
-     * @param string $index
      * @param string $documentId
-     * @param mixed $document
+     * @param mixed|null $document
      */
-    public function __construct(string $index, string $documentId, $document)
+    public function __construct(string $documentId, $document = null)
     {
-        $this->index = $index;
-        $this->documentId = $documentId;
+        parent::__construct($documentId);
+
         $this->document = $document;
     }
 
     /**
-     * Returns the document to be indexed.
+     * {@inheritdoc}
+     */
+    public static function getAction(): string
+    {
+        return 'index';
+    }
+
+    /**
+     * Adds an extra key to the document.
      *
-     * @return mixed
+     * @param string $key
+     * @param mixed $value
+     *
+     * @return void
+     */
+    public function addExtra(string $key, $value): void
+    {
+        $this->extra[$key] = $value;
+    }
+
+    /**
+     * Returns the document body to be indexed.
+     *
+     * @return mixed|null
      */
     public function getDocument()
     {
@@ -51,22 +71,12 @@ final class DocumentUpdate
     }
 
     /**
-     * Returns the id of the document.
+     * Returns extra fields for the document.
      *
-     * @return string
+     * @return mixed[]
      */
-    public function getDocumentId(): string
+    public function getExtra(): array
     {
-        return $this->documentId;
-    }
-
-    /**
-     * Returns the index name to be used for the update.
-     *
-     * @return string
-     */
-    public function getIndex(): string
-    {
-        return $this->index;
+        return $this->extra;
     }
 }

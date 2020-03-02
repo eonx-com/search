@@ -3,36 +3,27 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search;
 
-use LoyaltyCorp\Search\DataTransferObjects\DocumentUpdate;
-use LoyaltyCorp\Search\Interfaces\ClientInterface;
+use LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange;
+use LoyaltyCorp\Search\Events\BatchOfUpdatesEvent;
 use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
 use LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface;
-use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 final class Populator implements PopulatorInterface
 {
     /**
-     * @var \LoyaltyCorp\Search\Interfaces\ClientInterface
+     * @var \Psr\EventDispatcher\EventDispatcherInterface
      */
-    private $client;
-
-    /**
-     * @var \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface
-     */
-    private $nameTransformer;
+    private $dispatcher;
 
     /**
      * Constructor.
      *
-     * @param \LoyaltyCorp\Search\Interfaces\ClientInterface $client
-     * @param \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface $nameTransformer
+     * @param \Psr\EventDispatcher\EventDispatcherInterface $dispatcher
      */
-    public function __construct(
-        ClientInterface $client,
-        IndexNameTransformerInterface $nameTransformer
-    ) {
-        $this->client = $client;
-        $this->nameTransformer = $nameTransformer;
+    public function __construct(EventDispatcherInterface $dispatcher)
+    {
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -46,63 +37,28 @@ final class Populator implements PopulatorInterface
         $batched = $this->getBatchedIterable($handler, $batchSize);
 
         foreach ($batched as $batch) {
-            $this->populateWith($handler, $indexSuffix, $batch);
+            $event = new BatchOfUpdatesEvent($indexSuffix, $batch);
+
+            $this->dispatcher->dispatch($event);
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function populateWith(
-        TransformableSearchHandlerInterface $handler,
-        string $indexSuffix,
-        iterable $objects
-    ): void {
-        $updates = [];
-
-        foreach ($objects as $object) {
-            $searchId = $handler->getSearchId($object);
-            // If the handler didnt return an identifier, there is nothing to index.
-            if ($searchId === null) {
-                continue;
-            }
-
-            $transformed = $handler->transform($object);
-            // If the handler didnt transform the document there is nothing to index.
-            if ($transformed === null) {
-                continue;
-            }
-
-            $index = $this->nameTransformer->transformIndexName($handler, $object);
-            $updates[] = new DocumentUpdate(
-                $index . $indexSuffix,
-                (string)$searchId,
-                $transformed
-            );
-        }
-
-        // If there were no updates generated we have nothing to update.
-        if (\count($updates) === 0) {
-            return;
-        }
-
-        $this->client->bulkUpdate($updates);
     }
 
     /**
      * Batches a search handler's iterable into batch sizes.
      *
+     * @phpstan-param \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface<mixed> $handler
+     *
      * @param \LoyaltyCorp\Search\Interfaces\TransformableSearchHandlerInterface $handler
      * @param int $batchSize
      *
-     * @return mixed[]
+     * @return \LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerObjectForChange[][]
      */
     private function getBatchedIterable(TransformableSearchHandlerInterface $handler, int $batchSize): iterable
     {
         $batch = [];
 
         foreach ($handler->getFillIterable() as $item) {
-            $batch[] = $item;
+            $batch[] = new HandlerObjectForChange($handler->getHandlerKey(), $item);
 
             if (\count($batch) >= $batchSize) {
                 yield $batch;

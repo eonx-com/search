@@ -3,19 +3,20 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Interfaces\Transformers;
 
+use LoyaltyCorp\Search\DataTransferObjects\Handlers\ObjectForChange;
 use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 
 interface IndexNameTransformerInterface
 {
     /**
-     * Transform index name.
+     * Transform index name for a single update.
      *
      * @param \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface $handler
-     * @param object $object
+     * @param ObjectForChange<mixed> $object
      *
      * @return string
      */
-    public function transformIndexName(SearchHandlerInterface $handler, object $object): string;
+    public function transformIndexName(SearchHandlerInterface $handler, ObjectForChange $object): string;
 
     /**
      * Transform index names.

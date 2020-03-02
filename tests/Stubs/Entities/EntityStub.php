@@ -6,7 +6,7 @@ namespace Tests\LoyaltyCorp\Search\Stubs\Entities;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity()
+ * @ORM\Entity
  *
  * @coversNothing
  */
@@ -15,7 +15,7 @@ class EntityStub
     /**
      * Coupon ID.
      *
-     * @ORM\Id()
+     * @ORM\Id
      * @ORM\Column(type="string", name="id")
      *
      * @var string

@@ -7,14 +7,17 @@ parameters:
             message: '/Parameter #1 \$function of function call_user_func_array expects callable\(\): mixed, array\(Illuminate\\Container\\Container, string\) given./'
             path: tests/Stubs/Vendor/Illuminate/Contracts/Foundation/ApplicationStub.php
         -
-            message: '#Tests\\LoyaltyCorp\\Search\\Stubs\\Vendor\\Elasticsearch\\ClientStub::__construct\(\) does not call parent constructor from Elasticsearch\\Client.#'
-            path: tests/Stubs/Vendor/Elasticsearch/ClientStub.php
-        -
-            message: '#Tests\\LoyaltyCorp\\Search\\Stubs\\Vendor\\Elasticsearch\\CallableResponseClientStub::__construct\(\) does not call parent constructor from Elasticsearch\\Client.#'
+            message: '#Method Tests\\LoyaltyCorp\\Search\\Stubs\\Vendor\\Elasticsearch\\CallableResponseClientStub::bulk\(\) should return array but returns GuzzleHttp\\Ring\\Future\\FutureArray\.#'
             path: tests/Stubs/Vendor/Elasticsearch/CallableResponseClientStub.php
         -
-            message: '#Tests\\LoyaltyCorp\\Search\\Stubs\\Vendor\\Elasticsearch\\NullResponseClientStub::__construct\(\) does not call parent constructor from Elasticsearch\\Client.#'
-            path: tests/Stubs/Vendor/Elasticsearch/NullResponseClientStub.php
+            message: '#Method (.*) should return (.*) but return statement is missing\.#'
+            path: tests/Stubs/Vendor
         -
-            message: '#Tests\\LoyaltyCorp\\Search\\Stubs\\CatStub::__construct\(\) does not call parent constructor from Elasticsearch\\Namespaces\\AbstractNamespace.#'
-            path: tests/Stubs/CatStub.php
+            message: '#Method (.*) return type has no value type specified in iterable type (.*)\.#'
+            path: tests/Stubs/Vendor
+        -
+            message: '#Method (.*) has parameter (.*) with no value type specified in iterable type (.*)\.#'
+            path: tests/Stubs/Vendor
+        -
+            message: '#Method Tests\\LoyaltyCorp\\Search\\TestCases\\IntegrationTestCase::getContainer\(\) should return Illuminate\\Container\\Container but returns Illuminate\\Container\\Container\|null\.#'
+            path: tests/TestCases/IntegrationTestCase.php

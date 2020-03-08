@@ -3,22 +3,22 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Bridge\Symfony\Listeners;
 
-use LoyaltyCorp\EasyEntityChange\Events\EntityChangeEvent;
-use LoyaltyCorp\Search\Workers\EntityUpdateWorker;
+use EonX\EasyEntityChange\Events\EntityChangeEvent;
+use LoyaltyCorp\Search\Interfaces\Workers\EntityUpdateWorkerInterface;
 
 final class EntityUpdateListener
 {
     /**
-     * @var \LoyaltyCorp\Search\Workers\EntityUpdateWorker
+     * @var \LoyaltyCorp\Search\Interfaces\Workers\EntityUpdateWorkerInterface
      */
     private $worker;
 
     /**
      * Constructor.
      *
-     * @param \LoyaltyCorp\Search\Workers\EntityUpdateWorker $worker
+     * @param \LoyaltyCorp\Search\Interfaces\Workers\EntityUpdateWorkerInterface $worker
      */
-    public function __construct(EntityUpdateWorker $worker)
+    public function __construct(EntityUpdateWorkerInterface $worker)
     {
         $this->worker = $worker;
     }
@@ -26,12 +26,12 @@ final class EntityUpdateListener
     /**
      * Handles entity change event and updates ES indexes.
      *
-     * @param \LoyaltyCorp\EasyEntityChange\Events\EntityChangeEvent $event
+     * @param \EonX\EasyEntityChange\Events\EntityChangeEvent $event
      *
      * @return void
      */
     public function __invoke(EntityChangeEvent $event): void
     {
-        $this->worker->handle($event->getUpdates());
+        $this->worker->handle($event->getChanges());
     }
 }

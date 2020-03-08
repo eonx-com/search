@@ -18,6 +18,11 @@ final class ClientFactory implements ClientFactoryInterface
     private $bulkResponseHelper;
 
     /**
+     * @var null|int
+     */
+    private $connectionTimeout;
+
+    /**
      * @var string
      */
     private $elasticsearchHost;
@@ -26,6 +31,11 @@ final class ClientFactory implements ClientFactoryInterface
      * @var \EoneoPay\Externals\Logger\Interfaces\LoggerInterface
      */
     private $logger;
+
+    /**
+     * @var null|int
+     */
+    private $timeout;
 
     /**
      * @var bool
@@ -39,17 +49,23 @@ final class ClientFactory implements ClientFactoryInterface
      * @param \EoneoPay\Externals\Logger\Interfaces\LoggerInterface $logger
      * @param null|string $elasticsearchHost
      * @param null|bool $verifySsl
+     * @param null|int $connectionTimeout
+     * @param null|int $timeout
      */
     public function __construct(
         ClientBulkResponseHelperInterface $bulkResponseHelper,
         LoggerInterface $logger,
         ?string $elasticsearchHost = null,
-        ?bool $verifySsl = null
+        ?bool $verifySsl = null,
+        ?int $connectionTimeout = null,
+        ?int $timeout = null
     ) {
         $this->bulkResponseHelper = $bulkResponseHelper;
         $this->logger = $logger;
-        $this->elasticsearchHost = (string)($elasticsearchHost ?? '');
-        $this->verifySsl = (bool)($verifySsl ?? true);
+        $this->elasticsearchHost = $elasticsearchHost ?? '';
+        $this->verifySsl = $verifySsl ?? true;
+        $this->connectionTimeout = $connectionTimeout ?? 2;
+        $this->timeout = $timeout ?? 12;
     }
 
     /**
@@ -63,8 +79,8 @@ final class ClientFactory implements ClientFactoryInterface
             ClientBuilder::create()
                 ->setConnectionParams([
                     'client' => [
-                        'connect_timeout' => 2,
-                        'timeout' => 12,
+                        'connect_timeout' => $this->connectionTimeout,
+                        'timeout' => $this->timeout,
                     ],
                 ])
                 ->setLogger($this->logger)

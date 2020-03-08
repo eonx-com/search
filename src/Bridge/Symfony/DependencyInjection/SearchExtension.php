@@ -14,9 +14,14 @@ final class SearchExtension extends Extension
     /**
      * {@inheritDoc}
      *
+     * @param mixed[] $configs
+     * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
+     *
+     * @return void
+     *
      * @throws \Exception
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
@@ -26,6 +31,10 @@ final class SearchExtension extends Extension
 
         if (($config['use_listeners'] ?? false) === true) {
             $loader->load('services_events.yaml');
+        }
+
+        if (($config['use_commands'] ?? false) === true) {
+            $loader->load('services_commands.yaml');
         }
 
         // Auto tag search handlers

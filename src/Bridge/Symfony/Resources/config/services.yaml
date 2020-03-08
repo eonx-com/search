@@ -1,7 +1,15 @@
 parameters:
     default_elasticsearch_host: 'https://admin:admin@elasticsearch:9200'
-    elasticsearch_host: '%env(default:default_elasticsearch_host:ELASTICSEARCH_HOST)%'
+    default_elasticsearch_verify_ssl: true
+    default_elasticsearch_connection_timeout: 2
+    default_elasticsearch_timeout: 12
+    default_elasticsearch_update_batch_size: 100
 
+    elasticsearch_host: '%env(default:default_elasticsearch_host:ELASTICSEARCH_HOST)%'
+    elasticsearch_verify_ssl: '%env(default:default_elasticsearch_verify_ssl:ELASTICSEARCH_VERIFY_SSL)%'
+    elasticsearch_connection_timeout: '%env(default:default_elasticsearch_connection_timeout:ELASTICSEARCH_CONNECTION_TIMEOUT)%'
+    elasticsearch_timeout: '%env(default:default_elasticsearch_timeout:ELASTICSEARCH_TIMEOUT)%'
+    elasticsearch_update_batch_size: '%env(default:default_elasticsearch_update_batch_size:ELASTICSEARCH_UPDATES_BATCH_SIZE)%'
 services:
     _defaults:
         autowire: true
@@ -12,22 +20,21 @@ services:
     LoyaltyCorp\Search\Interfaces\Helpers\ClientBulkResponseHelperInterface:
         class: LoyaltyCorp\Search\Helpers\ClientBulkResponseHelper
 
-    LoyaltyCorp\Search\Bridge\Symfony\Interfaces\EntityManagerHelperFactoryInterface:
-        class: LoyaltyCorp\Search\Bridge\Symfony\Factories\EntityManagerHelperFactory
-
-    LoyaltyCorp\Search\Interfaces\Helpers\EntityManagerHelperInterface:
-        factory: ['@LoyaltyCorp\Search\Bridge\Symfony\Interfaces\EntityManagerHelperFactoryInterface', 'create']
-
-    LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlerInterface:
-        class: LoyaltyCorp\Search\Helpers\RegisteredSearchHandler
+    LoyaltyCorp\Search\Bridge\Symfony\Interfaces\RegisteredSearchHandlersFactoryInterface:
+        class: LoyaltyCorp\Search\Bridge\Symfony\Factories\RegisteredSearchHandlersFactory
         arguments: [!tagged search_handler]
+
+    LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface:
+        factory: ['@LoyaltyCorp\Search\Bridge\Symfony\Interfaces\RegisteredSearchHandlersFactoryInterface', 'create']
 
     # --- Client + Factory --- #
     LoyaltyCorp\Search\Bridge\Symfony\Interfaces\ClientFactoryInterface:
         class: LoyaltyCorp\Search\Bridge\Symfony\Factories\ClientFactory
         arguments:
             $elasticsearchHost: '%elasticsearch_host%'
-            $verifySsl: '%env(bool:ELASTICSEARCH_VERIFY_SSL)%'
+            $verifySsl: '%elasticsearch_verify_ssl%'
+            $connectionTimeout: '%elasticsearch_connection_timeout%'
+            $timeout: '%elasticsearch_timeout%'
 
     LoyaltyCorp\Search\Interfaces\ClientInterface:
         factory: ['@LoyaltyCorp\Search\Bridge\Symfony\Interfaces\ClientFactoryInterface', 'create']
@@ -45,10 +52,23 @@ services:
     LoyaltyCorp\Search\Interfaces\PopulatorInterface:
         class: LoyaltyCorp\Search\Populator
 
+    LoyaltyCorp\Search\Interfaces\Access\AccessPopulatorInterface:
+        class: LoyaltyCorp\Search\Access\AnonymousAccessPopulator
+
+    LoyaltyCorp\Search\Interfaces\UpdateProcessorInterface:
+        class: LoyaltyCorp\Search\UpdateProcessor
+
+    LoyaltyCorp\Search\Interfaces\Indexer\MappingHelperInterface:
+        class: LoyaltyCorp\Search\Indexer\AccessTokenMappingHelper
+
+    LoyaltyCorp\Search\Interfaces\ResponseFactoryInterface:
+        class: LoyaltyCorp\Search\ResponseFactory
+
     # --- Workers --- #
-    LoyaltyCorp\Search\Workers\EntityDeleteDataWorker: ~
-    LoyaltyCorp\Search\Workers\EntityDeleteWorker: ~
-    LoyaltyCorp\Search\Workers\EntityUpdateWorker: ~
+    LoyaltyCorp\Search\Interfaces\Workers\EntityUpdateWorkerInterface:
+        class: LoyaltyCorp\Search\Workers\EntityUpdateWorker
+        arguments:
+            $batchSize: '%update_batch_size%'
 
     # --- Request Proxy --- #
     LoyaltyCorp\Search\Interfaces\RequestProxyFactoryInterface:

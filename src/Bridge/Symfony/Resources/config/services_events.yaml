@@ -4,14 +4,10 @@ services:
         autoconfigure: true
         public: false
 
-    LoyaltyCorp\Search\Bridge\Symfony\Listeners\EntityDeleteDataListener:
+    LoyaltyCorp\Search\Bridge\Symfony\Listeners\BatchOfUpdatesListener:
         tags:
-            - { name: kernel.event_listener, event: \LoyaltyCorp\EasyEntityChange\Events\EntityDeleteDataEvent }
-
-    LoyaltyCorp\Search\Bridge\Symfony\Listeners\EntityDeleteListener:
-        tags:
-            - { name: kernel.event_listener, event: \LoyaltyCorp\EasyEntityChange\Events\EntityChangeEvent }
+            - { name: kernel.event_listener, event: LoyaltyCorp\Search\Events\BatchOfUpdatesEvent }
 
     LoyaltyCorp\Search\Bridge\Symfony\Listeners\EntityUpdateListener:
         tags:
-            - { name: kernel.event_listener, event: \LoyaltyCorp\EasyEntityChange\Events\EntityChangeEvent }
+            - { name: kernel.event_listener, event: EonX\EasyEntityChange\Events\EntityChangeEvent }

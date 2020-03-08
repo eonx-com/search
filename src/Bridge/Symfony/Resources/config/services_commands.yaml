@@ -1,0 +1,17 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    LoyaltyCorp\Search\Bridge\Symfony\Console\Commands\SearchIndexCleanCommand:
+        tags: ['console.command']
+
+    LoyaltyCorp\Search\Bridge\Symfony\Console\Commands\SearchIndexCreateCommand:
+        tags: ['console.command']
+
+    LoyaltyCorp\Search\Bridge\Symfony\Console\Commands\SearchIndexFillCommand:
+        tags: ['console.command']
+
+    LoyaltyCorp\Search\Bridge\Symfony\Console\Commands\SearchIndexLiveCommand:
+        tags: ['console.command']

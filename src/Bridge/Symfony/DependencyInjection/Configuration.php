@@ -19,7 +19,8 @@ final class Configuration implements ConfigurationInterface
 
         $treeBuilder->getRootNode()
             ->children()
-                ->booleanNode('use_listeners')->defaultFalse()
+                ->booleanNode('use_commands')->defaultFalse()->end()
+                ->booleanNode('use_listeners')->defaultFalse()->end()
             ->end();
 
         return $treeBuilder;

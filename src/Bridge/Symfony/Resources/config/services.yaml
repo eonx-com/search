@@ -68,7 +68,7 @@ services:
     LoyaltyCorp\Search\Interfaces\Workers\EntityUpdateWorkerInterface:
         class: LoyaltyCorp\Search\Workers\EntityUpdateWorker
         arguments:
-            $batchSize: '%update_batch_size%'
+            $batchSize: '%elasticsearch_update_batch_size%'
 
     # --- Request Proxy --- #
     LoyaltyCorp\Search\Interfaces\RequestProxyFactoryInterface:

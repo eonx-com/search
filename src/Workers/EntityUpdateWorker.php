@@ -132,6 +132,7 @@ final class EntityUpdateWorker implements EntityUpdateWorkerInterface
 
         // Retrieves all subscriptions grouped by their subscribing classes
         $subscriptions = $this->registeredHandlers->getSubscriptionsGroupedByClass();
+
         foreach ($changes as $update) {
             /** @var \LoyaltyCorp\Search\DataTransferObjects\Workers\HandlerChangeSubscription[] $classSubscriptions */
             $classSubscriptions = $subscriptions[$update->getClass()] ?? [];

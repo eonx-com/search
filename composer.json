@@ -21,7 +21,7 @@
     "eonx-com/easy-entity-change": "^2.0",
     "eonx-com/multitenancy": "^1.0",
     "eonx-com/standards": "^0.3",
-    "eonx-com/test-utils": "^0.1.0",
+    "eonx-com/test-utils": "^0.2",
     "eonx-com/utils": "^1.0",
     "friendsofphp/php-cs-fixer": "^2.15",
     "guzzlehttp/psr7": "^1.5",

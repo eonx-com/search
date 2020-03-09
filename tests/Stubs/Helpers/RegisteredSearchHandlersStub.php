@@ -17,7 +17,7 @@ final class RegisteredSearchHandlersStub extends BaseStub implements RegisteredS
      */
     public function getAll(): array
     {
-        return $this->returnOrThrowResponse(__FUNCTION__);
+        return $this->doStubCall(__FUNCTION__, \get_defined_vars(), []);
     }
 
     /**
@@ -25,7 +25,7 @@ final class RegisteredSearchHandlersStub extends BaseStub implements RegisteredS
      */
     public function getSubscriptionsGroupedByClass(): array
     {
-        return $this->returnOrThrowResponse(__FUNCTION__);
+        return $this->doStubCall(__FUNCTION__, \get_defined_vars(), []);
     }
 
     /**
@@ -33,9 +33,7 @@ final class RegisteredSearchHandlersStub extends BaseStub implements RegisteredS
      */
     public function getTransformableHandlerByKey(string $key): TransformableSearchHandlerInterface
     {
-        $this->saveCalls(__FUNCTION__, \get_defined_vars());
-
-        return $this->returnOrThrowResponse(__FUNCTION__);
+        return $this->doStubCall(__FUNCTION__, \get_defined_vars());
     }
 
     /**
@@ -43,6 +41,6 @@ final class RegisteredSearchHandlersStub extends BaseStub implements RegisteredS
      */
     public function getTransformableHandlers(): array
     {
-        return $this->returnOrThrowResponse(__FUNCTION__);
+        return $this->doStubCall(__FUNCTION__, \get_defined_vars(), []);
     }
 }

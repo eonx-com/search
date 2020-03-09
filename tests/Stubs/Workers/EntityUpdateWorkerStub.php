@@ -16,6 +16,6 @@ final class EntityUpdateWorkerStub extends BaseStub implements EntityUpdateWorke
      */
     public function handle(array $changes): void
     {
-        $this->saveCalls(__FUNCTION__, \get_defined_vars());
+        $this->doStubCall(__FUNCTION__, \get_defined_vars(), null);
     }
 }

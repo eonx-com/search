@@ -20,7 +20,7 @@ class FillableRepositoryStub extends BaseStub implements FillableRepositoryInter
      */
     public function getFillIterable(): iterable
     {
-        return $this->returnOrThrowResponse(__FUNCTION__);
+        return $this->doStubCall(__FUNCTION__, \get_defined_vars(), []);
     }
 
     /**
@@ -28,6 +28,6 @@ class FillableRepositoryStub extends BaseStub implements FillableRepositoryInter
      */
     public function prefillSearch(iterable $changes): void
     {
-        $this->saveCalls(__FUNCTION__, \get_defined_vars());
+        $this->doStubCall(__FUNCTION__, \get_defined_vars(), null);
     }
 }

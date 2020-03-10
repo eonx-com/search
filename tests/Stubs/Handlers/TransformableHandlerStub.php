@@ -68,7 +68,7 @@ class TransformableHandlerStub extends BaseStub implements TransformableSearchHa
      */
     public function getFillIterable(): iterable
     {
-        return $this->returnOrThrowResponse(__FUNCTION__);
+        return $this->doStubCall(__FUNCTION__, \get_defined_vars(), []);
     }
 
     /**
@@ -76,7 +76,7 @@ class TransformableHandlerStub extends BaseStub implements TransformableSearchHa
      */
     public function getHandlerKey(): string
     {
-        return $this->returnOrThrowResponse(__FUNCTION__);
+        return $this->doStubCall(__FUNCTION__, \get_defined_vars());
     }
 
     /**
@@ -92,7 +92,7 @@ class TransformableHandlerStub extends BaseStub implements TransformableSearchHa
      */
     public function getSubscriptions(): array
     {
-        return $this->returnOrThrowResponse(__FUNCTION__);
+        return $this->doStubCall(__FUNCTION__, \get_defined_vars(), []);
     }
 
     /**
@@ -100,7 +100,7 @@ class TransformableHandlerStub extends BaseStub implements TransformableSearchHa
      */
     public function prefill(iterable $changes): void
     {
-        $this->saveCalls(__FUNCTION__, \get_defined_vars());
+        $this->doStubCall(__FUNCTION__, \get_defined_vars(), null);
     }
 
     /**
@@ -108,8 +108,6 @@ class TransformableHandlerStub extends BaseStub implements TransformableSearchHa
      */
     public function transform(ObjectForChange $change): ?DocumentAction
     {
-        $this->saveCalls(__FUNCTION__, \get_defined_vars());
-
-        return $this->returnOrThrowResponse(__FUNCTION__);
+        return $this->doStubCall(__FUNCTION__, \get_defined_vars(), null);
     }
 }

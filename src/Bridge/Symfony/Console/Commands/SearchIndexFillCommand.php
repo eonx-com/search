@@ -12,6 +12,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class SearchIndexFillCommand extends Command
 {
     /**
+     * @var null|string The default command name
+     */
+    protected static $defaultName = 'search:index:fill';
+
+    /**
      * @var \LoyaltyCorp\Search\Interfaces\PopulatorInterface
      */
     private $populator;
@@ -35,10 +40,14 @@ final class SearchIndexFillCommand extends Command
         parent::__construct();
     }
 
+    /**
+     * Configures the current command.
+     *
+     * @return void
+     */
     protected function configure()
     {
-        $this->setName('search:index:fill')
-            ->setDescription('Populate all search handler indices with their corresponding data');
+        $this->setDescription('Populate all search handler indices with their corresponding data');
     }
 
     /**
@@ -47,9 +56,9 @@ final class SearchIndexFillCommand extends Command
      * @param \Symfony\Component\Console\Input\InputInterface $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
-     * @return void
+     * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $allSearchHandlers = $this->searchHandlers->getTransformableHandlers();
         $totalHandlers = \count($allSearchHandlers);
@@ -72,5 +81,7 @@ final class SearchIndexFillCommand extends Command
             /** @noinspection DisconnectedForeachInstructionInspection */
             $output->writeln("\xE2\x9C\x93");
         }
+
+        return 0;
     }
 }

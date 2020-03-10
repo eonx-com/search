@@ -10,32 +10,29 @@ use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface;
 final class RegisteredSearchHandlersFactory implements RegisteredSearchHandlersFactoryInterface
 {
     /**
-     * @var iterable<\LoyaltyCorp\Search\Interfaces\SearchHandlerInterface>
+     * @var \Traversable<\LoyaltyCorp\Search\Interfaces\SearchHandlerInterface>
      */
     private $searchHandlers;
 
     /**
      * RegisteredSearchHandlersFactory constructor.
      *
-     * @param iterable<\LoyaltyCorp\Search\Interfaces\SearchHandlerInterface> $searchHandlers
+     * @param \Traversable<\LoyaltyCorp\Search\Interfaces\SearchHandlerInterface> $searchHandlers
      */
-    public function __construct(iterable $searchHandlers)
+    public function __construct(\Traversable $searchHandlers)
     {
         $this->searchHandlers = $searchHandlers;
     }
 
     /**
-     * @inheritDoc
+     * Create search RegisteredSearchHandlersInterface.
+     *
+     * @return \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface
      */
     public function create(): RegisteredSearchHandlersInterface
     {
         // Because tagged services are wrapped in Symfony\Component\DependencyInjection\Argument\RewindableGenerator,
-        // We need to iterate to get the actual instance.
-        $searchHandlers = [];
-        foreach ($this->searchHandlers as $searchHandler) {
-            $searchHandlers[] = $searchHandler;
-        }
-
-        return new RegisteredSearchHandlers($searchHandlers);
+        // We need to convert iterator to array to get the actual instances.
+        return new RegisteredSearchHandlers(\iterator_to_array($this->searchHandlers));
     }
 }

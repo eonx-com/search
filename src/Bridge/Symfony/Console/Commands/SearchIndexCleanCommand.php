@@ -12,6 +12,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class SearchIndexCleanCommand extends Command
 {
     /**
+     * @var null|string The default command name
+     */
+    protected static $defaultName = 'search:index:clean';
+
+    /**
      * @var \LoyaltyCorp\Search\Interfaces\IndexerInterface
      */
     private $indexer;
@@ -35,10 +40,14 @@ final class SearchIndexCleanCommand extends Command
         parent::__construct();
     }
 
+    /**
+     * Configures the current command.
+     *
+     * @return void
+     */
     protected function configure()
     {
-        $this->setName('search:index:clean')
-            ->setDescription('Remove any indices deriving from search handlers that are unused');
+        $this->setDescription('Remove any indices deriving from search handlers that are unused');
     }
 
     /**
@@ -47,13 +56,15 @@ final class SearchIndexCleanCommand extends Command
      * @param \Symfony\Component\Console\Input\InputInterface $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
-     * @return void
+     * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln('Removing all unused indices across search handlers');
 
         // Warn - prompt
         $this->indexer->clean($this->searchHandlers->getAll());
+
+        return 0;
     }
 }

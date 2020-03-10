@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\LoyaltyCorp\Search\Unit\Bridge\Symfony\DependencyInjection;
 
+use EonX\EasyEntityChange\Events\EntityChangeEvent;
 use LoyaltyCorp\Search\Access\AnonymousAccessPopulator;
 use LoyaltyCorp\Search\Bridge\Symfony\Console\Commands\SearchIndexCleanCommand;
 use LoyaltyCorp\Search\Bridge\Symfony\Console\Commands\SearchIndexCreateCommand;
@@ -16,6 +17,7 @@ use LoyaltyCorp\Search\Bridge\Symfony\Interfaces\RegisteredSearchHandlersFactory
 use LoyaltyCorp\Search\Bridge\Symfony\Listeners\BatchOfUpdatesListener;
 use LoyaltyCorp\Search\Bridge\Symfony\Listeners\EntityUpdateListener;
 use LoyaltyCorp\Search\Client;
+use LoyaltyCorp\Search\Events\BatchOfUpdatesEvent;
 use LoyaltyCorp\Search\Helpers\ClientBulkResponseHelper;
 use LoyaltyCorp\Search\Helpers\RegisteredSearchHandlers;
 use LoyaltyCorp\Search\Indexer;
@@ -57,7 +59,7 @@ final class SearchExtensionTest extends UnitTestCase
     {
         $container = new ContainerBuilder();
 
-        (new SearchExtension())->load(['search' => ['use_commands' => true]], $container);
+        (new SearchExtension())->load([], $container);
 
         $commands = [
             SearchIndexCleanCommand::class,
@@ -66,8 +68,14 @@ final class SearchExtensionTest extends UnitTestCase
             SearchIndexLiveCommand::class,
         ];
 
-        foreach ($commands as $command) {
-            self::assertTrue($container->hasDefinition($command));
+        $taggedServices = \array_keys($container->findTaggedServiceIds('console.command'));
+
+        foreach ($commands as $commandClass) {
+            $definition = $container->getDefinition($commandClass);
+
+            self::assertNotNull($definition);
+            self::assertNotNull($definition->getTag('console.command'));
+            self::assertContains($commandClass, $taggedServices);
         }
     }
 
@@ -82,15 +90,21 @@ final class SearchExtensionTest extends UnitTestCase
     {
         $container = new ContainerBuilder();
 
-        (new SearchExtension())->load(['search' => ['use_listeners' => true]], $container);
+        (new SearchExtension())->load([], $container);
 
         $listeners = [
-            BatchOfUpdatesListener::class,
-            EntityUpdateListener::class,
+            BatchOfUpdatesEvent::class => BatchOfUpdatesListener::class,
+            EntityChangeEvent::class => EntityUpdateListener::class,
         ];
 
-        foreach ($listeners as $listener) {
-            self::assertTrue($container->hasDefinition($listener));
+        $taggedServices = \array_keys($container->findTaggedServiceIds('kernel.event_listener'));
+
+        foreach ($listeners as $event => $listener) {
+            $definition = $container->getDefinition($listener);
+
+            self::assertNotNull($definition);
+            self::assertContains($listener, $taggedServices);
+            self::assertContains($event, $definition->getTag('kernel.event_listener')[0] ?? []);
         }
     }
 
@@ -124,8 +138,22 @@ final class SearchExtensionTest extends UnitTestCase
             UpdateProcessorInterface::class => UpdateProcessor::class,
         ];
 
+        $withFactoryServices = [
+            RegisteredSearchHandlersInterface::class => RegisteredSearchHandlersFactoryInterface::class,
+            ClientInterface::class => ClientFactoryInterface::class,
+        ];
+
         foreach ($services as $interface => $service) {
-            self::assertTrue($container->hasDefinition($interface), $interface);
+            $definition = $container->getDefinition($interface);
+
+            self::assertNotNull($definition);
+
+            if (isset($withFactoryServices[$interface]) === true) {
+                self::assertEquals($withFactoryServices[$interface], (string)($definition->getFactory()[0] ?? null));
+                continue;
+            }
+
+            self::assertEquals($service, $definition->getClass());
         }
     }
 }

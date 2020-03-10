@@ -1,15 +1,15 @@
 parameters:
-    default_elasticsearch_host: 'https://admin:admin@elasticsearch:9200'
-    default_elasticsearch_verify_ssl: true
-    default_elasticsearch_connection_timeout: 2
-    default_elasticsearch_timeout: 12
-    default_elasticsearch_update_batch_size: 100
+    eonx_search_default_elasticsearch_host: 'https://admin:admin@elasticsearch:9200'
+    eonx_search_default_elasticsearch_verify_ssl: true
+    eonx_search_default_elasticsearch_connection_timeout: 2
+    eonx_search_default_elasticsearch_timeout: 12
+    eonx_search_default_elasticsearch_update_batch_size: 100
 
-    elasticsearch_host: '%env(default:default_elasticsearch_host:ELASTICSEARCH_HOST)%'
-    elasticsearch_verify_ssl: '%env(default:default_elasticsearch_verify_ssl:ELASTICSEARCH_VERIFY_SSL)%'
-    elasticsearch_connection_timeout: '%env(default:default_elasticsearch_connection_timeout:ELASTICSEARCH_CONNECTION_TIMEOUT)%'
-    elasticsearch_timeout: '%env(default:default_elasticsearch_timeout:ELASTICSEARCH_TIMEOUT)%'
-    elasticsearch_update_batch_size: '%env(default:default_elasticsearch_update_batch_size:ELASTICSEARCH_UPDATES_BATCH_SIZE)%'
+    eonx_search_elasticsearch_host: '%env(default:eonx_search_default_elasticsearch_host:ELASTICSEARCH_HOST)%'
+    eonx_search_elasticsearch_verify_ssl: '%env(default:eonx_search_default_elasticsearch_verify_ssl:ELASTICSEARCH_VERIFY_SSL)%'
+    eonx_search_elasticsearch_connection_timeout: '%env(default:eonx_search_default_elasticsearch_connection_timeout:ELASTICSEARCH_CONNECTION_TIMEOUT)%'
+    eonx_search_elasticsearch_timeout: '%env(default:eonx_search_default_elasticsearch_timeout:ELASTICSEARCH_TIMEOUT)%'
+    eonx_search_elasticsearch_update_batch_size: '%env(default:eonx_search_default_elasticsearch_update_batch_size:ELASTICSEARCH_UPDATES_BATCH_SIZE)%'
 services:
     _defaults:
         autowire: true
@@ -31,10 +31,10 @@ services:
     LoyaltyCorp\Search\Bridge\Symfony\Interfaces\ClientFactoryInterface:
         class: LoyaltyCorp\Search\Bridge\Symfony\Factories\ClientFactory
         arguments:
-            $elasticsearchHost: '%elasticsearch_host%'
-            $verifySsl: '%elasticsearch_verify_ssl%'
-            $connectionTimeout: '%elasticsearch_connection_timeout%'
-            $timeout: '%elasticsearch_timeout%'
+            $elasticsearchHost: '%eonx_search_elasticsearch_host%'
+            $verifySsl: '%eonx_search_elasticsearch_verify_ssl%'
+            $connectionTimeout: '%eonx_search_elasticsearch_connection_timeout%'
+            $timeout: '%eonx_search_elasticsearch_timeout%'
 
     LoyaltyCorp\Search\Interfaces\ClientInterface:
         factory: ['@LoyaltyCorp\Search\Bridge\Symfony\Interfaces\ClientFactoryInterface', 'create']
@@ -68,10 +68,10 @@ services:
     LoyaltyCorp\Search\Interfaces\Workers\EntityUpdateWorkerInterface:
         class: LoyaltyCorp\Search\Workers\EntityUpdateWorker
         arguments:
-            $batchSize: '%elasticsearch_update_batch_size%'
+            $batchSize: '%eonx_search_elasticsearch_update_batch_size%'
 
     # --- Request Proxy --- #
     LoyaltyCorp\Search\Interfaces\RequestProxyFactoryInterface:
         class: LoyaltyCorp\Search\RequestProxyFactory
         arguments:
-            $elasticHost: '%elasticsearch_host%'
+            $elasticHost: '%eonx_search_elasticsearch_host%'

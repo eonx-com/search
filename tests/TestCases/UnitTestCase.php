@@ -12,18 +12,4 @@ use Eonx\TestUtils\TestCases\UnitTestCase as BaseUnitTestCase;
  */
 abstract class UnitTestCase extends BaseUnitTestCase
 {
-    /**
-     * Returns private property value.
-     *
-     * @param mixed $object
-     * @param string $property
-     *
-     * @return mixed
-     */
-    protected function getPrivatePropertyValue($object, string $property)
-    {
-        return (function () use ($property) {
-            return $this->{$property};
-        })->call($object);
-    }
 }

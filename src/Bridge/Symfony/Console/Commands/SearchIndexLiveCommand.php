@@ -14,6 +14,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class SearchIndexLiveCommand extends Command
 {
     /**
+     * @var null|string The default command name
+     */
+    protected static $defaultName = 'search:index:live';
+
+    /**
      * @var \LoyaltyCorp\Search\Interfaces\IndexerInterface
      */
     private $indexer;
@@ -37,19 +42,23 @@ final class SearchIndexLiveCommand extends Command
         parent::__construct();
     }
 
+    /**
+     * Configures the current command.
+     *
+     * @return void
+     */
     protected function configure()
     {
-        $this->setName('search:index:live')
-            ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Enable dry run mode.')
+        $this->addOption('dry-run', null, InputOption::VALUE_NONE, 'Enable dry run mode.')
             ->setDescription('Atomically switches root aliases from search handlers to the latest index');
     }
 
     /**
      * Swap root alias to point to newest index created on a per-search-handler basis.
      *
-     * @return void
+     * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $dryRun = $this->isDryRun($input);
 
@@ -66,6 +75,8 @@ final class SearchIndexLiveCommand extends Command
 
         $table->setHeaders($headers)->setRows($rows);
         $table->render();
+
+        return 0;
     }
 
     /**

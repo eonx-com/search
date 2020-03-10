@@ -9,14 +9,14 @@ use LoyaltyCorp\Search\Interfaces\Helpers\ClientBulkResponseHelperInterface;
 final class ClientBulkResponseHelperStub implements ClientBulkResponseHelperInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function checkBulkResponsesForErrors($response): void
     {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function unwrapPromise(FutureArrayInterface $promise)
     {

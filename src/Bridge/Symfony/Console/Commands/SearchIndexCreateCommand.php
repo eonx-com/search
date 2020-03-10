@@ -12,6 +12,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class SearchIndexCreateCommand extends Command
 {
     /**
+     * @var null|string The default command name
+     */
+    protected static $defaultName = 'search:index:create';
+
+    /**
      * @var \LoyaltyCorp\Search\Interfaces\IndexerInterface
      */
     private $indexer;
@@ -35,10 +40,14 @@ final class SearchIndexCreateCommand extends Command
         parent::__construct();
     }
 
+    /**
+     * Configures the current command.
+     *
+     * @return void
+     */
     protected function configure()
     {
-        $this->setName('search:index:create')
-            ->setDescription('Create date-based indices for all registered search handlers');
+        $this->setDescription('Create date-based indices for all registered search handlers');
     }
 
     /**
@@ -47,9 +56,9 @@ final class SearchIndexCreateCommand extends Command
      * @param \Symfony\Component\Console\Input\InputInterface $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
-     * @return void
+     * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $allSearchHandlers = $this->searchHandlers->getAll();
         $totalHandlers = \count($allSearchHandlers);
@@ -72,5 +81,7 @@ final class SearchIndexCreateCommand extends Command
              */
             $output->writeln("\xE2\x9C\x93");
         }
+
+        return 0;
     }
 }

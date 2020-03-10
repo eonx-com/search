@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace Tests\LoyaltyCorp\Search\Unit\Bridge\Symfony\Factories;
 
 use LoyaltyCorp\Search\Bridge\Symfony\Factories\RegisteredSearchHandlersFactory;
+use LoyaltyCorp\Search\Helpers\RegisteredSearchHandlers;
+use ReflectionProperty;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\NonDoctrineHandlerStub;
 use Tests\LoyaltyCorp\Search\Stubs\Handlers\TransformableHandlerStub;
 use Tests\LoyaltyCorp\Search\TestCases\UnitTestCase;
@@ -15,6 +17,10 @@ final class RegisteredSearchHandlersFactoryTest extends UnitTestCase
 {
     /**
      * Test create instance of RegisteredSearchHandlers with default value.
+     *
+     * @return void
+     *
+     * @throws \ReflectionException
      */
     public function testCreateRegisteredSearchHandlersClient(): void
     {
@@ -25,7 +31,11 @@ final class RegisteredSearchHandlersFactoryTest extends UnitTestCase
 
         $registeredHandlers = (new RegisteredSearchHandlersFactory($this->toIterable($expectedHandlers)))->create();
 
-        self::assertEquals($expectedHandlers, $this->getPrivatePropertyValue($registeredHandlers, 'searchHandlers'));
+        // Use reflection to assert private properties are set properly.
+        $actualSearchHandlers = new ReflectionProperty(RegisteredSearchHandlers::class, 'searchHandlers');
+        $actualSearchHandlers->setAccessible(true);
+
+        self::assertEquals($expectedHandlers, $actualSearchHandlers->getValue($registeredHandlers));
     }
 
     /**
@@ -33,9 +43,9 @@ final class RegisteredSearchHandlersFactoryTest extends UnitTestCase
      *
      * @param \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[] $toYield
      *
-     * @return iterable<\LoyaltyCorp\Search\Interfaces\SearchHandlerInterface>
+     * @return \Traversable<\LoyaltyCorp\Search\Interfaces\SearchHandlerInterface>
      */
-    private function toIterable(array $toYield): iterable
+    private function toIterable(array $toYield): \Traversable
     {
         foreach ($toYield as $searchHandler) {
             yield $searchHandler;

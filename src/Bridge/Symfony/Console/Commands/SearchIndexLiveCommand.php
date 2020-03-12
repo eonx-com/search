@@ -47,7 +47,7 @@ final class SearchIndexLiveCommand extends Command
      *
      * @return void
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->addOption('dry-run', null, InputOption::VALUE_NONE, 'Enable dry run mode.')
             ->setDescription('Atomically switches root aliases from search handlers to the latest index');
@@ -56,9 +56,14 @@ final class SearchIndexLiveCommand extends Command
     /**
      * Swap root alias to point to newest index created on a per-search-handler basis.
      *
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     *
      * @return int
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $dryRun = $this->isDryRun($input);
 
@@ -69,11 +74,11 @@ final class SearchIndexLiveCommand extends Command
         $results = $this->indexer->indexSwap($this->searchHandlers->getAll(), $dryRun);
 
         // Display results as table.
-        [$headers, $rows] = $results->getTableData();
+        $tableData = $results->getTableData();
 
         $table = new Table($output);
 
-        $table->setHeaders($headers)->setRows($rows);
+        $table->setHeaders($tableData[0] ?? [])->setRows($tableData[1] ?? []);
         $table->render();
 
         return 0;

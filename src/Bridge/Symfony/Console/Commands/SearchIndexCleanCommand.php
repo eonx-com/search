@@ -45,7 +45,7 @@ final class SearchIndexCleanCommand extends Command
      *
      * @return void
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setDescription('Remove any indices deriving from search handlers that are unused');
     }
@@ -57,8 +57,10 @@ final class SearchIndexCleanCommand extends Command
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
      * @return int
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('Removing all unused indices across search handlers');
 

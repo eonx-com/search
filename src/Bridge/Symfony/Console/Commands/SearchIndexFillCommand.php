@@ -45,7 +45,7 @@ final class SearchIndexFillCommand extends Command
      *
      * @return void
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setDescription('Populate all search handler indices with their corresponding data');
     }
@@ -57,8 +57,10 @@ final class SearchIndexFillCommand extends Command
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
      * @return int
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $allSearchHandlers = $this->searchHandlers->getTransformableHandlers();
         $totalHandlers = \count($allSearchHandlers);

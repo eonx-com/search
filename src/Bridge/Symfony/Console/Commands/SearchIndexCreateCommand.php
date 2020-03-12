@@ -45,7 +45,7 @@ final class SearchIndexCreateCommand extends Command
      *
      * @return void
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setDescription('Create date-based indices for all registered search handlers');
     }
@@ -57,8 +57,10 @@ final class SearchIndexCreateCommand extends Command
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
      * @return int
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $allSearchHandlers = $this->searchHandlers->getAll();
         $totalHandlers = \count($allSearchHandlers);

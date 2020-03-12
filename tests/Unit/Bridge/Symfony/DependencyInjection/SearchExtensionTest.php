@@ -45,6 +45,9 @@ use Tests\LoyaltyCorp\Search\TestCases\UnitTestCase;
 
 /**
  * @covers \LoyaltyCorp\Search\Bridge\Symfony\DependencyInjection\SearchExtension
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Required for thorough testing
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods) Well tested code for all the cases.
  */
 final class SearchExtensionTest extends UnitTestCase
 {

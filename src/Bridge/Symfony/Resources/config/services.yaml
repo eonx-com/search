@@ -1,0 +1,77 @@
+parameters:
+    eonx_search_default_elasticsearch_host: 'https://admin:admin@elasticsearch:9200'
+    eonx_search_default_elasticsearch_verify_ssl: true
+    eonx_search_default_elasticsearch_connection_timeout: 2
+    eonx_search_default_elasticsearch_timeout: 12
+    eonx_search_default_elasticsearch_update_batch_size: 100
+
+    eonx_search_elasticsearch_host: '%env(default:eonx_search_default_elasticsearch_host:ELASTICSEARCH_HOST)%'
+    eonx_search_elasticsearch_verify_ssl: '%env(default:eonx_search_default_elasticsearch_verify_ssl:ELASTICSEARCH_VERIFY_SSL)%'
+    eonx_search_elasticsearch_connection_timeout: '%env(default:eonx_search_default_elasticsearch_connection_timeout:ELASTICSEARCH_CONNECTION_TIMEOUT)%'
+    eonx_search_elasticsearch_timeout: '%env(default:eonx_search_default_elasticsearch_timeout:ELASTICSEARCH_TIMEOUT)%'
+    eonx_search_elasticsearch_update_batch_size: '%env(default:eonx_search_default_elasticsearch_update_batch_size:ELASTICSEARCH_UPDATES_BATCH_SIZE)%'
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    # --- Helpers --- #
+    LoyaltyCorp\Search\Interfaces\Helpers\ClientBulkResponseHelperInterface:
+        class: LoyaltyCorp\Search\Helpers\ClientBulkResponseHelper
+
+    LoyaltyCorp\Search\Bridge\Symfony\Interfaces\RegisteredSearchHandlersFactoryInterface:
+        class: LoyaltyCorp\Search\Bridge\Symfony\Factories\RegisteredSearchHandlersFactory
+        arguments: [!tagged search_handler]
+
+    LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface:
+        factory: ['@LoyaltyCorp\Search\Bridge\Symfony\Interfaces\RegisteredSearchHandlersFactoryInterface', 'create']
+
+    # --- Client + Factory --- #
+    LoyaltyCorp\Search\Bridge\Symfony\Interfaces\ClientFactoryInterface:
+        class: LoyaltyCorp\Search\Bridge\Symfony\Factories\ClientFactory
+        arguments:
+            $elasticsearchHost: '%eonx_search_elasticsearch_host%'
+            $verifySsl: '%eonx_search_elasticsearch_verify_ssl%'
+            $connectionTimeout: '%eonx_search_elasticsearch_connection_timeout%'
+            $timeout: '%eonx_search_elasticsearch_timeout%'
+
+    LoyaltyCorp\Search\Interfaces\ClientInterface:
+        factory: ['@LoyaltyCorp\Search\Bridge\Symfony\Interfaces\ClientFactoryInterface', 'create']
+
+    # --- Index Related --- #
+    LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface:
+        class: LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer
+
+    LoyaltyCorp\Search\Interfaces\IndexerInterface:
+        class: LoyaltyCorp\Search\Indexer
+
+    LoyaltyCorp\Search\Interfaces\ManagerInterface:
+        class: LoyaltyCorp\Search\Manager
+
+    LoyaltyCorp\Search\Interfaces\PopulatorInterface:
+        class: LoyaltyCorp\Search\Populator
+
+    LoyaltyCorp\Search\Interfaces\Access\AccessPopulatorInterface:
+        class: LoyaltyCorp\Search\Access\AnonymousAccessPopulator
+
+    LoyaltyCorp\Search\Interfaces\UpdateProcessorInterface:
+        class: LoyaltyCorp\Search\UpdateProcessor
+
+    LoyaltyCorp\Search\Interfaces\Indexer\MappingHelperInterface:
+        class: LoyaltyCorp\Search\Indexer\AccessTokenMappingHelper
+
+    LoyaltyCorp\Search\Interfaces\ResponseFactoryInterface:
+        class: LoyaltyCorp\Search\ResponseFactory
+
+    # --- Workers --- #
+    LoyaltyCorp\Search\Interfaces\Workers\EntityUpdateWorkerInterface:
+        class: LoyaltyCorp\Search\Workers\EntityUpdateWorker
+        arguments:
+            $batchSize: '%eonx_search_elasticsearch_update_batch_size%'
+
+    # --- Request Proxy --- #
+    LoyaltyCorp\Search\Interfaces\RequestProxyFactoryInterface:
+        class: LoyaltyCorp\Search\RequestProxyFactory
+        arguments:
+            $elasticHost: '%eonx_search_elasticsearch_host%'

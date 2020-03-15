@@ -21,3 +21,6 @@ parameters:
         -
             message: '#Method Tests\\LoyaltyCorp\\Search\\TestCases\\IntegrationTestCase::getContainer\(\) should return Illuminate\\Container\\Container but returns Illuminate\\Container\\Container\|null\.#'
             path: tests/TestCases/IntegrationTestCase.php
+        -
+            message: '#Method LoyaltyCorp\\Search\\Bridge\\Symfony\\DependencyInjection\\SearchExtension::load\(\) has parameter \$configs with no value type specified in iterable type array.#'
+            path: src\Bridge\Symfony\DependencyInjection/SearchExtension.php

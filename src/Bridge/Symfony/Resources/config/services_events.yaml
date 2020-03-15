@@ -1,0 +1,13 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    LoyaltyCorp\Search\Bridge\Symfony\Listeners\BatchOfUpdatesListener:
+        tags:
+            - { name: kernel.event_listener, event: LoyaltyCorp\Search\Events\BatchOfUpdatesEvent }
+
+    LoyaltyCorp\Search\Bridge\Symfony\Listeners\EntityUpdateListener:
+        tags:
+            - { name: kernel.event_listener, event: EonX\EasyEntityChange\Events\EntityChangeEvent }

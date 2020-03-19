@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Bridge\Symfony\Messages;
 
-final class EntityChangeMessage
+use LoyaltyCorp\Search\Bridge\Symfony\Interfaces\SearchMessageInterface;
+
+final class EntityChangeMessage implements SearchMessageInterface
 {
     /**
      * Contains an array of ChangedEntity DTO objects that indicate any

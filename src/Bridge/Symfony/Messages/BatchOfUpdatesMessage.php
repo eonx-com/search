@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Bridge\Symfony\Messages;
 
-final class BatchOfUpdatesMessage
+use LoyaltyCorp\Search\Bridge\Symfony\Interfaces\SearchMessageInterface;
+
+final class BatchOfUpdatesMessage implements SearchMessageInterface
 {
     /**
      * Stores an index suffix if one is to be used during batch processing.

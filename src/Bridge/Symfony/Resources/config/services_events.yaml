@@ -11,3 +11,10 @@ services:
     LoyaltyCorp\Search\Bridge\Symfony\Listeners\EntityUpdateListener:
         tags:
             - { name: kernel.event_listener, event: EonX\EasyEntityChange\Events\EntityChangeEvent }
+
+    LoyaltyCorp\Search\Bridge\Symfony\MessageHandlers\BatchOfUpdatesHandler:
+        tags: [messenger.message_handler]
+
+    LoyaltyCorp\Search\Bridge\Symfony\MessageHandlers\EntityUpdateHandler:
+        tags: [messenger.message_handler]
+

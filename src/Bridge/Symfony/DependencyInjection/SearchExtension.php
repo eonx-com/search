@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 final class SearchExtension extends Extension
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * @param mixed[] $configs
      * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container

@@ -4,8 +4,9 @@ declare(strict_types=1);
 namespace Tests\LoyaltyCorp\Search\Unit\Bridge\Symfony\Listeners;
 
 use LoyaltyCorp\Search\Bridge\Symfony\Listeners\BatchOfUpdatesListener;
+use LoyaltyCorp\Search\Bridge\Symfony\Messages\BatchOfUpdatesMessage;
 use LoyaltyCorp\Search\Events\BatchOfUpdatesEvent;
-use Tests\LoyaltyCorp\Search\Stubs\UpdateProcessorStub;
+use Tests\LoyaltyCorp\Search\Stubs\Bridge\Symfony\MessageBusStub;
 use Tests\LoyaltyCorp\Search\TestCases\UnitTestCase;
 
 /**
@@ -20,19 +21,19 @@ final class BatchOfUpdatesListenerTest extends UnitTestCase
      */
     public function testHandle(): void
     {
-        $updateProcessor = new UpdateProcessorStub();
+        $messageBus = new MessageBusStub();
 
-        $listener = new BatchOfUpdatesListener($updateProcessor);
+        $listener = new BatchOfUpdatesListener($messageBus);
 
         $expectedProcessCalls = [
             [
-                'indexSuffix' => 'suffix',
-                'updates' => [],
-            ],
+                'message' => new BatchOfUpdatesMessage('suffix', []),
+                'stamps' => []
+            ]
         ];
 
         $listener(new BatchOfUpdatesEvent('suffix', []));
 
-        self::assertSame($expectedProcessCalls, $updateProcessor->getCalls('process'));
+        self::assertEquals($expectedProcessCalls, $messageBus->getCalls('dispatch'));
     }
 }

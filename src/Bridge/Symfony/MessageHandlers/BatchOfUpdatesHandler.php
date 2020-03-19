@@ -5,8 +5,9 @@ namespace LoyaltyCorp\Search\Bridge\Symfony\MessageHandlers;
 
 use LoyaltyCorp\Search\Bridge\Symfony\Messages\BatchOfUpdatesMessage;
 use LoyaltyCorp\Search\Interfaces\UpdateProcessorInterface;
+use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
-class BatchOfUpdatesHandler
+final class BatchOfUpdatesHandler implements MessageHandlerInterface
 {
     /**
      * @var \LoyaltyCorp\Search\Interfaces\UpdateProcessorInterface

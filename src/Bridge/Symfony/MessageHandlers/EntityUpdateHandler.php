@@ -5,8 +5,9 @@ namespace LoyaltyCorp\Search\Bridge\Symfony\MessageHandlers;
 
 use LoyaltyCorp\Search\Bridge\Symfony\Messages\EntityChangeMessage;
 use LoyaltyCorp\Search\Interfaces\Workers\EntityUpdateWorkerInterface;
+use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
-final class EntityUpdateHandler
+final class EntityUpdateHandler implements MessageHandlerInterface
 {
     /**
      * @var \LoyaltyCorp\Search\Interfaces\Workers\EntityUpdateWorkerInterface

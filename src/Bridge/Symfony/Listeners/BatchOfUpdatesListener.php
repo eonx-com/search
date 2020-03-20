@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Bridge\Symfony\Listeners;
 
-use LoyaltyCorp\Search\Bridge\Symfony\Messages\BatchOfUpdatesMessage;
 use LoyaltyCorp\Search\Events\BatchOfUpdatesEvent;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -33,9 +32,6 @@ class BatchOfUpdatesListener
      */
     public function __invoke(BatchOfUpdatesEvent $batchOfUpdates): void
     {
-        $this->messageBus->dispatch(new BatchOfUpdatesMessage(
-            $batchOfUpdates->getIndexSuffix(),
-            $batchOfUpdates->getUpdates()
-        ));
+        $this->messageBus->dispatch($batchOfUpdates);
     }
 }

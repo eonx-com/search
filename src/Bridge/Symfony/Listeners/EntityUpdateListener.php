@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace LoyaltyCorp\Search\Bridge\Symfony\Listeners;
 
 use EonX\EasyEntityChange\Events\EntityChangeEvent;
-use LoyaltyCorp\Search\Bridge\Symfony\Messages\EntityChangeMessage;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 final class EntityUpdateListener
@@ -33,6 +32,6 @@ final class EntityUpdateListener
      */
     public function __invoke(EntityChangeEvent $event): void
     {
-        $this->messageBus->dispatch(new EntityChangeMessage($event->getChanges()));
+        $this->messageBus->dispatch($event);
     }
 }

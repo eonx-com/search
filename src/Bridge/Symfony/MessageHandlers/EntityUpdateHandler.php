@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Bridge\Symfony\MessageHandlers;
 
-use LoyaltyCorp\Search\Bridge\Symfony\Messages\EntityChangeMessage;
+use EonX\EasyEntityChange\Events\EntityChangeEvent;
 use LoyaltyCorp\Search\Interfaces\Workers\EntityUpdateWorkerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
@@ -27,11 +27,11 @@ final class EntityUpdateHandler implements MessageHandlerInterface
     /**
      * Handles entity change event and updates ES indexes.
      *
-     * @param \LoyaltyCorp\Search\Bridge\Symfony\Messages\EntityChangeMessage $event
+     * @param \EonX\EasyEntityChange\Events\EntityChangeEvent $event
      *
      * @return void
      */
-    public function __invoke(EntityChangeMessage $event): void
+    public function __invoke(EntityChangeEvent $event): void
     {
         $this->worker->handle($event->getChanges());
     }

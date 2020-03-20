@@ -4,13 +4,12 @@ declare(strict_types=1);
 namespace Tests\LoyaltyCorp\Search\Unit\Bridge\Symfony\MessageHandlers;
 
 use LoyaltyCorp\Search\Bridge\Symfony\MessageHandlers\BatchOfUpdatesHandler;
-use LoyaltyCorp\Search\Bridge\Symfony\Messages\BatchOfUpdatesMessage;
+use LoyaltyCorp\Search\Events\BatchOfUpdatesEvent;
 use Tests\LoyaltyCorp\Search\Stubs\UpdateProcessorStub;
 use Tests\LoyaltyCorp\Search\TestCases\UnitTestCase;
 
 /**
  * @covers \LoyaltyCorp\Search\Bridge\Symfony\MessageHandlers\BatchOfUpdatesHandler
- * @covers \LoyaltyCorp\Search\Bridge\Symfony\Messages\BatchOfUpdatesMessage
  */
 final class BatchOfUpdatesHandlerTest extends UnitTestCase
 {
@@ -32,7 +31,7 @@ final class BatchOfUpdatesHandlerTest extends UnitTestCase
             ],
         ];
 
-        $handler(new BatchOfUpdatesMessage('suffix', []));
+        $handler(new BatchOfUpdatesEvent('suffix', []));
 
         self::assertSame($expectedProcessCalls, $updateProcessor->getCalls('process'));
     }

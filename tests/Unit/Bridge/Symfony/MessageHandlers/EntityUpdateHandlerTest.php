@@ -4,15 +4,14 @@ declare(strict_types=1);
 namespace Tests\LoyaltyCorp\Search\Unit\Bridge\Symfony\MessageHandlers;
 
 use EonX\EasyEntityChange\DataTransferObjects\UpdatedEntity;
+use EonX\EasyEntityChange\Events\EntityChangeEvent;
 use LoyaltyCorp\Search\Bridge\Symfony\MessageHandlers\EntityUpdateHandler;
-use LoyaltyCorp\Search\Bridge\Symfony\Messages\EntityChangeMessage;
 use stdClass;
 use Tests\LoyaltyCorp\Search\Stubs\Workers\EntityUpdateWorkerStub;
 use Tests\LoyaltyCorp\Search\TestCases\UnitTestCase;
 
 /**
  * @covers \LoyaltyCorp\Search\Bridge\Symfony\MessageHandlers\EntityUpdateHandler
- * @covers \LoyaltyCorp\Search\Bridge\Symfony\Messages\EntityChangeMessage
  */
 final class EntityUpdateHandlerTest extends UnitTestCase
 {
@@ -36,7 +35,7 @@ final class EntityUpdateHandlerTest extends UnitTestCase
             ['changes' => [$updatedEntity]],
         ];
 
-        $listener(new EntityChangeMessage([
+        $listener(new EntityChangeEvent([
             $updatedEntity,
         ]));
 

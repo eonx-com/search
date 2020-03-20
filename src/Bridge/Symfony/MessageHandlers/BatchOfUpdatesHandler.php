@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Bridge\Symfony\MessageHandlers;
 
-use LoyaltyCorp\Search\Bridge\Symfony\Messages\BatchOfUpdatesMessage;
+use LoyaltyCorp\Search\Events\BatchOfUpdatesEvent;
 use LoyaltyCorp\Search\Interfaces\UpdateProcessorInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
@@ -27,11 +27,11 @@ final class BatchOfUpdatesHandler implements MessageHandlerInterface
     /**
      * Handles batch of updates.
      *
-     * @param \LoyaltyCorp\Search\Bridge\Symfony\Messages\BatchOfUpdatesMessage $batchOfUpdates
+     * @param \LoyaltyCorp\Search\Events\BatchOfUpdatesEvent $batchOfUpdates
      *
      * @return void
      */
-    public function __invoke(BatchOfUpdatesMessage $batchOfUpdates): void
+    public function __invoke(BatchOfUpdatesEvent $batchOfUpdates): void
     {
         $this->updateProcessor->process(
             $batchOfUpdates->getIndexSuffix(),

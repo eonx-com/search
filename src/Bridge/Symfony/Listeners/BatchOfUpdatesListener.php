@@ -4,23 +4,23 @@ declare(strict_types=1);
 namespace LoyaltyCorp\Search\Bridge\Symfony\Listeners;
 
 use LoyaltyCorp\Search\Events\BatchOfUpdatesEvent;
-use LoyaltyCorp\Search\Interfaces\UpdateProcessorInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class BatchOfUpdatesListener
 {
     /**
-     * @var \LoyaltyCorp\Search\Interfaces\UpdateProcessorInterface
+     * @var \Symfony\Component\Messenger\MessageBusInterface
      */
-    private $updateProcessor;
+    private $messageBus;
 
     /**
      * BatchOfUpdatesListener constructor.
      *
-     * @param \LoyaltyCorp\Search\Interfaces\UpdateProcessorInterface $updateProcessor
+     * @param \Symfony\Component\Messenger\MessageBusInterface $messageBus
      */
-    public function __construct(UpdateProcessorInterface $updateProcessor)
+    public function __construct(MessageBusInterface $messageBus)
     {
-        $this->updateProcessor = $updateProcessor;
+        $this->messageBus = $messageBus;
     }
 
     /**
@@ -32,9 +32,6 @@ class BatchOfUpdatesListener
      */
     public function __invoke(BatchOfUpdatesEvent $batchOfUpdates): void
     {
-        $this->updateProcessor->process(
-            $batchOfUpdates->getIndexSuffix(),
-            $batchOfUpdates->getUpdates()
-        );
+        $this->messageBus->dispatch($batchOfUpdates);
     }
 }

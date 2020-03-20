@@ -7,7 +7,7 @@ use EonX\EasyEntityChange\DataTransferObjects\UpdatedEntity;
 use EonX\EasyEntityChange\Events\EntityChangeEvent;
 use LoyaltyCorp\Search\Bridge\Symfony\Listeners\EntityUpdateListener;
 use stdClass;
-use Tests\LoyaltyCorp\Search\Stubs\Workers\EntityUpdateWorkerStub;
+use Tests\LoyaltyCorp\Search\Stubs\Bridge\Symfony\MessageBusStub;
 use Tests\LoyaltyCorp\Search\TestCases\UnitTestCase;
 
 /**
@@ -22,8 +22,8 @@ final class EntityUpdateListenerTest extends UnitTestCase
      */
     public function testHandle(): void
     {
-        $worker = new EntityUpdateWorkerStub();
-        $listener = new EntityUpdateListener($worker);
+        $messageBus = new MessageBusStub();
+        $listener = new EntityUpdateListener($messageBus);
 
         $updatedEntity = new UpdatedEntity(
             ['property'],
@@ -31,14 +31,17 @@ final class EntityUpdateListenerTest extends UnitTestCase
             ['id' => 'value']
         );
 
+        $event = new EntityChangeEvent([$updatedEntity,]);
+
+        $listener($event);
+
         $expectedCalls = [
-            ['changes' => [$updatedEntity]],
+            [
+                'message' => $event,
+                'stamps' => []
+            ]
         ];
 
-        $listener(new EntityChangeEvent([
-            $updatedEntity,
-        ]));
-
-        self::assertSame($expectedCalls, $worker->getCalls('handle'));
+        self::assertEquals($expectedCalls, $messageBus->getCalls('dispatch'));
     }
 }

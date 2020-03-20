@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Events;
 
-final class BatchOfUpdatesEvent
+use LoyaltyCorp\Search\Interfaces\Events\SearchEventInterface;
+
+final class BatchOfUpdatesEvent implements SearchEventInterface
 {
     /**
      * Stores an index suffix if one is to be used during batch processing.

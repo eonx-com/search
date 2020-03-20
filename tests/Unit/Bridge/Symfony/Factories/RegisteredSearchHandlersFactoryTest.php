@@ -26,7 +26,7 @@ final class RegisteredSearchHandlersFactoryTest extends UnitTestCase
     {
         $expectedHandlers = [
             new NonDoctrineHandlerStub(),
-            new TransformableHandlerStub()
+            new TransformableHandlerStub(),
         ];
 
         $registeredHandlers = (new RegisteredSearchHandlersFactory($this->toIterable($expectedHandlers)))->create();
@@ -39,7 +39,7 @@ final class RegisteredSearchHandlersFactoryTest extends UnitTestCase
     }
 
     /**
-     * Return dummy search handlers as iterable for `!tagged search_handler`
+     * Return dummy search handlers as iterable for `!tagged search_handler`.
      *
      * @param \LoyaltyCorp\Search\Interfaces\SearchHandlerInterface[] $toYield
      *

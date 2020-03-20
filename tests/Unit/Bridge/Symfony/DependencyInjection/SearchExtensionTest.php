@@ -153,6 +153,7 @@ final class SearchExtensionTest extends UnitTestCase
 
             if (isset($withFactoryServices[$interface]) === true) {
                 self::assertEquals($withFactoryServices[$interface], (string)($definition->getFactory()[0] ?? null));
+
                 continue;
             }
 

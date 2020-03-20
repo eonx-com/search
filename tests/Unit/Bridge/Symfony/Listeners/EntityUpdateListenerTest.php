@@ -31,15 +31,15 @@ final class EntityUpdateListenerTest extends UnitTestCase
             ['id' => 'value']
         );
 
-        $event = new EntityChangeEvent([$updatedEntity,]);
+        $event = new EntityChangeEvent([$updatedEntity, ]);
 
         $listener($event);
 
         $expectedCalls = [
             [
                 'message' => $event,
-                'stamps' => []
-            ]
+                'stamps' => [],
+            ],
         ];
 
         self::assertEquals($expectedCalls, $messageBus->getCalls('dispatch'));

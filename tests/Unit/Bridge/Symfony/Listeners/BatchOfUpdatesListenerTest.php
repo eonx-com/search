@@ -29,8 +29,8 @@ final class BatchOfUpdatesListenerTest extends UnitTestCase
         $expectedProcessCalls = [
             [
                 'message' => $event,
-                'stamps' => []
-            ]
+                'stamps' => [],
+            ],
         ];
 
         $listener($event);

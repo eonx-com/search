@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class SearchIndexLiveCommand extends Command
 {
     /**
-     * @var null|string The default command name
+     * @var string|null The default command name
      */
     protected static $defaultName = 'search:index:live';
 

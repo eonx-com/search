@@ -18,7 +18,7 @@ final class ClientFactory implements ClientFactoryInterface
     private $bulkResponseHelper;
 
     /**
-     * @var null|int
+     * @var int|null
      */
     private $connectionTimeout;
 
@@ -33,7 +33,7 @@ final class ClientFactory implements ClientFactoryInterface
     private $logger;
 
     /**
-     * @var null|int
+     * @var int|null
      */
     private $timeout;
 
@@ -47,10 +47,10 @@ final class ClientFactory implements ClientFactoryInterface
      *
      * @param \LoyaltyCorp\Search\Interfaces\Helpers\ClientBulkResponseHelperInterface $bulkResponseHelper
      * @param \EoneoPay\Externals\Logger\Interfaces\LoggerInterface $logger
-     * @param null|string $elasticsearchHost
-     * @param null|bool $verifySsl
-     * @param null|int $connectionTimeout
-     * @param null|int $timeout
+     * @param string|null $elasticsearchHost
+     * @param bool|null $verifySsl
+     * @param int|null $connectionTimeout
+     * @param int|null $timeout
      */
     public function __construct(
         ClientBulkResponseHelperInterface $bulkResponseHelper,

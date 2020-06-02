@@ -79,9 +79,6 @@ final class ResponseFactoryTest extends UnitTestCase
                     'must' => [
                         'match_all' => new stdClass(),
                     ],
-                    'filter' => [
-                        ['terms' => ['_access_tokens' => ['anonymous']]],
-                    ],
                 ],
             ],
         ];

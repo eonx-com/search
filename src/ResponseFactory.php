@@ -107,9 +107,9 @@ final class ResponseFactory implements ResponseFactoryInterface
         $body->query->bool->must = $query;
 
         /*
-         * If there is not access token provider, the search should not filter and data.
+         * If there is no access token provider, the search should not filter any data.
          * An example of this scenario is that when an admin is searching they don't need
-         * access filters and can see everything that is indexed in the system.
+         * access filters and can see everything that is indexed in the system for that index.
          */
         if (\is_array($accessTokens) === true) {
             // Create the access control filter

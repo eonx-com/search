@@ -101,25 +101,16 @@ final class ResponseFactory implements ResponseFactoryInterface
         // If the search request doesnt have a query, we add a default match_all query.
         $query = $body->query ?? ['match_all' => new stdClass()];
 
+        $filter = new stdClass();
+        $filter->terms = [
+            AccessTokenMappingHelper::ACCESS_TOKEN_PROPERTY . '.keyword' => $accessTokens ?: ['anonymous'],
+        ];
+
         // Wrap the entire query in a bool/filter
         $body->query = new stdClass();
         $body->query->bool = new stdClass();
         $body->query->bool->must = $query;
-
-        /*
-         * If there is no access token provider, the search should not filter any data.
-         * An example of this scenario is that when an admin is searching they don't need
-         * access filters and can see everything that is indexed in the system for that index.
-         */
-        if (\is_array($accessTokens) === true) {
-            // Create the access control filter
-            $filter = new stdClass();
-            $filter->terms = [
-                AccessTokenMappingHelper::ACCESS_TOKEN_PROPERTY => $accessTokens,
-            ];
-
-            $body->query->bool->filter = [$filter];
-        }
+        $body->query->bool->filter = [$filter];
 
         // Reencode the request body as a stream for the request.
         $modifiedBody = stream_for(\json_encode($body, \JSON_THROW_ON_ERROR));

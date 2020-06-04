@@ -101,10 +101,9 @@ final class ResponseFactory implements ResponseFactoryInterface
         // If the search request doesnt have a query, we add a default match_all query.
         $query = $body->query ?? ['match_all' => new stdClass()];
 
-        // Create the access control filter
         $filter = new stdClass();
         $filter->terms = [
-            AccessTokenMappingHelper::ACCESS_TOKEN_PROPERTY => $accessTokens ?: ['anonymous'],
+            AccessTokenMappingHelper::ACCESS_TOKEN_PROPERTY . '.keyword' => $accessTokens ?: ['anonymous'],
         ];
 
         // Wrap the entire query in a bool/filter

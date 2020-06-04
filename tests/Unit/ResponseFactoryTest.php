@@ -80,7 +80,7 @@ final class ResponseFactoryTest extends UnitTestCase
                         'match_all' => new stdClass(),
                     ],
                     'filter' => [
-                        ['terms' => ['_access_tokens' => ['anonymous']]],
+                        ['terms' => ['_access_tokens.keyword' => ['anonymous']]],
                     ],
                 ],
             ],
@@ -134,7 +134,7 @@ final class ResponseFactoryTest extends UnitTestCase
                         ],
                     ],
                     'filter' => [
-                        ['terms' => ['_access_tokens' => ['access-secret', 'purple-elephants']]],
+                        ['terms' => ['_access_tokens.keyword' => ['access-secret', 'purple-elephants']]],
                     ],
                 ],
             ],
@@ -195,7 +195,7 @@ final class ResponseFactoryTest extends UnitTestCase
                         'match_all' => new stdClass(),
                     ],
                     'filter' => [
-                        ['terms' => ['_access_tokens' => ['access-secret', 'purple-elephants']]],
+                        ['terms' => ['_access_tokens.keyword' => ['access-secret', 'purple-elephants']]],
                     ],
                 ],
             ],

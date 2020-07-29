@@ -10,6 +10,8 @@ parameters:
     eonx_search_elasticsearch_connection_timeout: '%env(default:eonx_search_default_elasticsearch_connection_timeout:ELASTICSEARCH_CONNECTION_TIMEOUT)%'
     eonx_search_elasticsearch_timeout: '%env(default:eonx_search_default_elasticsearch_timeout:ELASTICSEARCH_TIMEOUT)%'
     eonx_search_elasticsearch_update_batch_size: '%env(default:eonx_search_default_elasticsearch_update_batch_size:ELASTICSEARCH_UPDATES_BATCH_SIZE)%'
+
+
 services:
     _defaults:
         autowire: true
@@ -75,3 +77,6 @@ services:
         class: LoyaltyCorp\Search\RequestProxyFactory
         arguments:
             $elasticHost: '%eonx_search_elasticsearch_host%'
+
+    LoyaltyCorp\Search\Interfaces\Logstash\MigratorInterface:
+        class: LoyaltyCorp\Search\Logstash\Migrator

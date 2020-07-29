@@ -15,3 +15,6 @@ services:
 
     LoyaltyCorp\Search\Bridge\Symfony\Console\Commands\SearchIndexLiveCommand:
         tags: ['console.command']
+
+    LoyaltyCorp\Search\Bridge\Symfony\Console\Commands\MigrateToLogstashCommand:
+        tags: ['console.command']

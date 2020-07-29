@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace LoyaltyCorp\Search\Bridge\Laravel\Providers;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Elasticsearch\ClientBuilder;
 use EoneoPay\Externals\Logger\Interfaces\LoggerInterface;
 use Illuminate\Contracts\Container\Container;
@@ -20,6 +21,7 @@ use LoyaltyCorp\Search\Interfaces\Helpers\ClientBulkResponseHelperInterface;
 use LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface;
 use LoyaltyCorp\Search\Interfaces\Indexer\MappingHelperInterface;
 use LoyaltyCorp\Search\Interfaces\IndexerInterface;
+use LoyaltyCorp\Search\Interfaces\Logstash\MigratorInterface;
 use LoyaltyCorp\Search\Interfaces\PopulatorInterface;
 use LoyaltyCorp\Search\Interfaces\RequestProxyFactoryInterface;
 use LoyaltyCorp\Search\Interfaces\ResponseFactoryInterface;
@@ -27,6 +29,7 @@ use LoyaltyCorp\Search\Interfaces\SearchHandlerInterface;
 use LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface;
 use LoyaltyCorp\Search\Interfaces\UpdateProcessorInterface;
 use LoyaltyCorp\Search\Interfaces\Workers\EntityUpdateWorkerInterface;
+use LoyaltyCorp\Search\Logstash\Migrator;
 use LoyaltyCorp\Search\Populator;
 use LoyaltyCorp\Search\RequestProxyFactory;
 use LoyaltyCorp\Search\ResponseFactory;
@@ -34,6 +37,7 @@ use LoyaltyCorp\Search\Transformers\DefaultIndexNameTransformer;
 use LoyaltyCorp\Search\UpdateProcessor;
 use LoyaltyCorp\Search\Workers\EntityUpdateWorker;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) High coupling required to ensure all services are bound
@@ -105,6 +109,16 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
                 $app->get(RegisteredSearchHandlersInterface::class),
                 $app->get(EventDispatcherInterface::class),
                 (int)\env('ELASTICSEARCH_UPDATES_BATCH_SIZE', 100)
+            );
+        });
+
+        $container->singleton(MigratorInterface::class, static function (Container $app) {
+            return new Migrator(
+                $app->get(ManagerRegistry::class),
+                $app->get(Filesystem::class),
+                $app->get(MappingHelperInterface::class),
+                $app->get(IndexNameTransformerInterface::class),
+                $app->get(RegisteredSearchHandlersInterface::class)
             );
         });
     }

@@ -1,0 +1,7 @@
+version: '3.7'
+services:
+  logstash:
+    build:
+      context: ../../../
+      dockerfile: ./docker/logstash/Dockerfile
+    image: 278198210055.dkr.ecr.ap-southeast-2.amazonaws.com/logstash:${TAG:-LATEST}

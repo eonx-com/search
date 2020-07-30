@@ -197,7 +197,6 @@ final class Migrator implements MigratorInterface
         $select = [];
         $tableAlias = $this->getTableAlias($tableName);
         foreach ($properties as $property => $propertyDetails) {
-            dump($propertyDetails);
             $column = $this->findMatch($property, $columns);
 
             // First char should at least be the same.

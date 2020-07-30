@@ -74,8 +74,18 @@ final class Migrator implements MigratorInterface
      */
     private $searchHandlers;
 
+    /**
+     * Migrator constructor.
+     *
+     * @param \Doctrine\Persistence\ManagerRegistry|Doctrine\Common\Persistence\ManagerRegistry $managerRegistry
+     * @param \Symfony\Component\Filesystem\Filesystem $filesystem
+     * @param \LoyaltyCorp\Search\Interfaces\Indexer\MappingHelperInterface $mappingHelper
+     * @param \LoyaltyCorp\Search\Interfaces\Transformers\IndexNameTransformerInterface $indexNameTransformer
+     * @param \LoyaltyCorp\Search\Interfaces\Helpers\RegisteredSearchHandlersInterface $handlers
+     * @param null|string $logstashPath
+     */
     public function __construct(
-        ManagerRegistry $managerRegistry,
+        $managerRegistry,
         Filesystem $filesystem,
         MappingHelperInterface $mappingHelper,
         IndexNameTransformerInterface $indexNameTransformer,
@@ -92,16 +102,17 @@ final class Migrator implements MigratorInterface
 
     public function migrate(OutputInterface $output, string $providerClass): void
     {
-        if (\class_exists($providerClass) === false) {
-            $output->writeln(\sprintf('%s class does not exist', $providerClass));
-
-            return;
-        }
         $this->providerClass = $providerClass;
         $this->output = $output;
         $this->hasProvider = false;
         $this->curatorConfig = '';
         $this->pipelineConfig = '';
+
+        if (\class_exists($providerClass) === false) {
+            $this->output->writeln(\sprintf('%s class does not exist', $providerClass));
+
+            return;
+        }
 
         // Copy base files
         $this->filesystem->mirror(__DIR__ . '/../../templates/logstash', $this->logstashPath);
@@ -139,6 +150,7 @@ final class Migrator implements MigratorInterface
             if ($sqlColumn === 'NO_SQL_MAPPING_FOUND') {
                 $this->noSqlMappings[$indexName][] = $propertyName;
             }
+
             if ($sqlColumn === $propertyName) {
                 // No need to rename.
                 continue;
@@ -184,7 +196,8 @@ final class Migrator implements MigratorInterface
 
         $select = [];
         $tableAlias = $this->getTableAlias($tableName);
-        foreach ($properties as $property) {
+        foreach ($properties as $property => $propertyDetails) {
+            dump($propertyDetails);
             $column = $this->findMatch($property, $columns);
 
             // First char should at least be the same.
@@ -242,7 +255,7 @@ final class Migrator implements MigratorInterface
             // Build SQL queries
             $esProperties = $mapping['doc']['properties'];
 
-            $this->buildSelectSql($searchHandler, array_keys($esProperties), $indexName);
+            $this->buildSelectSql($searchHandler, $esProperties, $indexName);
 
             $this->buildInputPipeline($esProperties, $indexName, $inputTemplate);
 

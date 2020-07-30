@@ -114,7 +114,7 @@ final class SearchServiceProvider extends ServiceProvider implements DeferrableP
 
         $container->singleton(MigratorInterface::class, static function (Container $app) {
             return new Migrator(
-                $app->get(ManagerRegistry::class),
+                $app->get('registry'),
                 $app->get(Filesystem::class),
                 $app->get(MappingHelperInterface::class),
                 $app->get(IndexNameTransformerInterface::class),

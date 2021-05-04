@@ -23,7 +23,7 @@
     "eonx-com/standards": "^0.3",
     "eonx-com/test-utils": "^0.2",
     "eonx-com/utils": "^1.0",
-    "friendsofphp/php-cs-fixer": "^2.15",
+    "friendsofphp/php-cs-fixer": "^2.15 || ^3.0",
     "guzzlehttp/psr7": "^1.5",
     "illuminate/container": "^5.8 || ^6.0",
     "illuminate/support": "^5.8 || ^6.0",
